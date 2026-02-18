@@ -141,8 +141,7 @@
             font-size: 13px;
         }
 
-        .form-group input,
-        .form-group select {
+        .form-group input {
             padding: 10px;
             border: 1px solid #ffd700;
             border-radius: 5px;
@@ -151,9 +150,44 @@
             font-family: inherit;
             font-size: 14px;
         }
+        .form-group select {
+              padding: 10px;
+              border: 2px solid #ffd700;
+              border-radius: 5px;
+              background: #fff;
+              color: #003399;
+              font-family: inherit;
+              font-size: 14px;
+              font-weight: bold;
+              box-shadow: 0 2px 8px rgba(255,215,0,0.10);
+              transition: background 0.2s, color 0.2s;
+        }
 
         .form-group input::placeholder {
             color: rgba(255, 255, 255, 0.5);
+        }
+        .form-group select:focus {
+            background: #f7f7f7;
+            color: #003399;
+            outline: none;
+        }
+        /* Coach create form input fields */
+        .coach-form .form-group input[type="date"],
+        .coach-form .form-group input[type="time"],
+        .coach-form .form-group input[type="number"] {
+            background: #fff;
+            color: #003399;
+            border: 2px solid #ffd700;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(255,215,0,0.10);
+            transition: background 0.2s, color 0.2s;
+        }
+        .coach-form .form-group input[type="date"]:focus,
+        .coach-form .form-group input[type="time"]:focus,
+        .coach-form .form-group input[type="number"]:focus {
+            background: #f7f7f7;
+            color: #003399;
+            outline: none;
         }
 
         .form-group input:focus,
@@ -344,15 +378,7 @@
             font-size: 13px;
         }
 
-        .btn-start {
-            background: #f39c12;
-            color: white;
-            flex: 1;
-        }
 
-        .btn-start:hover {
-            background: #e67e22;
-        }
 
         .btn-delete {
             background: #e74c3c;
@@ -577,16 +603,61 @@
             <button id="backBtn" class="btn btn-back" onclick="goBack()" style="display: none;">
                 <i class="fas fa-arrow-left"></i> Späť
             </button>
-            <div id="userDisplay" class="user-info" style="display: none;">
-                <i class="fas fa-user-circle"></i> <span id="userDisplay2"></span>
-            </div>
-            <button id="logoutBtn" class="btn btn-logout" onclick="logout()" style="display: none;">
-                <i class="fas fa-sign-out-alt"></i> Odhlásiť
-            </button>
+                <button id="userDisplay" class="user-info" style="display: none; background: none; border: none; cursor: pointer;">
+                    <i class="fas fa-user-circle"></i> <span id="userDisplay2"></span>
+                        <style>
+                        #userDisplay.user-info {
+                            position: relative;
+                            background: #fff;
+                            border: 2px solid #ffd700;
+                            box-shadow: 0 2px 8px rgba(255,215,0,0.12);
+                            font-weight: bold;
+                            overflow: hidden;
+                            transition: background 0.2s, color 0.2s;
+                        }
+                        #userDisplay.user-info::before {
+                            content: '';
+                            position: absolute;
+                            inset: 0;
+                            background: rgba(255,215,0,0.18);
+                            pointer-events: none;
+                            z-index: 0;
+                        }
+                        #userDisplay.user-info span {
+                            color: #ffd700;
+                            position: relative;
+                            z-index: 1;
+                        }
+                        #userDisplay.user-info i {
+                            color: #003399;
+                            position: relative;
+                            z-index: 1;
+                        }
+                        #userDisplay.user-info:hover {
+                            background: #fffbe6;
+                            box-shadow: 0 4px 16px rgba(255,215,0,0.18);
+                        }
+                        </style>
+                </button>
         </div>
     </div>
 
     <div class="container">
+        <!-- Logout Modal -->
+        <div id="logoutModal" class="modal" style="display:none;position:fixed;z-index:9999;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.4);align-items:center;justify-content:center;">
+            <div class="modal-content" style="background:#fff;color:#222;max-width:350px;width:90vw;margin:auto;border-radius:10px;padding:30px 20px;box-shadow:0 8px 32px rgba(0,0,0,0.18);position:relative;animation:modalSlideIn 0.3s;">
+                <div class="modal-header" style="display:flex;align-items:center;justify-content:space-between;">
+                    <h2 style="font-size:22px;margin:0;z-index:1;">Odhlásenie</h2>
+                    <button class="close-btn" onclick="closeLogoutModal()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#888;"><i class="fas fa-times"></i></button>
+                </div>
+                <div style="margin: 20px 0; text-align: center;">
+                    <p>Ste prihlásený ako <b id="logoutUserName"></b>.</p>
+                    <p>Čo chcete urobiť?</p>
+                </div>
+                <button class="btn btn-primary" style="width:100%;margin-bottom:10px;background:#e74c3c;color:white;" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Odhlásiť sa</button>
+                <button class="btn btn-secondary" style="width:100%;background:#ffd700;color:#003399;" onclick="handleSwitchAccount()"><i class="fas fa-user-switch"></i> Prepnúť účet</button>
+            </div>
+        </div>
         <!-- Empty State -->
         <div id="emptyState" class="empty-message">
             Musíte sa prihlásiť aby ste mohli vidieť tréningy.<br><br>
@@ -599,6 +670,7 @@
         <div class="coach-section" id="coachSection">
             <div class="coach-form">
                 <h3><i class="fas fa-plus-circle"></i> Vytvoriť nový tréning</h3>
+                <div id="trainingError" style="display:none;color:#e74c3c;font-weight:bold;margin-bottom:10px;text-align:center;"></div>
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="trainingDate">Dátum:</label>
@@ -749,15 +821,13 @@
             if (!currentUser.isLoggedIn) {
                 document.getElementById('emptyState').style.display = 'block';
                 document.getElementById('backBtn').style.display = 'none';
-                document.getElementById('userDisplay').style.display = 'none';
-                document.getElementById('logoutBtn').style.display = 'none';
+                document.getElementById('userDisplay').style.display = 'none'; // This line remains unchanged
                 return;
             }
 
             document.getElementById('emptyState').style.display = 'none';
             document.getElementById('backBtn').style.display = 'inline-flex';
-            document.getElementById('userDisplay').style.display = 'flex';
-            document.getElementById('logoutBtn').style.display = 'inline-flex';
+            document.getElementById('userDisplay').style.display = 'flex'; // This line remains unchanged
 
             const roleLabel = { 'coach': 'Tréner', 'player': 'Hráč', 'parent': 'Rodič' }[currentUser.role];
             document.getElementById('userDisplay2').textContent = `${currentUser.username} (${roleLabel})`;
@@ -823,9 +893,15 @@
 
             console.log('Form values:', {date, time, type, duration, category});
 
+            const errorDiv = document.getElementById('trainingError');
             if (!date || !time || !type || !duration || !category) {
-                alert('Vyplňte všetky polia!');
+                if (errorDiv) {
+                    errorDiv.textContent = 'Vyplňte všetky polia!';
+                    errorDiv.style.display = 'block';
+                }
                 return;
+            } else if (errorDiv) {
+                errorDiv.style.display = 'none';
             }
 
             // Get players for this category
@@ -854,7 +930,6 @@
             localStorage.setItem('trainings', JSON.stringify(trainings));
 
             console.log('Training created:', training);
-            alert('Tréning vytvorený! (' + categoryPlayers.length + ' hráčov)');
             
             // Clear form
             document.getElementById('trainingDate').value = '';
@@ -916,7 +991,6 @@
                         </div>
                         <div class="training-footer">
                             <div style="color:#2ecc71;">Účasť: ${percent}%</div>
-                            ${t.isActive ? `<button class="btn-action btn-start" onclick="startTraining(${t.id})"><i class="fas fa-play"></i> Začať</button>` : ''}
                             <button class="btn-action btn-delete" onclick="deleteTraining(${t.id})"><i class="fas fa-trash"></i> Odstrániť</button>
                         </div>
                     </div>
@@ -1035,11 +1109,49 @@
         function startTraining(trainingId) {
             const t = trainings.find(x => x.id === trainingId);
             if (t) {
+                // Move all 'unknown' to 'no' before closing
+                Object.keys(t.attendance).forEach(key => {
+                    if (t.attendance[key] === 'unknown') {
+                        t.attendance[key] = 'no';
+                    }
+                });
                 t.isActive = false;
                 localStorage.setItem('trainings', JSON.stringify(trainings));
                 refreshCoachRoster();
             }
         }
+
+        // Auto-close trainings and move 'unknown' to 'no' if start time has passed
+        function autoCloseTrainingsByTime() {
+            const now = new Date();
+            let changed = false;
+            trainings.forEach(t => {
+                if (t.isActive && t.date && t.time) {
+                    // Parse date and time
+                    const dt = new Date(t.date + 'T' + t.time);
+                    if (now >= dt) {
+                        // Move all 'unknown' to 'no'
+                        Object.keys(t.attendance).forEach(key => {
+                            if (t.attendance[key] === 'unknown') {
+                                t.attendance[key] = 'no';
+                            }
+                        });
+                        t.isActive = false;
+                        changed = true;
+                    }
+                }
+            });
+            if (changed) {
+                localStorage.setItem('trainings', JSON.stringify(trainings));
+                refreshCoachRoster();
+                refreshPlayerTrainings();
+            }
+        }
+
+        // Kontrola každú minútu
+        setInterval(autoCloseTrainingsByTime, 60000);
+        // Skontroluj aj hneď po načítaní
+        window.addEventListener('load', autoCloseTrainingsByTime);
 
         function deleteTraining(trainingId) {
             if (confirm('Odstrániť?')) {
@@ -1117,15 +1229,55 @@
             window.location.href = 'index.html';
         }
 
-        function logout() {
-            if (confirm('Odhlásiť sa?')) {
-                localStorage.removeItem('lastLogin');
-                localStorage.removeItem('lastRole');
-                currentUser = { username: '', role: '', isLoggedIn: false };
-                trainings = [];
-                parentChildren = {};
-                location.reload();
+        // Logout Modal Logic
+        document.addEventListener('DOMContentLoaded', function() {
+            const userDisplayBtn = document.getElementById('userDisplay');
+            if (userDisplayBtn) {
+                userDisplayBtn.onclick = function(e) {
+                    e.preventDefault();
+                    openLogoutModal();
+                };
             }
+            // Modal close on outside click
+            const logoutModal = document.getElementById('logoutModal');
+            if (logoutModal) {
+                logoutModal.addEventListener('click', function(e) {
+                    if (e.target === this) closeLogoutModal();
+                });
+            }
+        });
+
+        function openLogoutModal() {
+            const modal = document.getElementById('logoutModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+                // Set username
+                const userNameSpan = document.getElementById('logoutUserName');
+                if (userNameSpan && currentUser && currentUser.username) {
+                    userNameSpan.textContent = currentUser.username;
+                }
+            }
+        }
+        function closeLogoutModal() {
+            const modal = document.getElementById('logoutModal');
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        }
+        function handleLogout() {
+            localStorage.removeItem('lastLogin');
+            localStorage.removeItem('lastRole');
+            currentUser = { username: '', role: '', isLoggedIn: false };
+            trainings = [];
+            parentChildren = {};
+            closeLogoutModal();
+            location.reload();
+        }
+        function handleSwitchAccount() {
+            handleLogout();
+            // After reload, login modal should show on main page
         }
     </script>
 </body>

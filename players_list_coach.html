@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zoznam hráčov - Tréner</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #003399 0%, #1a5ccc 100%);
+            color: white;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 40px;
+            background: rgba(0,0,0,0.25);
+            border-bottom: 3px solid #ffd700;
+        }
+        .header h1 {
+            color: #ffd700;
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .btn-back {
+            background: rgba(255,255,255,0.1);
+            color: #ffd700;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-back:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: rgba(255,255,255,0.07);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+            padding: 40px 32px;
+        }
+        .search-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 28px;
+            justify-content: center;
+        }
+        .search-bar input {
+            padding: 10px 16px;
+            border-radius: 6px;
+            border: none;
+            font-size: 16px;
+            width: 220px;
+        }
+        .player-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            justify-content: center;
+        }
+        .player-card {
+            background: rgba(0,0,0,0.13);
+            border-radius: 10px;
+            padding: 24px 18px;
+            width: 220px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+            text-align: center;
+        }
+        .player-card:hover {
+            background: rgba(255,255,255,0.13);
+            transform: translateY(-4px) scale(1.03);
+        }
+        .player-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: #ffd700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: #003399;
+            margin: 0 auto 10px auto;
+        }
+        .player-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ffd700;
+            margin-bottom: 6px;
+        }
+        .player-info {
+            color: #fff;
+            font-size: 15px;
+            margin-bottom: 2px;
+        }
+        .player-category {
+            color: #ffd700;
+            font-size: 13px;
+            margin-bottom: 2px;
+        }
+        .player-position {
+            color: #fff;
+            font-size: 13px;
+            margin-bottom: 2px;
+        }
+    </style>
+</head>
+<body>
+    <script>
+    // Restrict access to coaches only
+    (function() {
+        let user = null;
+        try {
+            user = JSON.parse(localStorage.getItem('currentUser'));
+        } catch (e) {}
+        if (!user || !user.isLoggedIn || user.role !== 'coach') {
+            window.location.href = 'index.html';
+        }
+    })();
+    </script>
+    <div class="header">
+        <h1><i class="fas fa-users"></i> Zoznam hráčov</h1>
+        <button class="btn-back" onclick="window.history.back()"><i class="fas fa-arrow-left"></i> Späť</button>
+    </div>
+    <div class="container">
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Hľadať hráča..." oninput="renderPlayerList()">
+        </div>
+        <div class="player-list" id="playerListContainer">
+            <!-- Player cards will be loaded here -->
+        </div>
+    </div>
+    <script src="database.js"></script>
+    <script>
+    function renderPlayerList() {
+        const search = document.getElementById('searchInput').value.toLowerCase();
+        const container = document.getElementById('playerListContainer');
+        container.innerHTML = '';
+        if (typeof PLAYERS === 'undefined') {
+            container.innerHTML = '<div style="color:#ffd700;text-align:center;font-size:22px;padding:40px 0;">Žiadni hráči neboli nájdení.</div>';
+            return;
+        }
+        let found = false;
+        for (const username in PLAYERS) {
+            const p = PLAYERS[username];
+            if (
+                p.fullName.toLowerCase().includes(search) ||
+                p.category.toLowerCase().includes(search) ||
+                p.position.toLowerCase().includes(search)
+            ) {
+                found = true;
+                const card = document.createElement('div');
+                card.className = 'player-card';
+                card.onclick = () => {
+                    window.location.href = `player_detail_coach.html?username=${encodeURIComponent(username)}`;
+                };
+                card.innerHTML = `
+                    <div class="player-avatar"><i class='fas fa-user'></i></div>
+                    <div class="player-name">${p.fullName}</div>
+                    <div class="player-info">${p.dateOfBirth} | #${p.shirtNumber}</div>
+                    <div class="player-category">${p.category}</div>
+                    <div class="player-position">${p.position}</div>
+                `;
+                container.appendChild(card);
+            }
+        }
+        if (!found) {
+            container.innerHTML = '<div style="color:#ffd700;text-align:center;font-size:22px;padding:40px 0;">Žiadni hráči neboli nájdení.</div>';
+        }
+    }
+    document.addEventListener('DOMContentLoaded', renderPlayerList);
+    </script>
+</body>
+</html>
