@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tréningy - OŠK Kamenná Poruba</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #003399 0%, #1a5ccc 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto 40px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            border-bottom: 3px solid #ffd700;
+        }
+
+        .header h1 {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 28px;
+            color: #ffd700;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-logout {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-logout:hover {
+            background: #c0392b;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 215, 0, 0.2);
+            padding: 10px 20px;
+            border-radius: 5px;
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #ffd700;
+            padding: 60px 20px;
+            font-size: 18px;
+        }
+
+        .coach-section, .player-section {
+            display: none;
+        }
+
+        .coach-section.active, .player-section.active {
+            display: block;
+        }
+
+        .coach-form {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 10px;
+            border: 2px solid #ffd700;
+            margin-bottom: 40px;
+        }
+
+        .coach-form h3 {
+            color: #ffd700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            color: #ffd700;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 10px;
+            border: 1px solid #ffd700;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #ffed4e;
+        }
+
+        .btn-create {
+            grid-column: 1 / -1;
+            background: #ffd700;
+            color: #003399;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .btn-create:hover {
+            background: #ffed4e;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+        }
+
+        h2 {
+            color: #ffd700;
+            margin-bottom: 20px;
+            margin-top: 40px;
+        }
+
+        .trainings-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .training-card {
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.02);
+            overflow: hidden;
+        }
+
+        .training-header {
+            background: linear-gradient(90deg, rgba(255, 215, 0, 0.2) 0%, rgba(0, 51, 153, 0.2) 100%);
+            padding: 20px;
+            border-bottom: 2px solid #ffd700;
+        }
+
+        .training-header h3 {
+            color: #ffd700;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        .training-header p {
+            margin: 5px 0;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .attendance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .attendance-group {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .attendance-group h4 {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .attendance-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .attendance-item {
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .attendance-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-yes, .btn-no, .btn-unknown {
+            flex: 1;
+            min-width: 70px;
+            padding: 10px 8px;
+            border: 2px solid;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .btn-yes {
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+            border-color: #2ecc71;
+        }
+
+        .btn-yes:hover, .btn-yes.active {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .btn-no {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            border-color: #e74c3c;
+        }
+
+        .btn-no:hover, .btn-no.active {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-unknown {
+            background: rgba(149, 165, 166, 0.2);
+            color: #95a5a6;
+            border-color: #95a5a6;
+        }
+
+        .btn-unknown:hover, .btn-unknown.active {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .status-display {
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        .training-footer {
+            padding: 20px;
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .btn-action {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .btn-start {
+            background: #f39c12;
+            color: white;
+            flex: 1;
+        }
+
+        .btn-start:hover {
+            background: #e67e22;
+        }
+
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+            flex: 1;
+        }
+
+        .btn-delete:hover {
+            background: #c0392b;
+        }
+
+        .parent-children {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 10px;
+            border: 2px solid #ffd700;
+            margin-bottom: 40px;
+        }
+
+        .parent-children h3 {
+            color: #ffd700;
+            margin-bottom: 20px;
+        }
+
+        .add-child {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .add-child input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ffd700;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .add-child input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .add-child button {
+            padding: 10px 20px;
+            background: #ffd700;
+            color: #003399;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .add-child button:hover {
+            background: #ffed4e;
+        }
+
+        #childrenList {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .child-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .btn-remove {
+            padding: 5px 15px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .btn-remove:hover {
+            background: #c0392b;
+        }
+
+        .training-info {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .training-info h4 {
+            color: #ffd700;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .training-info p {
+            margin: 5px 0;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .person-options {
+            padding: 15px 20px;
+            border-top: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .profile-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 10px;
+            border: 2px solid #ffd700;
+            margin-bottom: 40px;
+        }
+
+        .profile-header {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #ffd700;
+        }
+
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            color: #003399;
+            font-weight: bold;
+        }
+
+        .profile-info h2 {
+            margin: 0 0 15px 0;
+            font-size: 28px;
+            color: #ffd700;
+            border: none;
+            padding: 0;
+        }
+
+        .profile-info p {
+            margin: 8px 0;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 15px;
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-item {
+            background: rgba(255, 215, 0, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            text-align: center;
+        }
+
+        .stat-item-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffd700;
+            margin-bottom: 5px;
+        }
+
+        .stat-item-label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .attendance-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .training-footer {
+                flex-direction: column;
+            }
+
+            .btn-action {
+                width: 100%;
+            }
+
+            .profile-header {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-avatar {
+                width: 100px;
+                height: 100px;
+                font-size: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>
+            <i class="fas fa-dumbbell"></i> Tréningy OŠK Kamenná Poruba
+        </h1>
+        <div class="header-buttons">
+            <button id="backBtn" class="btn btn-back" onclick="goBack()" style="display: none;">
+                <i class="fas fa-arrow-left"></i> Späť
+            </button>
+            <div id="userDisplay" class="user-info" style="display: none;">
+                <i class="fas fa-user-circle"></i> <span id="userDisplay2"></span>
+            </div>
+            <button id="logoutBtn" class="btn btn-logout" onclick="logout()" style="display: none;">
+                <i class="fas fa-sign-out-alt"></i> Odhlásiť
+            </button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Empty State -->
+        <div id="emptyState" class="empty-message">
+            Musíte sa prihlásiť aby ste mohli vidieť tréningy.<br><br>
+            <button class="btn btn-back" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i> Vrátiť sa na hlavnú stránku
+            </button>
+        </div>
+
+        <!-- Coach Section -->
+        <div class="coach-section" id="coachSection">
+            <div class="coach-form">
+                <h3><i class="fas fa-plus-circle"></i> Vytvoriť nový tréning</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="trainingDate">Dátum:</label>
+                        <input type="date" id="trainingDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="trainingTime">Čas:</label>
+                        <input type="time" id="trainingTime">
+                    </div>
+                    <div class="form-group">
+                        <label for="trainingType">Typ:</label>
+                        <select id="trainingType">
+                            <option value="">-- Vybrať --</option>
+                            <option value="technical">Technický tréning</option>
+                            <option value="tactical">Taktický tréning</option>
+                            <option value="physical">Fyzický tréning</option>
+                            <option value="friendly">Prieťahový zápas</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="trainingDuration">Trvanie (min):</label>
+                        <input type="number" id="trainingDuration" value="90" min="30" step="15">
+                    </div>
+                    <div class="form-group">
+                        <label for="trainingCategory">Kategória:</label>
+                        <select id="trainingCategory">
+                            <option value="">-- Vybrať --</option>
+                            <option value="pripravky">Prípravky (U8-U9)</option>
+                            <option value="ziaci">Žiaci (U10-U12)</option>
+                            <option value="dorastenci">Dorastenci (U13-U18)</option>
+                            <option value="adults_young">Dospelí - Mladí (18-25)</option>
+                            <option value="adults_pro">Dospelí - Skúsení (25+)</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn-create" onclick="createTraining()">
+                        <i class="fas fa-plus"></i> Vytvoriť
+                    </button>
+                </div>
+            </div>
+
+            <h2><i class="fas fa-list"></i> Všetky tréningy</h2>
+            <div id="coachTrainingsContainer" class="trainings-list"></div>
+        </div>
+
+        <!-- Player/Parent Section -->
+        <div class="player-section" id="playerSection">
+            <div id="playerProfileArea" style="display: none;">
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div class="profile-avatar" id="profileAvatar">👤</div>
+                        <div class="profile-info">
+                            <h2 id="profileName">Meno Hráča</h2>
+                            <p><i class="fas fa-shirt"></i> Pozícia: <strong id="profilePosition">--</strong></p>
+                            <p><i class="fas fa-numbers"></i> Číslo: <strong id="profileNumber">--</strong></p>
+                            <p><i class="fas fa-users"></i> Kategória: <strong id="profileCategory">--</strong></p>
+                            <p><i class="fas fa-birthday-cake"></i> Narodený: <strong id="profileBirth">--</strong></p>
+                        </div>
+                    </div>
+                    <h3 style="color: #ffd700; margin-bottom: 15px;">Štatistika</h3>
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <div class="stat-item-value" id="profileAge">--</div>
+                            <div class="stat-item-label">Vek</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-item-value" id="profileHeight">--</div>
+                            <div class="stat-item-label">Výška (cm)</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-item-value" id="profileWeight">--</div>
+                            <div class="stat-item-label">Váha (kg)</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-item-value" id="profileJoined">--</div>
+                            <div class="stat-item-label">V klube od</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="parentChildrenArea" style="display: none;">
+                <div class="parent-children">
+                    <h3><i class="fas fa-child"></i> Moje deti</h3>
+                    <div class="add-child">
+                        <input type="text" id="childName" placeholder="Zadajte meno dieťaťa...">
+                        <button onclick="addChild()"><i class="fas fa-plus"></i> Pridať</button>
+                    </div>
+                    <div id="childrenList"></div>
+                </div>
+            </div>
+
+            <h2><i class="fas fa-calendar-check"></i> Dostupné tréningy</h2>
+            <div id="playerTrainingsContainer" class="trainings-list"></div>
+        </div>
+    </div>
+
+    <script>
+        // Vloženie PLAYERS objektu priamo (bez závislosti na database.js)
+        const PLAYERS = {
+            'jozef_adamcik': { username: 'jozef_adamcik', fullName: 'Jozef Adamčík', category: 'ziaci', position: 'Brankár', shirtNumber: 1, age: 10, height: 145, weight: 38, dateOfBirth: '2015-05-12', joinedClub: '2023-09-01' },
+            'marko_adamcik': { username: 'marko_adamcik', fullName: 'Marko Adamčík', category: 'ziaci', position: 'Obranca', shirtNumber: 4, age: 8, height: 135, weight: 32, dateOfBirth: '2017-08-25', joinedClub: '2023-10-15' },
+            'lukas_kuba': { username: 'lukas_kuba', fullName: 'Lukáš Kuba', category: 'dorastenci', position: 'Stredopoliar', shirtNumber: 6, age: 12, height: 160, weight: 48, dateOfBirth: '2013-03-18', joinedClub: '2022-06-01' },
+            'jakub_horvath': { username: 'jakub_horvath', fullName: 'Jakub Horváth', category: 'dorastenci', position: 'Útočník', shirtNumber: 9, age: 11, height: 155, weight: 45, dateOfBirth: '2014-11-07', joinedClub: '2023-08-20' },
+            'robert_sabo': { username: 'robert_sabo', fullName: 'Róbert Sabo', category: 'adults_pro', position: 'Obranca', shirtNumber: 3, age: 27, height: 182, weight: 78, dateOfBirth: '1998-06-22', joinedClub: '2016-07-01' },
+            'stefan_polak': { username: 'stefan_polak', fullName: 'Štefan Polák', category: 'adults_young', position: 'Stredopoliar', shirtNumber: 5, age: 23, height: 175, weight: 70, dateOfBirth: '2002-09-14', joinedClub: '2021-09-01' },
+            'tomas_kamenicky': { username: 'tomas_kamenicky', fullName: 'Tomáš Kamenický', category: 'pripravky', position: 'Útočník', shirtNumber: 10, age: 15, height: 150, weight: 40, dateOfBirth: '2010-02-28', joinedClub: '2024-02-01' }
+        };
+
+        let currentUser = { username: '', role: '', isLoggedIn: false };
+        let trainings = [];
+        let parentChildren = {};
+
+        window.addEventListener('load', function() {
+            // Skúsime najprv zo localStorage
+            let lastLogin = localStorage.getItem('lastLogin');
+            let lastRole = localStorage.getItem('lastRole');
+            
+            // Ak nie je v localStorage, skúsime z sessionStorage
+            if (!lastLogin) lastLogin = sessionStorage.getItem('lastLogin');
+            if (!lastRole) lastRole = sessionStorage.getItem('lastRole');
+
+            console.log('Page loaded. lastLogin:', lastLogin, 'lastRole:', lastRole);
+            console.log('All localStorage keys:', Object.keys(localStorage));
+
+            if (!lastLogin || !lastRole) {
+                document.getElementById('emptyState').style.display = 'block';
+                console.log('No login found - showing empty state');
+                return;
+            }
+
+            currentUser = {
+                username: lastLogin,
+                role: lastRole,
+                isLoggedIn: true
+            };
+
+            const saved = localStorage.getItem('trainings');
+            if (saved) trainings = JSON.parse(saved);
+
+            const savedChildren = localStorage.getItem('parentChildren_' + currentUser.username);
+            if (savedChildren) parentChildren = JSON.parse(savedChildren);
+
+            console.log('User loaded:', currentUser, 'Trainings:', trainings);
+            updateUI();
+        });
+
+        function updateUI() {
+            if (!currentUser.isLoggedIn) {
+                document.getElementById('emptyState').style.display = 'block';
+                document.getElementById('backBtn').style.display = 'none';
+                document.getElementById('userDisplay').style.display = 'none';
+                document.getElementById('logoutBtn').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('backBtn').style.display = 'inline-flex';
+            document.getElementById('userDisplay').style.display = 'flex';
+            document.getElementById('logoutBtn').style.display = 'inline-flex';
+
+            const roleLabel = { 'coach': 'Tréner', 'player': 'Hráč', 'parent': 'Rodič' }[currentUser.role];
+            document.getElementById('userDisplay2').textContent = `${currentUser.username} (${roleLabel})`;
+
+            if (currentUser.role === 'coach') {
+                document.getElementById('coachSection').classList.add('active');
+                document.getElementById('playerSection').classList.remove('active');
+                refreshCoachRoster();
+            } else {
+                document.getElementById('coachSection').classList.remove('active');
+                document.getElementById('playerSection').classList.add('active');
+
+                if (currentUser.role === 'parent') {
+                    document.getElementById('parentChildrenArea').style.display = 'block';
+                    document.getElementById('playerProfileArea').style.display = 'none';
+                    updateChildrenList();
+                } else if (currentUser.role === 'player') {
+                    document.getElementById('parentChildrenArea').style.display = 'none';
+                    document.getElementById('playerProfileArea').style.display = 'block';
+                    displayPlayerProfile();
+                }
+
+                refreshPlayerTrainings();
+            }
+        }
+
+        function displayPlayerProfile() {
+            const player = PLAYERS[currentUser.username];
+            if (!player) {
+                console.log('Player not found:', currentUser.username);
+                return;
+            }
+
+            // Avatár inicijály
+            const initials = player.fullName.split(' ').map(n => n[0]).join('').toUpperCase();
+            document.getElementById('profileAvatar').textContent = initials;
+
+            // Profil údaje
+            document.getElementById('profileName').textContent = player.fullName;
+            document.getElementById('profilePosition').textContent = player.position || '--';
+            document.getElementById('profileNumber').textContent = player.shirtNumber || '--';
+            document.getElementById('profileCategory').textContent = getCategoryLabel(player.category);
+            document.getElementById('profileBirth').textContent = player.dateOfBirth || '--';
+            document.getElementById('profileAge').textContent = player.age || '--';
+            document.getElementById('profileHeight').textContent = player.height || '--';
+            document.getElementById('profileWeight').textContent = player.weight || '--';
+            
+            // Dátum pripojenia sa do klubu
+            if (player.joinedClub) {
+                const date = new Date(player.joinedClub);
+                document.getElementById('profileJoined').textContent = date.getFullYear();
+            }
+        }
+
+        function createTraining() {
+            console.log('createTraining called');
+            
+            const date = document.getElementById('trainingDate').value;
+            const time = document.getElementById('trainingTime').value;
+            const type = document.getElementById('trainingType').value;
+            const duration = document.getElementById('trainingDuration').value;
+            const category = document.getElementById('trainingCategory').value;
+
+            console.log('Form values:', {date, time, type, duration, category});
+
+            if (!date || !time || !type || !duration || !category) {
+                alert('Vyplňte všetky polia!');
+                return;
+            }
+
+            // Get players for this category
+            const categoryPlayers = Object.values(PLAYERS).filter(p => p.category === category);
+            console.log('Category players:', categoryPlayers);
+
+            if (categoryPlayers.length === 0) {
+                alert('Nie sú žiadni hráči v tejto kategórii!');
+                return;
+            }
+
+            const training = {
+                id: Date.now(),
+                date, time, type, duration, category,
+                createdBy: currentUser.username,
+                isActive: true,
+                attendance: {}
+            };
+
+            // Initialize attendance
+            categoryPlayers.forEach(player => {
+                training.attendance[training.id + '_' + player.username] = 'unknown';
+            });
+
+            trainings.push(training);
+            localStorage.setItem('trainings', JSON.stringify(trainings));
+
+            console.log('Training created:', training);
+            alert('Tréning vytvorený! (' + categoryPlayers.length + ' hráčov)');
+            
+            // Clear form
+            document.getElementById('trainingDate').value = '';
+            document.getElementById('trainingTime').value = '';
+            document.getElementById('trainingType').value = '';
+            document.getElementById('trainingDuration').value = '90';
+            document.getElementById('trainingCategory').value = '';
+
+            refreshCoachRoster();
+            refreshPlayerTrainings();
+        }
+
+        function refreshCoachRoster() {
+            const container = document.getElementById('coachTrainingsContainer');
+            if (trainings.length === 0) {
+                container.innerHTML = '<div style="text-align:center;color:#ffd700;padding:30px;">Žiadne tréningy</div>';
+                return;
+            }
+
+            let html = '';
+            trainings.forEach(t => {
+                const date = new Date(t.date).toLocaleDateString('sk-SK');
+                const typeLabel = getTypeLabel(t.type);
+                const categoryLabel = getCategoryLabel(t.category);
+
+                let attending = 0, notAttending = 0, unknown = 0;
+                Object.values(t.attendance || {}).forEach(s => {
+                    if (s === 'yes') attending++;
+                    else if (s === 'no') notAttending++;
+                    else unknown++;
+                });
+
+                const total = attending + notAttending + unknown;
+                const percent = total > 0 ? Math.round((attending / total) * 100) : 0;
+
+                html += `
+                    <div class="training-card">
+                        <div class="training-header">
+                            <h3><i class="fas fa-futbol"></i> ${typeLabel}</h3>
+                            <p><i class="fas fa-calendar"></i> ${date} o ${t.time}</p>
+                            <p><i class="fas fa-users"></i> ${categoryLabel} | ${t.duration} min</p>
+                            <p style="color: ${t.isActive ? '#2ecc71' : '#e74c3c'};">
+                                ${t.isActive ? '🟢 Aktívny' : '🔴 Uzavretý'}
+                            </p>
+                        </div>
+                        <div class="attendance-grid">
+                            <div class="attendance-group">
+                                <h4 style="color:#2ecc71;"><i class="fas fa-check-circle"></i> Prídu (${attending})</h4>
+                                ${getAttendanceList(t.attendance, 'yes', '#2ecc71')}
+                            </div>
+                            <div class="attendance-group">
+                                <h4 style="color:#e74c3c;"><i class="fas fa-times-circle"></i> Neprídú (${notAttending})</h4>
+                                ${getAttendanceList(t.attendance, 'no', '#e74c3c')}
+                            </div>
+                            <div class="attendance-group">
+                                <h4 style="color:#95a5a6;"><i class="fas fa-question-circle"></i> Nevedia (${unknown})</h4>
+                                ${getAttendanceList(t.attendance, 'unknown', '#95a5a6')}
+                            </div>
+                        </div>
+                        <div class="training-footer">
+                            <div style="color:#2ecc71;">Účasť: ${percent}%</div>
+                            ${t.isActive ? `<button class="btn-action btn-start" onclick="startTraining(${t.id})"><i class="fas fa-play"></i> Začať</button>` : ''}
+                            <button class="btn-action btn-delete" onclick="deleteTraining(${t.id})"><i class="fas fa-trash"></i> Odstrániť</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function getAttendanceList(attendance, status, color) {
+            const items = [];
+            let index = 1;
+            Object.entries(attendance || {}).forEach(([key, value]) => {
+                if (value === status) {
+                    const name = key.substring(key.indexOf('_') + 1);
+                    items.push(`
+                        <div class="attendance-item">
+                            <span class="attendance-number" style="background:${color}">${index}</span>
+                            ${name}
+                        </div>
+                    `);
+                    index++;
+                }
+            });
+
+            if (items.length === 0) {
+                return '<div style="text-align:center;color:rgba(255,255,255,0.5);padding:10px;">--</div>';
+            }
+
+            return '<div class="attendance-list">' + items.join('') + '</div>';
+        }
+
+        function refreshPlayerTrainings() {
+            const container = document.getElementById('playerTrainingsContainer');
+            if (trainings.length === 0) {
+                container.innerHTML = '<div style="text-align:center;color:#ffd700;padding:30px;">Žiadne tréningy</div>';
+                return;
+            }
+
+            let peopleToDisplay = [currentUser.username];
+            if (currentUser.role === 'parent') {
+                peopleToDisplay = Object.keys(parentChildren);
+            }
+
+            if (peopleToDisplay.length === 0 && currentUser.role === 'parent') {
+                container.innerHTML = '<div style="text-align:center;color:#ffd700;padding:30px;">Pridajte svoje deti</div>';
+                return;
+            }
+
+            let html = '';
+            trainings.forEach(t => {
+                const date = new Date(t.date).toLocaleDateString('sk-SK');
+                const typeLabel = getTypeLabel(t.type);
+
+                peopleToDisplay.forEach(person => {
+                    const key = t.id + '_' + person;
+                    const status = t.attendance ? t.attendance[key] : 'unknown';
+
+                    html += `
+                        <div class="training-card">
+                            <div class="training-info">
+                                <h4>${typeLabel}</h4>
+                                <p><i class="fas fa-calendar"></i> ${date} o ${t.time}</p>
+                                <p><i class="fas fa-clock"></i> ${t.duration} min</p>
+                                <p style="color:${t.isActive ? '#2ecc71' : '#e74c3c'};">
+                                    ${t.isActive ? '🟢 Aktívny' : '🔴 Uzavretý'}
+                                </p>
+                            </div>
+                            <div class="person-options">
+                                <p style="color:#ffd700;margin-bottom:10px;font-weight:bold;">${person}</p>
+                    `;
+
+                    if (t.isActive) {
+                        html += `
+                            <div class="button-group">
+                                <button class="btn-yes ${status === 'yes' ? 'active' : ''}" onclick="markAttendance(${t.id},'${person}','yes')">
+                                    ✓ Prídem
+                                </button>
+                                <button class="btn-no ${status === 'no' ? 'active' : ''}" onclick="markAttendance(${t.id},'${person}','no')">
+                                    ✗ Neprídnem
+                                </button>
+                                <button class="btn-unknown ${status === 'unknown' ? 'active' : ''}" onclick="markAttendance(${t.id},'${person}','unknown')">
+                                    ? Neviem
+                                </button>
+                            </div>
+                        `;
+                    } else {
+                        const colors = { yes: '#2ecc71', no: '#e74c3c', unknown: '#95a5a6' };
+                        const labels = { yes: '✓ Prídem', no: '✗ Neprídnem', unknown: '? Neviem' };
+                        html += `
+                            <div class="status-display" style="background:${colors[status]};">
+                                ${labels[status]}
+                            </div>
+                        `;
+                    }
+
+                    html += `</div></div>`;
+                });
+            });
+
+            container.innerHTML = html;
+        }
+
+        function markAttendance(trainingId, person, status) {
+            const t = trainings.find(x => x.id === trainingId);
+            if (!t || !t.isActive) return;
+
+            t.attendance[trainingId + '_' + person] = status;
+            localStorage.setItem('trainings', JSON.stringify(trainings));
+
+            console.log('Attendance marked:', trainingId, person, status);
+            refreshPlayerTrainings();
+            refreshCoachRoster();
+        }
+
+        function startTraining(trainingId) {
+            const t = trainings.find(x => x.id === trainingId);
+            if (t) {
+                t.isActive = false;
+                localStorage.setItem('trainings', JSON.stringify(trainings));
+                refreshCoachRoster();
+            }
+        }
+
+        function deleteTraining(trainingId) {
+            if (confirm('Odstrániť?')) {
+                trainings = trainings.filter(x => x.id !== trainingId);
+                localStorage.setItem('trainings', JSON.stringify(trainings));
+                refreshCoachRoster();
+                refreshPlayerTrainings();
+            }
+        }
+
+        function addChild() {
+            const name = document.getElementById('childName').value.trim();
+            if (!name) {
+                alert('Zadajte meno!');
+                return;
+            }
+
+            if (!parentChildren[name]) {
+                parentChildren[name] = true;
+                localStorage.setItem('parentChildren_' + currentUser.username, JSON.stringify(parentChildren));
+                document.getElementById('childName').value = '';
+                updateChildrenList();
+                refreshPlayerTrainings();
+            }
+        }
+
+        function removeChild(name) {
+            if (confirm('Odstrániť?')) {
+                delete parentChildren[name];
+                localStorage.setItem('parentChildren_' + currentUser.username, JSON.stringify(parentChildren));
+                updateChildrenList();
+                refreshPlayerTrainings();
+            }
+        }
+
+        function updateChildrenList() {
+            const list = document.getElementById('childrenList');
+            const children = Object.keys(parentChildren);
+
+            if (children.length === 0) {
+                list.innerHTML = '<p style="color:rgba(255,255,255,0.5);text-align:center;">Žiadne deti</p>';
+                return;
+            }
+
+            let html = '';
+            children.forEach(child => {
+                html += `
+                    <div class="child-item">
+                        <span><i class="fas fa-child"></i> ${child}</span>
+                        <button class="btn-remove" onclick="removeChild('${child}')">Odstrániť</button>
+                    </div>
+                `;
+            });
+
+            list.innerHTML = html;
+        }
+
+        function getTypeLabel(type) {
+            const types = { technical: 'Technický', tactical: 'Taktický', physical: 'Fyzický', friendly: 'Prieťahový' };
+            return (types[type] || type) + ' tréning';
+        }
+
+        function getCategoryLabel(cat) {
+            const cats = {
+                pripravky: 'Prípravky (U8-U9)',
+                ziaci: 'Žiaci (U10-U12)',
+                dorastenci: 'Dorastenci (U13-U18)',
+                adults_young: 'Dospelí - Mladí (18-25)',
+                adults_pro: 'Dospelí - Skúsení (25+)'
+            };
+            return cats[cat] || cat;
+        }
+
+        function goBack() {
+            window.location.href = 'Fotball Team Kamenna poruba concept.html';
+        }
+
+        function logout() {
+            if (confirm('Odhlásiť sa?')) {
+                localStorage.removeItem('lastLogin');
+                localStorage.removeItem('lastRole');
+                currentUser = { username: '', role: '', isLoggedIn: false };
+                trainings = [];
+                parentChildren = {};
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>

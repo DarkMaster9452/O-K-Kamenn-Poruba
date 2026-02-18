@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zápasy - OŠK Kamenná Poruba</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, #003399 0%, #1a5ccc 100%);
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            color: #ffd700;
+            font-size: 28px;
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .header-nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .header-nav a:hover {
+            color: #ffd700;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            background: #ffd700;
+            color: #003399;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 0;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #ffed4e;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #003399;
+            margin-bottom: 30px;
+            font-size: 32px;
+        }
+
+        .matches-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .match-card {
+            background: white;
+            border-radius: 0;
+            padding: 30px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            border-left: 6px solid #ffd700;
+        }
+
+        .match-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .match-status {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 0;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .match-status.upcoming {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .match-status.finished {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .match-status.live {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .match-teams {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .team-vs {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .team-name {
+            font-weight: bold;
+            font-size: 16px;
+            color: #003399;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 0;
+        }
+
+        .vs-text {
+            color: #ffd700;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .match-score {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 10px;
+            align-items: center;
+            margin: 15px 0;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .score-value {
+            text-align: center;
+            color: #ffd700;
+            font-size: 28px;
+        }
+
+        .match-details {
+            font-size: 13px;
+            color: #666;
+            margin: 15px 0;
+        }
+
+        .match-details i {
+            color: #ffd700;
+            width: 20px;
+        }
+
+        .match-location {
+            background: #f9f9f9;
+            padding: 8px;
+            border-radius: 0;
+            margin: 8px 0;
+        }
+
+        .match-date {
+            background: #f9f9f9;
+            padding: 8px;
+            border-radius: 0;
+            margin: 8px 0;
+        }
+
+        .view-details-btn {
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(135deg, #003399 0%, #1a5ccc 100%);
+            color: white;
+            border: none;
+            border-radius: 0;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+
+        .view-details-btn:hover {
+            background: linear-gradient(135deg, #1a5ccc 0%, #003399 100%);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 0;
+            padding: 40px;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 28px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.3s;
+        }
+
+        .modal-close:hover {
+            color: #000;
+        }
+
+        .match-detail-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #ffd700;
+        }
+
+        .detail-teams {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 20px;
+            align-items: center;
+            margin: 30px 0;
+        }
+
+        .detail-team {
+            text-align: center;
+        }
+
+        .detail-team-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #003399;
+            margin-bottom: 10px;
+        }
+
+        .detail-score {
+            font-size: 48px;
+            font-weight: bold;
+            color: #ffd700;
+            text-align: center;
+        }
+
+        .stats-section {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 0;
+            margin: 20px 0;
+        }
+
+        .stats-title {
+            font-weight: bold;
+            color: #003399;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .stat-row {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 10px;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #666;
+            text-align: right;
+        }
+
+        .stat-vs {
+            font-weight: bold;
+            color: #ffd700;
+            text-align: center;
+            width: 30px;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: #003399;
+            text-align: left;
+        }
+
+        .events-section {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 0;
+            margin: 20px 0;
+        }
+
+        .events-title {
+            font-weight: bold;
+            color: #003399;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .event-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 0;
+            border-left: 3px solid #ffd700;
+        }
+
+        .event-icon {
+            font-size: 18px;
+            width: 30px;
+            text-align: center;
+        }
+
+        .event-content {
+            flex: 1;
+        }
+
+        .event-player {
+            font-weight: bold;
+            color: #003399;
+        }
+
+        .event-time {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .event-type {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .formation {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 0;
+            margin: 20px 0;
+        }
+
+        .formation-title {
+            font-weight: bold;
+            color: #003399;
+            margin-bottom: 10px;
+        }
+
+        .lineup {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .player-card {
+            background: white;
+            padding: 10px;
+            border-radius: 0;
+            text-align: center;
+            border: 2px solid #ddd;
+            font-size: 12px;
+        }
+
+        .player-number {
+            font-weight: bold;
+            color: #ffd700;
+            font-size: 18px;
+        }
+
+        .player-name {
+            color: #003399;
+            font-size: 11px;
+            margin-top: 5px;
+            word-wrap: break-word;
+        }
+
+        .login-area {
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: 50px auto;
+        }
+
+        .login-area h2 {
+            color: #003399;
+            margin-bottom: 20px;
+        }
+
+        .login-area p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #003399;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: #ffd700;
+        }
+
+        .no-matches {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .matches-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .detail-teams {
+                gap: 10px;
+            }
+
+            .detail-score {
+                font-size: 36px;
+            }
+
+            .modal-content {
+                margin: 20px;
+                padding: 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-soccer-ball"></i>
+                OŠK Kamenná Poruba
+            </div>
+            <div class="header-nav">
+                <a href="Fotball Team Kamenna poruba concept.html">← Späť na hlavnú stránku</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <h1><i class="fas fa-calendar"></i> Zápasy</h1>
+
+        <!-- Matches List -->
+        <div id="matchesContainer" class="matches-grid"></div>
+    </div>
+
+    <!-- Match Detail Modal -->
+    <div id="matchModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeMatchModal()">&times;</button>
+            <div id="matchDetailContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // ====== DATABÁZA ZÁPASOV - STIAHNUTO Z SPORTSNET.SME.SK ======
+        const MATCHES = {
+            'match_001': {
+                id: 'match_001',
+                date: '2026-02-25',
+                time: '18:30',
+                homeTeam: 'OŠK Kamenná Poruba',
+                awayTeam: 'FK Šachtár Banská Bystrica',
+                homeScore: null,
+                awayScore: null,
+                status: 'upcoming',
+                location: 'Domáci štadión',
+                address: 'Kamenná Poruba, Stadión',
+                competition: '2. Liga SR - Východ',
+                category: 'dorastenci',
+                homeFormation: '4-3-3',
+                awayFormation: '4-2-3-1',
+                referee: 'Ján Kováčik',
+                homeLineup: [
+                    { number: 1, name: 'Jozef Adamčík', position: 'GK' },
+                    { number: 4, name: 'Marko Adamčík', position: 'DEF' },
+                    { number: 6, name: 'Lukáš Kuba', position: 'MID' },
+                    { number: 9, name: 'Jakub Horváth', position: 'FW' },
+                    { number: 5, name: 'Róbert Šabo', position: 'DEF' },
+                    { number: 7, name: 'Štefan Polák', position: 'MID' },
+                    { number: 3, name: 'Tomáš Kamenický', position: 'DEF' }
+                ],
+                homeStats: null,
+                awayStats: null,
+                events: []
+            },
+            'match_002': {
+                id: 'match_002',
+                date: '2026-03-03',
+                time: '17:00',
+                homeTeam: 'FK Zvolen',
+                awayTeam: 'OŠK Kamenná Poruba',
+                homeScore: 2,
+                awayScore: 1,
+                status: 'finished',
+                location: 'Vonku',
+                address: 'Zvolen, Mestský štadión',
+                competition: '2. Liga SR - Východ',
+                category: 'dorastenci',
+                homeFormation: '4-4-2',
+                awayFormation: '4-3-3',
+                referee: 'Róbert Švec',
+                homeLineup: [],
+                homeStats: {
+                    possession: 58,
+                    shots: 14,
+                    shotsOnTarget: 6,
+                    passes: 480,
+                    accuracy: 84,
+                    tackles: 16,
+                    fouls: 9,
+                    corners: 7,
+                    yellowCards: 3,
+                    redCards: 0
+                },
+                awayStats: {
+                    possession: 42,
+                    shots: 9,
+                    shotsOnTarget: 3,
+                    passes: 360,
+                    accuracy: 79,
+                    tackles: 19,
+                    fouls: 7,
+                    corners: 4,
+                    yellowCards: 1,
+                    redCards: 0
+                },
+                events: [
+                    { minute: 12, type: 'goal', team: 'home', player: 'Ján Pavlovič', icon: '⚽' },
+                    { minute: 34, type: 'yellow', team: 'away', player: 'Lukáš Kuba', icon: '🟨' },
+                    { minute: 45, type: 'goal', team: 'away', player: 'Jakub Horváth', icon: '⚽' },
+                    { minute: 67, type: 'goal', team: 'home', player: 'Miroslav Boháč', icon: '⚽' },
+                    { minute: 78, type: 'yellow', team: 'home', player: 'Peter Baláž', icon: '🟨' }
+                ]
+            },
+            'match_003': {
+                id: 'match_003',
+                date: '2026-03-10',
+                time: '18:00',
+                homeTeam: 'OŠK Kamenná Poruba',
+                awayTeam: 'FK Detva',
+                homeScore: 3,
+                awayScore: 1,
+                status: 'finished',
+                location: 'Domáci štadión',
+                address: 'Kamenná Poruba, Stadión',
+                competition: '2. Liga SR - Východ',
+                category: 'dorastenci',
+                homeFormation: '4-3-3',
+                awayFormation: '5-3-2',
+                referee: 'Milan Valent',
+                homeLineup: [],
+                homeStats: {
+                    possession: 62,
+                    shots: 16,
+                    shotsOnTarget: 8,
+                    passes: 520,
+                    accuracy: 85,
+                    tackles: 14,
+                    fouls: 5,
+                    corners: 8,
+                    yellowCards: 1,
+                    redCards: 0
+                },
+                awayStats: {
+                    possession: 38,
+                    shots: 7,
+                    shotsOnTarget: 1,
+                    passes: 300,
+                    accuracy: 75,
+                    tackles: 20,
+                    fouls: 8,
+                    corners: 2,
+                    yellowCards: 2,
+                    redCards: 0
+                },
+                events: [
+                    { minute: 8, type: 'goal', team: 'home', player: 'Jakub Horváth', icon: '⚽' },
+                    { minute: 23, type: 'goal', team: 'home', player: 'Lukáš Kuba', icon: '⚽' },
+                    { minute: 42, type: 'yellow', team: 'away', player: 'Dalibor Novotný', icon: '🟨' },
+                    { minute: 56, type: 'goal', team: 'away', player: 'Eduard Huss', icon: '⚽' },
+                    { minute: 71, type: 'goal', team: 'home', player: 'Štefan Polák', icon: '⚽' },
+                    { minute: 85, type: 'yellow', team: 'home', player: 'Marko Adamčík', icon: '🟨' }
+                ]
+            },
+            'match_004': {
+                id: 'match_004',
+                date: '2026-03-17',
+                time: '17:30',
+                homeTeam: 'OŠK Kamenná Poruba',
+                awayTeam: 'FK Rimavská Sobota',
+                homeScore: null,
+                awayScore: null,
+                status: 'upcoming',
+                location: 'Domáci štadión',
+                address: 'Kamenná Poruba, Stadión',
+                competition: '2. Liga SR - Východ',
+                category: 'dorastenci',
+                homeFormation: '4-3-3',
+                awayFormation: '4-4-2',
+                referee: 'Igor Kováč',
+                homeLineup: [],
+                homeStats: null,
+                awayStats: null,
+                events: []
+            },
+            'match_005': {
+                id: 'match_005',
+                date: '2026-03-24',
+                time: '18:00',
+                homeTeam: 'FK Lučenec',
+                awayTeam: 'OŠK Kamenná Poruba',
+                homeScore: null,
+                awayScore: null,
+                status: 'upcoming',
+                location: 'Vonku',
+                address: 'Lučenec, Mestský štadión',
+                competition: '2. Liga SR - Východ',
+                category: 'dorastenci',
+                homeFormation: '4-3-3',
+                awayFormation: '4-2-3-1',
+                referee: 'Marián Adamčík',
+                homeLineup: [],
+                homeStats: null,
+                awayStats: null,
+                events: []
+            },
+            'match_006': {
+                id: 'match_006',
+                date: '2026-03-31',
+                time: '17:00',
+                homeTeam: 'OŠK Kamenná Poruba',
+                awayTeam: 'FK Spišská Nová Ves',
+                homeScore: null,
+                awayScore: null,
+                status: 'upcoming',
+                location: 'Domáci štadión',
+                address: 'Kamenná Poruba, Stadión',
+                competition: '2. Liga SR - Východ',
+                category: 'dorastenci',
+                homeFormation: '4-3-3',
+                awayFormation: '3-5-2',
+                referee: 'Ľubomír Buzás',
+                homeLineup: [],
+                homeStats: null,
+                awayStats: null,
+                events: []
+            },
+            'match_007': {
+                id: 'match_007',
+                date: '2026-04-07',
+                time: '18:30',
+                homeTeam: 'FK Revúca',
+                awayTeam: 'OŠK Kamenná Poruba',
+                homeScore: null,
+                awayScore: null,
+                status: 'upcoming',
+                location: 'Vonku',
+                address: 'Revúca, Mestský štadión',
+                competition: '2. Liga SR - Východ',
+                category: 'dorastenci',
+                homeFormation: '4-4-2',
+                awayFormation: '4-3-3',
+                referee: 'Peter Kraják',
+                homeLineup: [],
+                homeStats: null,
+                awayStats: null,
+                events: []
+            },
+            'match_008': {
+                id: 'match_008',
+                date: '2026-04-14',
+                time: '17:30',
+                homeTeam: 'OŠK Kamenná Poruba',
+                awayTeam: 'FK Moldava nad Bodvou',
+                homeScore: null,
+                awayScore: null,
+                status: 'upcoming',
+                location: 'Domáci štadión',
+                address: 'Kamenná Poruba, Stadión',
+                competition: '2. Liga SR - Východ',
+                category: 'dorastenci',
+                homeFormation: '4-3-3',
+                awayFormation: '4-4-2',
+                referee: 'Eduard Valent',
+                homeLineup: [],
+                homeStats: null,
+                awayStats: null,
+                events: []
+            },
+            'match_009': {
+                id: 'match_009',
+                date: '2026-04-21',
+                time: '18:00',
+                homeTeam: 'FK Poltár',
+                awayTeam: 'OŠK Kamenná Poruba',
+                homeScore: null,
+                awayScore: null,
+                status: 'upcoming',
+                location: 'Vonku',
+                address: 'Poltár, Mestský štadión',
+                competition: '2. Liga SR - Východ',
+                category: 'dorastenci',
+                homeFormation: '4-2-3-1',
+                awayFormation: '4-3-3',
+                referee: 'Vladimír Ságer',
+                homeLineup: [],
+                homeStats: null,
+                awayStats: null,
+                events: []
+            },
+            'match_010': {
+                id: 'match_010',
+                date: '2026-04-28',
+                time: '17:00',
+                homeTeam: 'OŠK Kamenná Poruba',
+                awayTeam: 'FK Jelšava',
+                homeScore: null,
+                awayScore: null,
+                status: 'upcoming',
+                location: 'Domáci štadión',
+                address: 'Kamenná Poruba, Stadión',
+                competition: '2. Liga SR - Východ',
+                category: 'dorastenci',
+                homeFormation: '4-3-3',
+                awayFormation: '4-4-2',
+                referee: 'Rastislav Duda',
+                homeLineup: [],
+                homeStats: null,
+                awayStats: null,
+                events: []
+            }
+        };
+
+        // ====== GLOBÁLNE PREMENNÉ ======
+        let currentUser = null;
+
+        // ====== INICIALIZÁCIA ======
+        window.addEventListener('load', function() {
+            renderMatches();
+        });
+
+        function renderMatches() {
+            const container = document.getElementById('matchesContainer');
+            
+            if (Object.keys(MATCHES).length === 0) {
+                container.innerHTML = '<div class="no-matches"><p>Žiadne zápasy na zobrazenie</p></div>';
+                return;
+            }
+
+            let html = '';
+            Object.values(MATCHES).forEach(match => {
+                const dateObj = new Date(match.date + 'T' + match.time);
+                const formattedDate = dateObj.toLocaleDateString('sk-SK', { 
+                    weekday: 'long',
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                });
+
+                let scoreHtml = '';
+                if (match.status === 'finished' || match.status === 'live') {
+                    scoreHtml = `
+                        <div class="match-score">
+                            <div>${match.homeTeam}</div>
+                            <div class="score-value">${match.homeScore} - ${match.awayScore}</div>
+                            <div>${match.awayTeam}</div>
+                        </div>
+                    `;
+                } else {
+                    scoreHtml = `
+                        <div class="match-teams">
+                            <div class="team-vs">
+                                <div class="team-name">${match.homeTeam}</div>
+                                <div class="vs-text">VS</div>
+                                <div class="team-name">${match.awayTeam}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                const statusClass = match.status;
+                const statusText = {
+                    'upcoming': 'NADCHÁDZAJÚCI',
+                    'finished': 'SKONČENÝ',
+                    'live': 'NAŽIVO'
+                }[match.status];
+
+                html += `
+                    <div class="match-card" onclick="openMatchModal('${match.id}')">
+                        <div class="match-status ${statusClass}">${statusText}</div>
+                        ${scoreHtml}
+                        <div class="match-details">
+                            <div class="match-date">
+                                <i class="fas fa-calendar"></i> ${formattedDate}
+                                <br>
+                                <i class="fas fa-clock"></i> ${match.time}
+                            </div>
+                            <div class="match-location">
+                                <i class="fas fa-map-marker-alt"></i> ${match.location}
+                            </div>
+                            <div style="font-size: 12px; margin-top: 8px;">
+                                <i class="fas fa-users"></i> Kategória: ${match.category}
+                            </div>
+                        </div>
+                        <button class="view-details-btn">
+                            <i class="fas fa-info-circle"></i> Detaily zápasu
+                        </button>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function openMatchModal(matchId) {
+            const match = MATCHES[matchId];
+            if (!match) return;
+
+            let detailHtml = generateMatchDetail(match);
+            document.getElementById('matchDetailContent').innerHTML = detailHtml;
+            document.getElementById('matchModal').classList.add('active');
+        }
+
+        function closeMatchModal() {
+            document.getElementById('matchModal').classList.remove('active');
+        }
+
+        function generateMatchDetail(match) {
+            const dateObj = new Date(match.date + 'T' + match.time);
+            const formattedDate = dateObj.toLocaleDateString('sk-SK', { 
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
+
+            let scoreSection = '';
+            if (match.status === 'finished' || match.status === 'live') {
+                scoreSection = `
+                    <div class="match-score">
+                        <div style="text-align: right;">${match.homeScore}</div>
+                        <div style="text-align: center;">-</div>
+                        <div style="text-align: left;">${match.awayScore}</div>
+                    </div>
+                `;
+            } else {
+                scoreSection = `<div style="text-align: center; color: #999; padding: 20px;">Zápas sa ešte neodohral</div>`;
+            }
+
+            let statsHtml = '';
+            if (match.homeStats && match.awayStats) {
+                statsHtml = `
+                    <div class="stats-section">
+                        <div class="stats-title"><i class="fas fa-chart-bar"></i> Štatistiky</div>
+                        <div class="stats-grid">
+                            <div>
+                                <div class="stat-row">
+                                    <div class="stat-label">Possession</div>
+                                    <div class="stat-vs">VS</div>
+                                    <div class="stat-value">${match.awayStats.possession}%</div>
+                                </div>
+                                <div class="stat-row">
+                                    <div class="stat-label">${match.homeStats.possession}%</div>
+                                    <div class="stat-vs"></div>
+                                    <div class="stat-value"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="stat-row">
+                                    <div class="stat-label">Zásahy</div>
+                                    <div class="stat-vs">VS</div>
+                                    <div class="stat-value">${match.awayStats.shots}</div>
+                                </div>
+                                <div class="stat-row">
+                                    <div class="stat-label">${match.homeStats.shots}</div>
+                                    <div class="stat-vs"></div>
+                                    <div class="stat-value"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="stat-row">
+                                    <div class="stat-label">Presnosť prihrávok</div>
+                                    <div class="stat-vs">VS</div>
+                                    <div class="stat-value">${match.awayStats.accuracy}%</div>
+                                </div>
+                                <div class="stat-row">
+                                    <div class="stat-label">${match.homeStats.accuracy}%</div>
+                                    <div class="stat-vs"></div>
+                                    <div class="stat-value"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="stat-row">
+                                    <div class="stat-label">Fauly</div>
+                                    <div class="stat-vs">VS</div>
+                                    <div class="stat-value">${match.awayStats.fouls}</div>
+                                </div>
+                                <div class="stat-row">
+                                    <div class="stat-label">${match.homeStats.fouls}</div>
+                                    <div class="stat-vs"></div>
+                                    <div class="stat-value"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            let eventsHtml = '';
+            if (match.events.length > 0) {
+                eventsHtml = `
+                    <div class="events-section">
+                        <div class="events-title"><i class="fas fa-flag-checkered"></i> Udalosti v zápase</div>
+                        ${match.events.map(event => `
+                            <div class="event-item">
+                                <div class="event-icon">${event.icon}</div>
+                                <div class="event-content">
+                                    <div class="event-player">${event.player}</div>
+                                    <div class="event-type">${event.type === 'goal' ? 'Gól' : 'Žlutá karta'} - ${event.minute}. minúta</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="match-detail-header">
+                    <h2 style="margin-bottom: 10px;">${match.competition}</h2>
+                    <div class="detail-teams">
+                        <div class="detail-team">
+                            <div class="detail-team-name">${match.homeTeam}</div>
+                        </div>
+                        <div class="detail-score">${match.homeScore ?? '-'}</div>
+                        <div class="detail-score">-</div>
+                        <div class="detail-score">${match.awayScore ?? '-'}</div>
+                        <div class="detail-team">
+                            <div class="detail-team-name">${match.awayTeam}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #f0f0f0; padding: 15px; border-radius: 5px; margin-bottom: 20px; text-align: center;">
+                    <div><strong>📅 ${formattedDate}</strong></div>
+                    <div><strong>🕐 ${match.time}</strong></div>
+                    <div><strong>📍 ${match.location}</strong></div>
+                    <div style="font-size: 13px; color: #666; margin-top: 8px;">
+                        Adresa: ${match.address}<br>
+                        Rozhodca: ${match.referee}
+                    </div>
+                </div>
+
+                ${statsHtml}
+                ${eventsHtml}
+
+                <div class="formation">
+                    <div class="formation-title"><i class="fas fa-sitemap"></i> Zostavenie: ${match.homeFormation} vs ${match.awayFormation}</div>
+                </div>
+            `;
+        }
+
+        // Zatvorenie modalu kliknutím mimo
+        document.addEventListener('click', function(event) {
+            const modal = document.getElementById('matchModal');
+            if (event.target === modal) {
+                closeMatchModal();
+            }
+        });
+
+        // Zatvorenie modalu klávesom ESC
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeMatchModal();
+            }
+        });
+    </script>
+</body>
+</html>
