@@ -51,6 +51,11 @@
             width: 60px;
             height: 60px;
             object-fit: contain;
+            border-radius: 50%;
+            background: white;
+            padding: 6px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            display: block;
         }
 
         .logo i {
@@ -545,6 +550,43 @@
             gap: 12px;
         }
 
+        /* Gallery Section */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+            margin-top: 30px;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.25s, box-shadow 0.25s;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 14px 30px rgba(0,0,0,0.18);
+        }
+
+        .gallery-image {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .gallery-caption {
+            padding: 12px 14px;
+            font-size: 14px;
+            color: #333;
+            background: #fff;
+        }
+
         /* Forms */
         .form-group {
             margin-bottom: 20px;
@@ -766,6 +808,40 @@
             h2 {
                 font-size: 24px;
             }
+
+            /* Kontakt pod seba */
+            #contact > div[style*='grid'] {
+                grid-template-columns: 1fr !important;
+                gap: 20px !important;
+            }
+            /* Kompaktnejšia štatistika hráčov */
+            #playersStatsContainer {
+                padding: 10px !important;
+            }
+            .player-stat-item {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 10px 5px;
+                gap: 6px;
+            }
+            .player-stat-values {
+                gap: 10px;
+            }
+            .player-stat-avatar {
+                width: 38px;
+                height: 38px;
+                font-size: 15px;
+            }
+            .player-stat-name {
+                font-size: 13px;
+            }
+            .player-stat-info-text {
+                font-size: 11px;
+            }
+            .stat-value {
+                width: 32px;
+                font-size: 13px;
+            }
         }
     </style>
 </head>
@@ -773,8 +849,8 @@
     <!-- Header -->
     <header>
         <div class="header-top">
-            <div class="logo">
-                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Crect fill='%23003399' width='256' height='256'/%3E%3Ccircle cx='128' cy='100' r='50' fill='%23ffd700'/%3E%3Ctext x='128' y='200' font-size='24' font-weight='bold' text-anchor='middle' fill='white'%3EOŠK%3C/text%3E%3C/svg%3E" alt="OŠK Kamenná Poruba Logo" class="logo-img">
+            <div class="logo" id="mainLogo" style="cursor:pointer;">
+                <img src="C:\Users\stran\Documents\GitHub\O-K-Kamenn-Poruba\OŠK Kamenná Poruba Logo.png" alt="OŠK Kamenná Poruba Logo" class="logo-img">
                 <div>
                     <div style="font-size: 14px; letter-spacing: 1px;">OŠK</div>
                     <div style="font-size: 18px; font-weight: bold;">Kamenná Poruba</div>
@@ -786,10 +862,10 @@
                     <li><a href="#about">O nás</a></li>
                     <li><a href="#players">Hráči</a></li>
                     <li><a href="#matches">Zápasy</a></li>
-                    <li><a href="#news">Správy</a></li>
+                    <li><a href="#gallery">Galéria</a></li>
                     <li><a href="#contact">Kontakt</a></li>
                     <li><a href="#" id="trainingNavLink" style="cursor: pointer; display: none;" onclick="goToTrainings(event)"><i class="fas fa-dumbbell"></i> Tréningy</a></li>
-                    <li><a href="#" id="matchesNavLink" style="cursor: pointer; display: none;" onclick="goToMatches(event)"><i class="fas fa-calendar"></i> Všetky zápasy</a></li>
+                    <li><a href="#" id="matchesNavLink" style="cursor: pointer;" onclick="goToMatches(event)"><i class="fas fa-calendar"></i> Všetky zápasy</a></li>
                     <li><a href="#" class="login-btn" id="loginBtnText" onclick="openLoginModal()">Prihlásiť sa</a></li>
                 </ul>
             </nav>
@@ -968,36 +1044,27 @@
                 </button>
             </div>
 
-        <!-- News Section -->
-        <section id="news">
-            <h2><i class="fas fa-newspaper"></i> Najnovšie správy</h2>
-            <div class="news-grid">
-                <div class="news-card">
-                    <img src="https://images.unsplash.com/photo-1516521318423-f06268fccad5?w=400&h=200&fit=crop" alt="News" class="news-image">
-                    <div class="news-content">
-                        <div class="news-date">18. február 2026</div>
-                        <div class="news-title">OŠK víťazí 3:1</div>
-                        <div class="news-excerpt">OŠK Kamenná Poruba predviedla výkonný výkon s impozantným víťazstvom 3:1 nad svojimi soupeňmi v nedeľňajšom napínavom zápase.</div>
-                        <a href="#" class="read-more">Čítať viac <i class="fas fa-arrow-right"></i></a>
-                    </div>
+        <!-- Gallery Section (replaces News) -->
+        <section id="gallery">
+            <h2><i class="fas fa-images"></i> Galéria</h2>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img class="gallery-image" src="https://source.unsplash.com/800x600/?soccer" alt="Fotka futbal">
                 </div>
-                <div class="news-card">
-                    <img src="https://images.unsplash.com/photo-1599166860303-8691c1d183de?w=400&h=200&fit=crop" alt="News" class="news-image">
-                    <div class="news-content">
-                        <div class="news-date">15. február 2026</div>
-                        <div class="news-title">Hráč podpisuje novú zmluvu</div>
-                        <div class="news-excerpt">Hviezdny stredopoliar Miroslav Benko podpísal trojročný predĺžený kontrakt s OŠK, čím potvrdzuje svoje záväzky voči klubu.</div>
-                        <a href="#" class="read-more">Čítať viac <i class="fas fa-arrow-right"></i></a>
-                    </div>
+                <div class="gallery-item">
+                    <img class="gallery-image" src="https://source.unsplash.com/800x600/?football" alt="Fotka futbal">
                 </div>
-                <div class="news-card">
-                    <img src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=400&h=200&fit=crop" alt="News" class="news-image">
-                    <div class="news-content">
-                        <div class="news-date">12. február 2026</div>
-                        <div class="news-title">Aktualizácie futbalovej akadémie</div>
-                        <div class="news-excerpt">Náš program rozvoja mládeže dosiahol výnimočné výsledky, pričom sa niekoľko mladých talentov posunulo do seniorského tímu.</div>
-                        <a href="#" class="read-more">Čítať viac <i class="fas fa-arrow-right"></i></a>
-                    </div>
+                <div class="gallery-item">
+                    <img class="gallery-image" src="https://source.unsplash.com/800x600/?soccer,stadium" alt="Fotka futbal">
+                </div>
+                <div class="gallery-item">
+                    <img class="gallery-image" src="https://source.unsplash.com/800x600/?soccer-player" alt="Fotka futbal">
+                </div>
+                <div class="gallery-item">
+                    <img class="gallery-image" src="https://source.unsplash.com/800x600/?soccer-ball" alt="Fotka futbal">
+                </div>
+                <div class="gallery-item">
+                    <img class="gallery-image" src="https://source.unsplash.com/800x600/?football-match" alt="Fotka futbal">
                 </div>
             </div>
         </section>
@@ -1108,26 +1175,28 @@
                     <li><a href="#">Často kladené otázky</a></li>
                     <li><a href="#">Rezervácia vstupeniek</a></li>
                 </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Novinový bulletin</h3>
-                <p>Prihláste sa na odoberanie najnovších správ a aktualizácií.</p>
-                <form onsubmit="handleSubscribe(event)" style="margin-top: 10px;">
-                    <div style="display: flex; gap: 8px;">
-                        <input type="email" placeholder="Váš email" required style="flex: 1; padding: 10px; border: 1px solid #555; border-radius: 5px; background: rgba(255, 255, 255, 0.1); color: white;">
-                        <button type="submit" class="btn btn-primary" style="padding: 10px 20px;">Odoberať</button>
-                    </div>
-                </form>
-            </div>
+        </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2026 OŠK Kamenná Poruba. Všetky práva vyhradené. | Vytvorené s <i class="fas fa-heart"></i> pre futbalových fanúšikov</p>
+            <p>&copy; 2026 OŠK Kamenná Poruba. Všetky práva vyhradené.</p>
         </div>
     </footer>
 
     <script src="database.js"></script>
     <script src="trainings.js"></script>
     <script>
+        // Scroll to main section when logo is clicked
+        document.addEventListener('DOMContentLoaded', function() {
+            var logo = document.getElementById('mainLogo');
+            if (logo) {
+                logo.addEventListener('click', function() {
+                    var main = document.querySelector('main');
+                    if (main) {
+                        main.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            }
+        });
         // Global variables
         let currentUser = {
             username: null,
@@ -1250,7 +1319,7 @@
             } else {
                 loginBtn.textContent = 'Prihlásiť sa';
                 trainingNavLink.style.display = 'none';
-                matchesNavLink.style.display = 'none';
+                // keep matchesNavLink visible for all users (including guests)
                 loginBtn.onclick = openLoginModal;
             }
         }

@@ -301,22 +301,24 @@
         }
 
         .detail-teams {
-            display: grid;
-            grid-template-columns: 1fr auto 1fr;
-            gap: 20px;
+            display: flex;
+            flex-direction: row;
             align-items: center;
+            justify-content: center;
+            gap: 32px;
             margin: 30px 0;
         }
 
         .detail-team {
             text-align: center;
+            min-width: 110px;
         }
 
         .detail-team-name {
             font-size: 20px;
             font-weight: bold;
             color: #003399;
-            margin-bottom: 10px;
+            margin-bottom: 0;
         }
 
         .detail-score {
@@ -324,6 +326,7 @@
             font-weight: bold;
             color: #ffd700;
             text-align: center;
+            min-width: 48px;
         }
 
         .stats-section {
@@ -515,11 +518,17 @@
             }
 
             .detail-teams {
-                gap: 10px;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .detail-team {
+                min-width: unset;
             }
 
             .detail-score {
                 font-size: 36px;
+                min-width: unset;
             }
 
             .modal-content {
@@ -542,7 +551,7 @@
                 OŠK Kamenná Poruba
             </div>
             <div class="header-nav">
-                <a href="Fotball Team Kamenna poruba concept.html">← Späť na hlavnú stránku</a>
+                <a href="index.html">← Späť na hlavnú stránku</a>
             </div>
         </div>
     </header>
@@ -1043,9 +1052,11 @@
                         <div class="detail-team">
                             <div class="detail-team-name">${match.homeTeam}</div>
                         </div>
-                        <div class="detail-score">${match.homeScore ?? '-'}</div>
-                        <div class="detail-score">-</div>
-                        <div class="detail-score">${match.awayScore ?? '-'}</div>
+                        <div style="display: flex; flex-direction: row; align-items: center; gap: 8px;">
+                            <div class="detail-score">${match.homeScore ?? '-'}</div>
+                            <div class="detail-score" style="color: #333; font-size: 32px;">:</div>
+                            <div class="detail-score">${match.awayScore ?? '-'}</div>
+                        </div>
                         <div class="detail-team">
                             <div class="detail-team-name">${match.awayTeam}</div>
                         </div>
