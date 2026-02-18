@@ -1,20 +1,23 @@
-# OŠK Kamenná Poruba - Tréningový Systém
+# OŠK Kamenná Poruba — Webová stránka
 
-## Súbory
+Komplexný koncept webu futbalového klubu OŠK Kamenná Poruba. Stránka obsahuje modernú navigáciu, prehľad hráčov, zápasov, tréningov, galériu, kontaktný formulár a login systém s rolami (tréner, hráč, rodič).
 
-- **Fotball Team Kamenna poruba concept.html** - Hlavný HTML súbor s navigáciou a loginom
-- **database.js** - Databáza všetkých používateľov, hráčov, trénersov a rodín
-- **trainings.js** - Kompletný systém správy tréningov (novo oddělené)
+## Hlavné sekcie a funkcionality
 
-## Ako to funguje
+- **Domov** — Úvodná sekcia s informáciami o klube a histórii
+- **O nás** — Prehľad histórie, úspechov a komunity
+- **Hráči** — Zoznam hráčov podľa kategórií, štatistiky, detailné karty hráčov (tréneri majú rozšírené možnosti)
+- **Zápasy** — Prehľad všetkých zápasov, detail zápasu, štatistiky
+- **Tréningy** — Systém správy tréningov (tréneri vytvárajú, hráči a rodičia potvrdzujú účasť)
+- **Galéria** — Fotogaléria z klubových akcií a zápasov
+- **Kontakt** — Kontaktný formulár, adresa, telefón, email
+- **Prihlásenie** — Login systém s výberom roly (tréner, hráč, rodič)
 
-### 1. Prihlásenie
+## Prihlásenie a roly
 
-- Klikni na "Prihlásiť sa" v hornom paneli
-- Vyber si rolu: Tréner, Hráč alebo Rodič
-- Zadaj používateľské meno a heslo (všetci: `heslo123`)
-
-### Testovateľne účty:
+- Prihlásenie cez tlačidlo v hornom paneli
+- Výber roly: Tréner, Hráč, Rodič
+- Testovacie účty (všetci heslo: `heslo123`):
 
 ```
 Tréneri:
@@ -38,78 +41,53 @@ Rodičia:
 - julius_kamenicky
 ```
 
-### 2. Tréningy v Navigácii
+## Tréningový systém
 
-- Po prihlásení sa v navigácii objaví "Tréningy" link
-- Kliknutím na neho sa načítajú všetky funkcie z `trainings.js`
+- Tréner: vytvára tréningy, spravuje účasť, uzatvára tréningy
+- Hráč: potvrdzuje účasť na tréningoch svojej kategórie
+- Rodič: potvrdzuje účasť za svoje deti
+- Účasť: Prídem / Neprídem / Neviem
+- Stav tréningu: Aktívny (možno meniť odpoveď) / Uzavretý (len na čítanie)
 
-### 3. Podľa Roly:
+## Zápasy
 
-**Tréner:**
+- Zoznam všetkých zápasov (importované zo Sportsnet)
+- Detail zápasu, štatistiky, udalosti, zostavy
 
-- Vytvára nové tréningy (dátum, čas, typ, trvanie, kategória)
-- Všetci hráči v kategórii sa automaticky pridajú so stavom "neviem"
-- Vidí tri skupiny hráčov: Prídu | Neprídú | Nevedia
-- Môže kliknutím "Začať tréning" uzavrieť zmeny (hráči potom nemôžu meniť odpoveď)
-- Vidí percentá účasti
+## Hráči
 
-**Hráč:**
+- Zoznam hráčov podľa kategórií
+- Detailné karty hráčov (tréneri môžu upravovať)
 
-- Vidí všetky dostupné tréningy svojej kategórie
-- Môže kliknúť: "Prídem" | "Neprídnem" | "Neviem"
-- Aktivne tréningy môže meniť, uzavreté nie
+## Galéria
 
-**Rodič:**
+- Fotky z klubových akcií a zápasov (lokálne obrázky v images/galeria)
 
-- Pridá si svoje deti
-- Za každé dieťa môže značiť účasť na tréningoch
-- Vidí rovnaké tréningy ako hráči
+## Kontakt
 
-## Stavy Tréningu
+- Kontaktný formulár, adresa, telefón, email
 
-### Aktívny (🟢 zelený)
+## Technológie a dáta
 
-- Hráči môžu zmeniť svoju odpoveď
-- Vidí sa štyri možnosti pre každého hráča v liste
+- HTML, CSS, JavaScript (statický frontend)
+- Dáta o používateľoch, hráčoch, tréningoch v `database.js` a `localStorage`
+- Žiadny backend — všetko beží v prehliadači
 
-### Uzavretý (🔴 červený)
+## Súbory
 
-- Po kliknutí "Začať tréning" sa tréning uzavrie
-- Hráči nemôžu zmeniť odpoveď
-- Vidí sa iba finálny stav (Prídem/Neprídnem/Neviem)
+- `index.html` — hlavná stránka s navigáciou a všetkými sekciami
+- `database.js` — databáza používateľov, hráčov, trénerov, rodičov
+- `trainings.js` — logika tréningového systému
+- `matches.html` — stránka so zápasmi
+- `players_list_coach.html` — zoznam hráčov pre trénera
+- `player_detail_coach.html` — detail hráča pre trénera
 
-## Stavy Účasti
+## Ako spustiť
 
-- **Prídu** (🟢 zelené) - Hráč potvrdil "Prídem"
-- **Neprídú** (🔴 červené) - Hráč potvrdil "Neprídnem"
-- **Nevedia** (⚪ sivé) - Hráč zatiaľ neodpovedal alebo klikol "Neviem"
+1. Otvor `index.html` v prehliadači (stačí dvojklik alebo cez VS Code Live Server)
+2. Prihlás sa testovacím účtom podľa roly
+3. Skúšaj navigáciu, tréningy, zápasy, galériu, kontakty
 
-## Kategórie Hráčov
+---
 
-- Prípravky (U8-U9)
-- Žiaci (U10-U12)
-- Dorastenci (U13-U18)
-- Dospelí - Mladí (18-25)
-- Dospelí - Skúsení (25+)
-
-## Typy Tréningov
-
-- Technický tréning
-- Taktický tréning
-- Fyzický tréning
-- Prieťahový zápas
-
-## Dáta
-
-Všetky dáta sa ukladajú v:
-
-- `localStorage` - tréningy, účasť, deti rodičov
-- `database.js` - predefined dáta o používateľoch, hráčoch atď.
-
-## Aktualizácie
-
-V verzii s oddelenými kódmi:
-
-- **trainings.js** - všetky funkcie: createTraining(), refreshPlayerTrainings(), etc.
-- HTML načítava `trainings.js` cez `<script src="trainings.js"></script>`
-- Pri kliknutí "Tréningy" sa spustí `showTrainingView()` ktorá inicializuje všetko
+Tento projekt je koncept — všetky dáta sú ilustračné a demo účely.
