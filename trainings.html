@@ -216,6 +216,22 @@
             box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
         }
 
+        .btn-toggle-trainings {
+            margin-top: 14px;
+            background: rgba(255, 255, 255, 0.12);
+            color: #ffd700;
+            border: 1px solid #ffd700;
+            padding: 10px 16px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-toggle-trainings:hover {
+            background: rgba(255, 215, 0, 0.18);
+        }
+
         h2 {
             color: #ffd700;
             margin-bottom: 20px;
@@ -698,9 +714,10 @@
                         <label for="trainingCategory">Kategória:</label>
                         <select id="trainingCategory">
                             <option value="">-- Vybrať --</option>
-                            <option value="pripravky">Prípravky (U8-U9)</option>
-                            <option value="ziaci">Žiaci (U10-U12)</option>
-                            <option value="dorastenci">Dorastenci (U13-U18)</option>
+                            <option value="pripravka_u9">Prípravka U9</option>
+                            <option value="pripravka_u11">Prípravka U11</option>
+                            <option value="ziaci">Žiaci (U12-U15)</option>
+                            <option value="dorastenci">Dorastenci (U16-U19)</option>
                             <option value="adults_young">Dospelí - Mladí (18-25)</option>
                             <option value="adults_pro">Dospelí - Skúsení (25+)</option>
                         </select>
@@ -709,10 +726,19 @@
                         <i class="fas fa-plus"></i> Vytvoriť
                     </button>
                 </div>
+
+                <button type="button" id="toggleTrainingsBtn" class="btn-toggle-trainings" onclick="toggleCoachTrainings()">
+                    <i class="fas fa-list"></i> Zobraziť záznam tréningov
+                </button>
             </div>
 
-            <h2><i class="fas fa-list"></i> Všetky tréningy</h2>
-            <div id="coachTrainingsContainer" class="trainings-list"></div>
+            <h2><i class="fas fa-calendar"></i> Budúce tréningy</h2>
+            <div id="coachUpcomingTrainingsContainer" class="trainings-list"></div>
+
+            <div id="coachTrainingsPanel" style="display:none;">
+                <h2><i class="fas fa-history"></i> Záznam tréningov (ukončené)</h2>
+                <div id="coachTrainingsContainer" class="trainings-list"></div>
+            </div>
         </div>
 
         <!-- Player/Parent Section -->
@@ -786,6 +812,7 @@
         let currentUser = { username: '', role: '', isLoggedIn: false };
         let trainings = [];
         let parentChildren = {};
+        let coachTrainingsVisible = false;
 
         window.addEventListener('load', function() {
             // Skúsime najprv zo localStorage
@@ -850,6 +877,14 @@
                 document.getElementById('coachSection').classList.add('active');
                 document.getElementById('playerSection').classList.remove('active');
                 refreshCoachRoster();
+                const panel = document.getElementById('coachTrainingsPanel');
+                const btn = document.getElementById('toggleTrainingsBtn');
+                if (panel) panel.style.display = coachTrainingsVisible ? 'block' : 'none';
+                if (btn) {
+                    btn.innerHTML = coachTrainingsVisible
+                        ? '<i class="fas fa-eye-slash"></i> Skryť záznam tréningov'
+                        : '<i class="fas fa-list"></i> Zobraziť záznam tréningov';
+                }
             } else {
                 document.getElementById('coachSection').classList.remove('active');
                 document.getElementById('playerSection').classList.add('active');
@@ -956,62 +991,106 @@
             refreshPlayerTrainings();
         }
 
-        function refreshCoachRoster() {
-            const container = document.getElementById('coachTrainingsContainer');
-            if (trainings.length === 0) {
-                container.innerHTML = '<div style="text-align:center;color:#ffd700;padding:30px;">Žiadne tréningy</div>';
-                return;
+        function toggleCoachTrainings() {
+            coachTrainingsVisible = !coachTrainingsVisible;
+            const panel = document.getElementById('coachTrainingsPanel');
+            const btn = document.getElementById('toggleTrainingsBtn');
+
+            if (coachTrainingsVisible) {
+                refreshCoachRoster();
             }
 
-            let html = '';
+            if (panel) {
+                panel.style.display = coachTrainingsVisible ? 'block' : 'none';
+            }
+
+            if (btn) {
+                btn.innerHTML = coachTrainingsVisible
+                    ? '<i class="fas fa-eye-slash"></i> Skryť záznam tréningov'
+                    : '<i class="fas fa-list"></i> Zobraziť záznam tréningov';
+            }
+        }
+
+        function refreshCoachRoster() {
+            const upcomingContainer = document.getElementById('coachUpcomingTrainingsContainer');
+            const finishedContainer = document.getElementById('coachTrainingsContainer');
+            if (!upcomingContainer || !finishedContainer) return;
+
+            const now = new Date();
+            const upcomingTrainings = [];
+            const finishedTrainings = [];
+
             trainings.forEach(t => {
-                const date = new Date(t.date).toLocaleDateString('sk-SK');
-                const typeLabel = getTypeLabel(t.type);
-                const categoryLabel = getCategoryLabel(t.category);
+                const trainingDateTime = (t.date && t.time) ? new Date(t.date + 'T' + t.time) : null;
+                const isFuture = trainingDateTime ? trainingDateTime > now : false;
 
-                let attending = 0, notAttending = 0, unknown = 0;
-                Object.values(t.attendance || {}).forEach(s => {
-                    if (s === 'yes') attending++;
-                    else if (s === 'no') notAttending++;
-                    else unknown++;
-                });
+                if (isFuture) {
+                    upcomingTrainings.push(t);
+                }
 
-                const total = attending + notAttending + unknown;
-                const percent = total > 0 ? Math.round((attending / total) * 100) : 0;
-
-                html += `
-                    <div class="training-card">
-                        <div class="training-header">
-                            <h3><i class="fas fa-futbol"></i> ${typeLabel}</h3>
-                            <p><i class="fas fa-calendar"></i> ${date} o ${t.time}</p>
-                            <p><i class="fas fa-users"></i> ${categoryLabel} | ${t.duration} min</p>
-                            <p style="color: ${t.isActive ? '#2ecc71' : '#e74c3c'};">
-                                ${t.isActive ? '🟢 Aktívny' : '🔴 Uzavretý'}
-                            </p>
-                        </div>
-                        <div class="attendance-grid">
-                            <div class="attendance-group">
-                                <h4 style="color:#2ecc71;"><i class="fas fa-check-circle"></i> Prídu (${attending})</h4>
-                                ${getAttendanceList(t.attendance, 'yes', '#2ecc71')}
-                            </div>
-                            <div class="attendance-group">
-                                <h4 style="color:#e74c3c;"><i class="fas fa-times-circle"></i> Neprídú (${notAttending})</h4>
-                                ${getAttendanceList(t.attendance, 'no', '#e74c3c')}
-                            </div>
-                            <div class="attendance-group">
-                                <h4 style="color:#95a5a6;"><i class="fas fa-question-circle"></i> Nevedia (${unknown})</h4>
-                                ${getAttendanceList(t.attendance, 'unknown', '#95a5a6')}
-                            </div>
-                        </div>
-                        <div class="training-footer">
-                            <div style="color:#2ecc71;">Účasť: ${percent}%</div>
-                            <button class="btn-action btn-delete" onclick="deleteTraining(${t.id})"><i class="fas fa-trash"></i> Odstrániť</button>
-                        </div>
-                    </div>
-                `;
+                if (!t.isActive) {
+                    finishedTrainings.push(t);
+                }
             });
 
-            container.innerHTML = html;
+            const renderTrainings = (list, emptyText) => {
+                if (list.length === 0) {
+                    return '<div style="text-align:center;color:#ffd700;padding:30px;">' + emptyText + '</div>';
+                }
+
+                let html = '';
+                list.forEach(t => {
+                    const date = new Date(t.date).toLocaleDateString('sk-SK');
+                    const typeLabel = getTypeLabel(t.type);
+                    const categoryLabel = getCategoryLabel(t.category);
+
+                    let attending = 0, notAttending = 0, unknown = 0;
+                    Object.values(t.attendance || {}).forEach(s => {
+                        if (s === 'yes') attending++;
+                        else if (s === 'no') notAttending++;
+                        else unknown++;
+                    });
+
+                    const total = attending + notAttending + unknown;
+                    const percent = total > 0 ? Math.round((attending / total) * 100) : 0;
+                    const statusInfo = getTrainingStatus(t);
+
+                    html += `
+                        <div class="training-card">
+                            <div class="training-header">
+                                <h3><i class="fas fa-futbol"></i> ${typeLabel}</h3>
+                                <p><i class="fas fa-calendar"></i> ${date} o ${t.time}</p>
+                                <p><i class="fas fa-users"></i> ${categoryLabel} | ${t.duration} min</p>
+                                <p style="color: ${statusInfo.color};">
+                                    ${statusInfo.text}
+                                </p>
+                            </div>
+                            <div class="attendance-grid">
+                                <div class="attendance-group">
+                                    <h4 style="color:#2ecc71;"><i class="fas fa-check-circle"></i> Prídu (${attending})</h4>
+                                    ${getAttendanceList(t.attendance, 'yes', '#2ecc71')}
+                                </div>
+                                <div class="attendance-group">
+                                    <h4 style="color:#e74c3c;"><i class="fas fa-times-circle"></i> Neprídú (${notAttending})</h4>
+                                    ${getAttendanceList(t.attendance, 'no', '#e74c3c')}
+                                </div>
+                                <div class="attendance-group">
+                                    <h4 style="color:#95a5a6;"><i class="fas fa-question-circle"></i> Nevedia (${unknown})</h4>
+                                    ${getAttendanceList(t.attendance, 'unknown', '#95a5a6')}
+                                </div>
+                            </div>
+                            <div class="training-footer">
+                                <div style="color:#2ecc71;">Účasť: ${percent}%</div>
+                                <button class="btn-action btn-delete" onclick="deleteTraining(${t.id})"><i class="fas fa-trash"></i> Odstrániť</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                return html;
+            };
+
+            upcomingContainer.innerHTML = renderTrainings(upcomingTrainings, 'Žiadne budúce tréningy');
+            finishedContainer.innerHTML = renderTrainings(finishedTrainings, 'Žiadne ukončené tréningy');
         }
 
         function getAttendanceList(attendance, status, color) {
@@ -1058,6 +1137,7 @@
             trainings.forEach(t => {
                 const date = new Date(t.date).toLocaleDateString('sk-SK');
                 const typeLabel = getTypeLabel(t.type);
+                const statusInfo = getTrainingStatus(t);
 
                 peopleToDisplay.forEach(person => {
                     const key = t.id + '_' + person;
@@ -1069,8 +1149,8 @@
                                 <h4>${typeLabel}</h4>
                                 <p><i class="fas fa-calendar"></i> ${date} o ${t.time}</p>
                                 <p><i class="fas fa-clock"></i> ${t.duration} min</p>
-                                <p style="color:${t.isActive ? '#2ecc71' : '#e74c3c'};">
-                                    ${t.isActive ? '🟢 Aktívny' : '🔴 Uzavretý'}
+                                <p style="color:${statusInfo.color};">
+                                    ${statusInfo.text}
                                 </p>
                             </div>
                             <div class="person-options">
@@ -1214,6 +1294,31 @@
                 adults_pro: 'Dospelí - Skúsení (25+)'
             };
             return cats[cat] || cat;
+        }
+
+        function getTrainingWindow(training) {
+            if (!training.date || !training.time) {
+                return null;
+            }
+            const start = new Date(training.date + 'T' + training.time);
+            if (Number.isNaN(start.getTime())) {
+                return null;
+            }
+            const durationMinutes = Number(training.duration) || 90;
+            const end = new Date(start.getTime() + durationMinutes * 60000);
+            return { start, end };
+        }
+
+        function getTrainingStatus(training) {
+            const window = getTrainingWindow(training);
+            const now = new Date();
+            if (window && now >= window.start && now <= window.end) {
+                return { text: '🟢 Aktívny tréning', color: '#2ecc71' };
+            }
+            if (training.isActive) {
+                return { text: '🟡 Čaká na začatie', color: '#ffd700' };
+            }
+            return { text: '🔴 Uzavretý tréning', color: '#e74c3c' };
         }
 
         function goBack() {

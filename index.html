@@ -1,28 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OŠK Kamenná Poruba - Oficiálna webová stránka</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-                /* Ensure modal arrows are always the same size */
-                #galleryModalPrev, #galleryModalNext {
-                    width: 56px !important;
-                    height: 56px !important;
-                    min-width: 56px;
-                    min-height: 56px;
-                    max-width: 56px;
-                    max-height: 56px;
-                }
-                #galleryModalPrev svg, #galleryModalNext svg {
-                    width: 32px;
-                    height: 32px;
-                    display: block;
-                    margin: auto;
-                }
+        /* Ensure modal arrows are always the same size */
+        #galleryModalPrev,
+        #galleryModalNext {
+            width: 56px !important;
+            height: 56px !important;
+            min-width: 56px;
+            min-height: 56px;
+            max-width: 56px;
+            max-height: 56px;
+        }
+
+        #galleryModalPrev svg,
+        #galleryModalNext svg {
+            width: 32px;
+            height: 32px;
+            display: block;
+            margin: auto;
+        }
+
         /* Gallery Modal Navigation Arrows - Modern SVG style */
-        #galleryModalPrev, #galleryModalNext {
+        #galleryModalPrev,
+        #galleryModalNext {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
@@ -31,70 +37,80 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(255,255,255,0.92);
+            background: rgba(255, 255, 255, 0.92);
             color: #003399;
             border-radius: 50%;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
             cursor: pointer;
             z-index: 2100;
             user-select: none;
             border: 2px solid #ffd700;
             transition: background 0.2s, color 0.2s, border 0.2s, box-shadow 0.2s;
         }
-        #galleryModalPrev:hover, #galleryModalNext:hover {
+
+        #galleryModalPrev:hover,
+        #galleryModalNext:hover {
             background: #ffd700;
             color: #003399;
             border: 2px solid #003399;
-            box-shadow: 0 6px 24px rgba(0,0,0,0.25);
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
         }
+
         #galleryModalPrev {
             left: 40px;
             right: auto;
         }
+
         #galleryModalNext {
             right: 40px;
             left: auto;
         }
-                /* Gallery Modal Zoom */
-                #galleryModal {
-                    display: none;
-                    position: fixed;
-                    z-index: 2000;
-                    left: 0;
-                    top: 0;
-                    width: 100vw;
-                    height: 100vh;
-                    background: rgba(0,0,0,0.85);
-                    justify-content: center;
-                    align-items: center;
-                    transition: opacity 0.3s;
-                }
-                #galleryModal[style*="display: flex"] {
-                    display: flex !important;
-                }
-                #galleryModalImg {
-                    max-width: 90vw;
-                    max-height: 85vh;
-                    border-radius: 12px;
-                    box-shadow: 0 8px 32px rgba(0,0,0,0.7);
-                    transition: transform 0.3s;
-                    background: #fff;
-                }
-                #galleryModalClose {
-                    position: absolute;
-                    top: 30px;
-                    right: 40px;
-                    color: white;
-                    font-size: 48px;
-                    font-weight: bold;
-                    cursor: pointer;
-                    z-index: 2100;
-                    text-shadow: 0 2px 8px rgba(0,0,0,0.7);
-                    transition: color 0.2s;
-                }
-                #galleryModalClose:hover {
-                    color: #ffd700;
-                }
+
+        /* Gallery Modal Zoom */
+        #galleryModal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.85);
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.3s;
+        }
+
+        #galleryModal[style*="display: flex"] {
+            display: flex !important;
+        }
+
+        #galleryModalImg {
+            max-width: 90vw;
+            max-height: 85vh;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+            transition: transform 0.3s;
+            background: #fff;
+        }
+
+        #galleryModalClose {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            color: white;
+            font-size: 48px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 2100;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+            transition: color 0.2s;
+        }
+
+        #galleryModalClose:hover {
+            color: #ffd700;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -185,6 +201,18 @@
             width: 100%;
         }
 
+        .nav-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ff4c4c;
+            margin-left: 6px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.35);
+        }
+
         .login-btn {
             background: #ffd700;
             color: #003399;
@@ -273,6 +301,7 @@
                 opacity: 0;
                 transform: translateY(-30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -284,6 +313,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -298,7 +328,7 @@
         }
 
         section {
-            margin-bottom: 60px;
+            margin-bottom: 0;
         }
 
         h2 {
@@ -506,6 +536,15 @@
             font-size: 16px;
         }
 
+        .stat-header-value {
+            width: 56px;
+            text-align: center;
+            font-weight: bold;
+            color: #666;
+            font-size: 15px;
+            white-space: nowrap;
+        }
+
         .empty-category {
             text-align: center;
             padding: 40px 20px;
@@ -644,7 +683,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 18px;
-            margin-top: 30px;
+            margin-top: 16px;
         }
 
         .gallery-item {
@@ -652,14 +691,14 @@
             overflow: hidden;
             background: #fff;
             border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             cursor: pointer;
             transition: transform 0.25s, box-shadow 0.25s;
         }
 
         .gallery-item:hover {
             transform: translateY(-6px);
-            box-shadow: 0 14px 30px rgba(0,0,0,0.18);
+            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.18);
         }
 
         .gallery-image {
@@ -669,7 +708,7 @@
             height: 220px;
             object-fit: cover;
             border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
             transition: transform 0.2s, box-shadow 0.2s;
             cursor: pointer;
             display: block;
@@ -747,6 +786,7 @@
                 opacity: 0;
                 transform: scale(0.9);
             }
+
             to {
                 opacity: 1;
                 transform: scale(1);
@@ -814,6 +854,7 @@
                 opacity: 0;
                 transform: scale(0.9);
             }
+
             to {
                 opacity: 1;
                 transform: scale(1);
@@ -925,6 +966,21 @@
 
         /* Responsive */
         @media (max-width: 768px) {
+
+            /* Player category filter buttons stacked on mobile */
+            #players .category-filter {
+                display: flex;
+                width: 100%;
+                margin-bottom: 10px;
+                justify-content: flex-start;
+            }
+
+            #players>div[style*="display: flex"] {
+                flex-direction: column !important;
+                gap: 0 !important;
+                align-items: stretch !important;
+            }
+
             .header-top {
                 flex-direction: column;
                 gap: 15px;
@@ -976,41 +1032,54 @@
             }
 
             /* Kontakt pod seba */
-            #contact > div[style*='grid'] {
+            #contact>div[style*='grid'] {
                 grid-template-columns: 1fr !important;
                 gap: 20px !important;
             }
+
             /* Kompaktnejšia štatistika hráčov */
             #playersStatsContainer {
                 padding: 10px !important;
             }
+
             .player-stat-item {
                 flex-direction: column;
                 align-items: flex-start;
                 padding: 10px 5px;
                 gap: 6px;
             }
+
             .player-stat-values {
                 gap: 10px;
             }
+
             .player-stat-avatar {
                 width: 38px;
                 height: 38px;
                 font-size: 15px;
             }
+
             .player-stat-name {
                 font-size: 13px;
             }
+
             .player-stat-info-text {
                 font-size: 11px;
             }
+
             .stat-value {
                 width: 32px;
                 font-size: 13px;
             }
+
+            .stat-header-value {
+                width: 32px;
+                font-size: 9px;
+            }
         }
     </style>
 </head>
+
 <body>
     <!-- Header -->
     <header>
@@ -1029,9 +1098,14 @@
                     <li><a href="#matches">Zápasy</a></li>
                     <li><a href="#gallery">Galéria</a></li>
                     <li><a href="#contact">Kontakt</a></li>
-                    <li id="coachPlayerCardBtn" style="display:none;"><a href="players_list_coach.html"><i class="fas fa-id-card"></i> Karty hráčov</a></li>
-                    <li><a href="#" id="trainingNavLink" style="cursor: pointer; display: none;" onclick="goToTrainings(event)"><i class="fas fa-dumbbell"></i> Tréningy</a></li>
-                    <li><a href="#" id="matchesNavLink" style="cursor: pointer;" onclick="goToMatches(event)"><i class="fas fa-calendar"></i> Všetky zápasy</a></li>
+                    <li><a href="#" id="matchesNavLink" style="cursor: pointer;" onclick="goToMatches(event)"><i
+                                class="fas fa-calendar"></i> Všetky zápasy</a></li>
+                    <li id="coachPlayerCardBtn" style="display:none;"><a href="players_list_coach.html"><i
+                                class="fas fa-id-card"></i> Karty hráčov</a></li>
+                    <li><a href="#" id="trainingNavLink" style="cursor: pointer; display: none;"
+                            onclick="goToTrainings(event)"><i class="fas fa-dumbbell"></i> Tréningy</a></li>
+                    <li><a href="#" id="infoNavLink" style="cursor: pointer; display: none;"
+                            onclick="goToImportantInfo(event)"><i class="fas fa-bullhorn"></i> Dôležité info</a></li>
                     <li><a href="#" class="login-btn" id="loginBtnText">Prihlásiť sa</a></li>
                 </ul>
             </nav>
@@ -1043,8 +1117,10 @@
         <h1>Vitajte na OŠK Kamenná Poruba</h1>
         <p>Výnimočnosť vo futbale, hrdosť komunity</p>
         <div class="hero-buttons">
-            <button class="btn btn-primary" onclick="document.getElementById('matches').scrollIntoView()">Zobraziť zápasy</button>
-            <button class="btn btn-secondary" onclick="document.getElementById('about').scrollIntoView()">Viac informácií</button>
+            <button class="btn btn-primary" onclick="document.getElementById('matches').scrollIntoView()">Zobraziť
+                zápasy</button>
+            <button class="btn btn-secondary" onclick="document.getElementById('about').scrollIntoView()">Viac
+                informácií</button>
         </div>
     </section>
 
@@ -1055,30 +1131,38 @@
             <h2><i class="fas fa-info-circle"></i> O našom klube</h2>
             <div class="cards-grid">
                 <div class="card">
-                    <div class="card-image" style="background: linear-gradient(135deg, #ffd700, #ffed4e); display: flex; align-items: center; justify-content: center;">
-                        <img src="images/359sk_1.jpg" alt="Naša história" style="width: 100%; height: 100%; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); object-fit: cover; object-position: 70% center; transform: scale(1.1);">
+                    <div class="card-image"
+                        style="background: linear-gradient(135deg, #ffd700, #ffed4e); display: flex; align-items: center; justify-content: center;">
+                        <img src="images/359sk_1.jpg" alt="Naša história"
+                            style="width: 100%; height: 100%; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); object-fit: cover; object-position: 70% center; transform: scale(1.1);">
                     </div>
                     <div class="card-content">
                         <div class="card-title">Naša história</div>
-                        <div class="card-text">Založený v roku 1955, OŠK Kamenná Poruba si vytvoril bohatú históriu, záväzok a silu komunity. Viac ako 70 rokov tradície a úspechov v slovenskom futbale.</div>
+                        <div class="card-text">Založený v roku 1955, OŠK Kamenná Poruba si vytvoril bohatú históriu,
+                            záväzok a silu komunity. Viac ako 70 rokov tradície a úspechov v slovenskom futbale.</div>
                     </div>
                 </div>
                 <div class="card">
-                    <div class="card-image" style="background: linear-gradient(135deg, #003399, #1a5ccc); display: flex; align-items: center; justify-content: center; color: white; font-size: 60px;">
+                    <div class="card-image"
+                        style="background: linear-gradient(135deg, #003399, #1a5ccc); display: flex; align-items: center; justify-content: center; color: white; font-size: 60px;">
                         <i class="fas fa-users"></i>
                     </div>
                     <div class="card-content">
                         <div class="card-title">Naša komunita</div>
-                        <div class="card-text">S tisíckami priaznivcov a živou základňou fanúšikov predstavuje náš klub srdce Kamennej Poruby. Sme odhodlaní rozvíjať mládež a futbal od základov.</div>
+                        <div class="card-text">S tisíckami priaznivcov a živou základňou fanúšikov predstavuje náš klub
+                            srdce Kamennej Poruby. Sme odhodlaní rozvíjať mládež a futbal od základov.</div>
                     </div>
                 </div>
                 <div class="card">
-                    <div class="card-image" style="background: linear-gradient(135deg, #ffd700, #ffed4e); display: flex; align-items: center; justify-content: center; color: #003399; font-size: 60px;">
+                    <div class="card-image"
+                        style="background: linear-gradient(135deg, #ffd700, #ffed4e); display: flex; align-items: center; justify-content: center; color: #003399; font-size: 60px;">
                         <i class="fas fa-trophy"></i>
                     </div>
                     <div class="card-content">
                         <div class="card-title">Naše úspechy</div>
-                        <div class="card-text">Viacero regionálnych majstrovstiev, stabilné výkony v súťažiach a nespočetné pamätné chvíle definujú úspechy nášho klubu. Pridajte sa k nám na ceste k ďalším históriám.</div>
+                        <div class="card-text">Viacero regionálnych majstrovstiev, stabilné výkony v súťažiach a
+                            nespočetné pamätné chvíle definujú úspechy nášho klubu. Pridajte sa k nám na ceste k ďalším
+                            históriám.</div>
                     </div>
                 </div>
             </div>
@@ -1086,19 +1170,24 @@
         </section>
 
         <!-- Players Section -->
-        <section id="players">
+        <section id="players" style="margin-top: 40px;">
             <h2><i class="fas fa-users"></i> Štatistika hráčov</h2>
-            
+
             <!-- Category Filter -->
-            <div style="text-align: center; margin-bottom: 40px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
-                <button onclick="filterPlayers('pripravky')" class="category-filter active" data-category="pripravky">
-                    <i class="fas fa-child"></i> Prípravky (U8-U9)
+            <div
+                style="text-align: center; margin-bottom: 40px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                <button onclick="filterPlayers('pripravka_u9')" class="category-filter active"
+                    data-category="pripravka_u9">
+                    <i class="fas fa-child"></i> Prípravka U9
+                </button>
+                <button onclick="filterPlayers('pripravka_u11')" class="category-filter" data-category="pripravka_u11">
+                    <i class="fas fa-child"></i> Prípravka U11
                 </button>
                 <button onclick="filterPlayers('ziaci')" class="category-filter" data-category="ziaci">
-                    <i class="fas fa-graduation-cap"></i> Žiaci (U10-U12)
+                    <i class="fas fa-graduation-cap"></i> Žiaci (U12-U15)
                 </button>
                 <button onclick="filterPlayers('dorastenci')" class="category-filter" data-category="dorastenci">
-                    <i class="fas fa-running"></i> Dorastenci (U13-U18)
+                    <i class="fas fa-running"></i> Dorastenci (U16-U19)
                 </button>
                 <button onclick="filterPlayers('adults_young')" class="category-filter" data-category="adults_young">
                     <i class="fas fa-dumbbell"></i> Dospelí - Mladí (18-25)
@@ -1109,14 +1198,18 @@
             </div>
 
             <!-- Stats Display -->
-            <div id="playersStatsContainer" style="background: white; border-radius: 0; padding: 30px; box-shadow: 0 8px 20px rgba(0,0,0,0.12); margin-bottom: 40px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 2px solid #f0f0f0;">
+            <div id="playersStatsContainer"
+                style="background: white; border-radius: 0; padding: 30px; box-shadow: 0 8px 20px rgba(0,0,0,0.12); margin-bottom: 40px;">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 2px solid #f0f0f0;">
                     <h3 style="margin: 0; color: #003399; font-size: 20px;">Hráči</h3>
-                    <div style="display: flex; gap: 40px; font-weight: bold; color: #666; font-size: 14px;">
-                        <div style="width: 50px; text-align: center;">⚽ Góly</div>
-                        <div style="width: 50px; text-align: center;">🎯 Asistencia</div>
-                        <div style="width: 50px; text-align: center;">🟨 KK</div>
-                        <div style="width: 50px; text-align: center;">🟥 CK</div>
+                    <div class="player-stat-values" style="margin-left:auto;">
+                        <div class="stat-header-value">Zápasy</div>
+                        <div class="stat-header-value">Minúty</div>
+                        <div class="stat-header-value">Góly</div>
+                        <div class="stat-header-value">Žltá</div>
+                        <div class="stat-header-value">Druhá</div>
+                        <div class="stat-header-value">Červená</div>
                     </div>
                 </div>
                 <div id="playersListContainer"></div>
@@ -1125,162 +1218,207 @@
         </section>
 
         <!-- Matches Section -->
-        <section id="matches" style="background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%); padding: 80px 40px;">
+        <section id="matches"
+            style="background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%); padding: 80px 40px;">
             <div style="max-width: 1400px; margin: 0 auto;">
                 <h2 style="text-align: center; color: #003399; margin-bottom: 50px; font-size: 36px;">
                     <i class="fas fa-calendar-check"></i> NASLEDUJÚCE ZÁPASY
                 </h2>
-            <div class="matches-container">
-                <div class="match-card" onclick="goToMatches({preventDefault: function(){}})">
-                    <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 15px; align-items: center; margin-bottom: 20px;">
-                        <div style="text-align: right; font-weight: bold; color: #003399; font-size: 16px;">OŠK Kamenná Poruba</div>
-                        <div style="color: #ffd700; font-weight: bold; font-size: 18px; text-align: center;">VS</div>
-                        <div style="text-align: left; font-weight: bold; color: #003399; font-size: 16px;">FK Šachtár Banská Bystrica</div>
-                    </div>
-                    <div style="text-align: center; margin-bottom: 15px;">
-                        <div style="font-size: 12px; color: #666; margin-bottom: 8px;">
-                            <i class="fas fa-calendar"></i> 25. február 2026
+                <div class="matches-container">
+                    <div class="match-card" onclick="goToMatches({preventDefault: function(){}})">
+                        <div
+                            style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 15px; align-items: center; margin-bottom: 20px;">
+                            <div style="text-align: right; font-weight: bold; color: #003399; font-size: 16px;">OŠK
+                                Kamenná Poruba</div>
+                            <div style="color: #ffd700; font-weight: bold; font-size: 18px; text-align: center;">VS
+                            </div>
+                            <div style="text-align: left; font-weight: bold; color: #003399; font-size: 16px;">FK
+                                Šachtár Banská Bystrica</div>
                         </div>
-                        <div style="font-size: 12px; color: #666;">
-                            <i class="fas fa-clock"></i> 18:30
+                        <div style="text-align: center; margin-bottom: 15px;">
+                            <div style="font-size: 12px; color: #666; margin-bottom: 8px;">
+                                <i class="fas fa-calendar"></i> 25. február 2026
+                            </div>
+                            <div style="font-size: 12px; color: #666;">
+                                <i class="fas fa-clock"></i> 18:30
+                            </div>
+                        </div>
+                        <div style="text-align: center; padding-top: 15px; border-top: 1px solid #ddd;">
+                            <i class="fas fa-map-marker-alt"></i> Domáci štadión
                         </div>
                     </div>
-                    <div style="text-align: center; padding-top: 15px; border-top: 1px solid #ddd;">
-                        <i class="fas fa-map-marker-alt"></i> Domáci štadión
+                    <div class="match-card" onclick="goToMatches({preventDefault: function(){}})">
+                        <div
+                            style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 15px; align-items: center; margin-bottom: 20px;">
+                            <div style="text-align: right; font-weight: bold; color: #003399; font-size: 16px;">FK
+                                Zvolen</div>
+                            <div style="color: #ffd700; font-weight: bold; font-size: 18px; text-align: center;">VS
+                            </div>
+                            <div style="text-align: left; font-weight: bold; color: #003399; font-size: 16px;">OŠK
+                                Kamenná Poruba</div>
+                        </div>
+                        <div style="text-align: center; margin-bottom: 15px;">
+                            <div style="font-size: 12px; color: #666; margin-bottom: 8px;">
+                                <i class="fas fa-calendar"></i> 3. marec 2026
+                            </div>
+                            <div style="font-size: 12px; color: #666;">
+                                <i class="fas fa-clock"></i> 17:00
+                            </div>
+                        </div>
+                        <div style="text-align: center; padding-top: 15px; border-top: 1px solid #ddd;">
+                            <i class="fas fa-map-marker-alt"></i> Vonku
+                        </div>
+                    </div>
+                    <div class="match-card" onclick="goToMatches({preventDefault: function(){}})">
+                        <div
+                            style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 15px; align-items: center; margin-bottom: 20px;">
+                            <div style="text-align: right; font-weight: bold; color: #003399; font-size: 16px;">OŠK
+                                Kamenná Poruba</div>
+                            <div style="color: #ffd700; font-weight: bold; font-size: 18px; text-align: center;">VS
+                            </div>
+                            <div style="text-align: left; font-weight: bold; color: #003399; font-size: 16px;">FK Detva
+                            </div>
+                        </div>
+                        <div style="text-align: center; margin-bottom: 15px;">
+                            <div style="font-size: 12px; color: #666; margin-bottom: 8px;">
+                                <i class="fas fa-calendar"></i> 10. marec 2026
+                            </div>
+                            <div style="font-size: 12px; color: #666;">
+                                <i class="fas fa-clock"></i> 18:00
+                            </div>
+                        </div>
+                        <div style="text-align: center; padding-top: 15px; border-top: 1px solid #ddd;">
+                            <i class="fas fa-map-marker-alt"></i> Domáci štadión
+                        </div>
+                    </div>
+                    <div class="match-card" onclick="goToMatches({preventDefault: function(){}})">
+                        <div
+                            style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 15px; align-items: center; margin-bottom: 20px;">
+                            <div style="text-align: right; font-weight: bold; color: #003399; font-size: 16px;">FK
+                                Lučenec</div>
+                            <div style="color: #ffd700; font-weight: bold; font-size: 18px; text-align: center;">VS
+                            </div>
+                            <div style="text-align: left; font-weight: bold; color: #003399; font-size: 16px;">OŠK
+                                Kamenná Poruba</div>
+                        </div>
+                        <div style="text-align: center; margin-bottom: 15px;">
+                            <div style="font-size: 12px; color: #666; margin-bottom: 8px;">
+                                <i class="fas fa-calendar"></i> 17. marec 2026
+                            </div>
+                            <div style="font-size: 12px; color: #666;">
+                                <i class="fas fa-clock"></i> 17:30
+                            </div>
+                        </div>
+                        <div style="text-align: center; padding-top: 15px; border-top: 1px solid #ddd;">
+                            <i class="fas fa-map-marker-alt"></i> Vonku
+                        </div>
                     </div>
                 </div>
-                <div class="match-card" onclick="goToMatches({preventDefault: function(){}})">
-                    <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 15px; align-items: center; margin-bottom: 20px;">
-                        <div style="text-align: right; font-weight: bold; color: #003399; font-size: 16px;">FK Zvolen</div>
-                        <div style="color: #ffd700; font-weight: bold; font-size: 18px; text-align: center;">VS</div>
-                        <div style="text-align: left; font-weight: bold; color: #003399; font-size: 16px;">OŠK Kamenná Poruba</div>
-                    </div>
-                    <div style="text-align: center; margin-bottom: 15px;">
-                        <div style="font-size: 12px; color: #666; margin-bottom: 8px;">
-                            <i class="fas fa-calendar"></i> 3. marec 2026
-                        </div>
-                        <div style="font-size: 12px; color: #666;">
-                            <i class="fas fa-clock"></i> 17:00
-                        </div>
-                    </div>
-                    <div style="text-align: center; padding-top: 15px; border-top: 1px solid #ddd;">
-                        <i class="fas fa-map-marker-alt"></i> Vonku
-                    </div>
-                </div>
-                <div class="match-card" onclick="goToMatches({preventDefault: function(){}})">
-                    <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 15px; align-items: center; margin-bottom: 20px;">
-                        <div style="text-align: right; font-weight: bold; color: #003399; font-size: 16px;">OŠK Kamenná Poruba</div>
-                        <div style="color: #ffd700; font-weight: bold; font-size: 18px; text-align: center;">VS</div>
-                        <div style="text-align: left; font-weight: bold; color: #003399; font-size: 16px;">FK Detva</div>
-                    </div>
-                    <div style="text-align: center; margin-bottom: 15px;">
-                        <div style="font-size: 12px; color: #666; margin-bottom: 8px;">
-                            <i class="fas fa-calendar"></i> 10. marec 2026
-                        </div>
-                        <div style="font-size: 12px; color: #666;">
-                            <i class="fas fa-clock"></i> 18:00
-                        </div>
-                    </div>
-                    <div style="text-align: center; padding-top: 15px; border-top: 1px solid #ddd;">
-                        <i class="fas fa-map-marker-alt"></i> Domáci štadión
-                    </div>
-                </div>
-                <div class="match-card" onclick="goToMatches({preventDefault: function(){}})">
-                    <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 15px; align-items: center; margin-bottom: 20px;">
-                        <div style="text-align: right; font-weight: bold; color: #003399; font-size: 16px;">FK Lučenec</div>
-                        <div style="color: #ffd700; font-weight: bold; font-size: 18px; text-align: center;">VS</div>
-                        <div style="text-align: left; font-weight: bold; color: #003399; font-size: 16px;">OŠK Kamenná Poruba</div>
-                    </div>
-                    <div style="text-align: center; margin-bottom: 15px;">
-                        <div style="font-size: 12px; color: #666; margin-bottom: 8px;">
-                            <i class="fas fa-calendar"></i> 17. marec 2026
-                        </div>
-                        <div style="font-size: 12px; color: #666;">
-                            <i class="fas fa-clock"></i> 17:30
-                        </div>
-                    </div>
-                    <div style="text-align: center; padding-top: 15px; border-top: 1px solid #ddd;">
-                        <i class="fas fa-map-marker-alt"></i> Vonku
-                    </div>
-                </div>
-            </div>
-            <div style="text-align: center; margin-top: 40px;">
-                <button class="btn btn-primary" onclick="goToMatches({preventDefault: function(){}})">
-                    <i class="fas fa-arrow-right"></i> Detaily všetkých zápasov so štatistikami
-                </button>
-            </div>
+                <div style="text-align: center; margin-top: 40px;">
 
-        <!-- Gallery Section (replaces News) -->
-        <section id="gallery">
-            <h2><i class="fas fa-images"></i> Galéria</h2>
-            <div class="gallery-grid">
-                <div class="gallery-item">
-                    <img class="gallery-image" src="images/10750142878023431842.jpg" alt="Galéria 1" style="min-width:220px; min-height:220px; background:#eaeaea;">
+                    <button class="btn btn-primary" style="margin-bottom: 32px; margin-top: 0;"
+                        onclick="goToMatches({preventDefault: function(){}})">
+                        <i class="fas fa-arrow-right"></i> Detaily všetkých zápasov so štatistikami
+                    </button>
                 </div>
-                <div class="gallery-item">
-                    <img class="gallery-image" src="images/2.jpg" alt="Galéria 2">
-                </div>
-                <div class="gallery-item">
-                    <img class="gallery-image" src="images/508120564_29838519272462811_2048504803720081817_n.jpg" alt="Galéria 3">
-                </div>
-                <div class="gallery-item">
-                    <img class="gallery-image" src="images/508433324_29841234952191243_3332785514084510977_n.jpg" alt="Galéria 4">
-                </div>
-                <div class="gallery-item">
-                    <img class="gallery-image" src="images/508538663_29841234848857920_7529913858397432447_n.jpg" alt="Galéria 5">
-                </div>
-                <div class="gallery-item">
-                    <img class="gallery-image" src="images/51597284815_c985abef70_b.jpg" alt="Galéria 6">
-                </div>
-                <div class="gallery-item">
-                    <img class="gallery-image" src="images/IMG_5259-Enhanced-NR-1024x683.jpg" alt="Galéria 7">
-                </div>
-                <div class="gallery-item">
-                    <img class="gallery-image" src="images/memorial-milana-smehyla-pre-favorizovanu-kamennu-porubu-117368.1920x1080t.jpg" alt="Galéria 8">
-                </div>
-                <div class="gallery-item">
-                    <img class="gallery-image" src="images/memorial-milana-smehyla-pre-favorizovanu-kamennu-porubu-13661.1920x1080t.jpg" alt="Galéria 9">
-                </div>
-                <div class="gallery-item">
-                    <img class="gallery-image" src="images/rozhovor-kamenna-poruba-okusi-prvykrat-v-historii-klubu-krajsku-sutaz-117322.1920x1080t.jpg" alt="Galéria 10">
-                </div>
-            </div>
-            <!-- Modal for zoomed image -->
-            <div id="galleryModal" style="display:none; position:fixed; z-index:2000; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); justify-content:center; align-items:center;">
-                <span id="galleryModalClose" style="position:absolute; top:30px; right:40px; color:white; font-size:48px; font-weight:bold; cursor:pointer; z-index:2100;">&times;</span>
-                <span id="galleryModalPrev">
-                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="16" cy="16" r="16" fill="none"/>
-                        <polyline points="20,8 12,16 20,24" stroke="#003399" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                    </svg>
-                </span>
-                <span id="galleryModalNext">
-                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="16" cy="16" r="16" fill="none"/>
-                        <polyline points="12,8 20,16 12,24" stroke="#003399" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                    </svg>
-                </span>
-                <img id="galleryModalImg" src="" alt="Zoom" style="max-width:90vw; max-height:85vh; border-radius:12px; box-shadow:0 8px 32px rgba(0,0,0,0.7);">
-            </div>
-        </section>
 
-        <!-- Contact Section -->
-        <section id="contact">
-            <h2><i class="fas fa-envelope"></i> Kontaktujte nás</h2>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 30px;">
-                <div>
-                    <h3 style="margin-bottom: 20px; color: #1a1a2e;">Kontaktné informácie</h3>
-                    <div style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);">
-                        <p style="margin-bottom: 20px;"><i class="fas fa-map-marker-alt" style="color: #ffd700; width: 30px;"></i> <strong>Adresa:</strong><br>Futbalový štadión, Kamenná Poruba, Slovensko</p>
-                        <p style="margin-bottom: 20px;"><i class="fas fa-phone" style="color: #ffd700; width: 30px;"></i> <strong>Telefón:</strong><br>+421 123 456 789</p>
-                        <p style="margin-bottom: 20px;"><i class="fas fa-envelope" style="color: #ffd700; width: 30px;"></i> <strong>Email:</strong><br>info@oskamennaoruba.sk</p>
-                        <p><i class="fas fa-clock" style="color: #ffd700; width: 30px;"></i> <strong>Pracovná doba:</strong><br>Po-Pia: 9:00 - 18:00</p>
+                <!-- Gallery Section (replaces News) -->
+                <section id="gallery">
+                    <h2><i class="fas fa-images"></i> Galéria</h2>
+                    <div class="gallery-grid">
+                        <div class="gallery-item">
+                            <img class="gallery-image" src="images/10750142878023431842.jpg" alt="Galéria 1"
+                                style="min-width:220px; min-height:220px; background:#eaeaea;">
+                        </div>
+                        <div class="gallery-item">
+                            <img class="gallery-image" src="images/2.jpg" alt="Galéria 2">
+                        </div>
+                        <div class="gallery-item">
+                            <img class="gallery-image"
+                                src="images/508120564_29838519272462811_2048504803720081817_n.jpg" alt="Galéria 3">
+                        </div>
+                        <div class="gallery-item">
+                            <img class="gallery-image"
+                                src="images/508433324_29841234952191243_3332785514084510977_n.jpg" alt="Galéria 4">
+                        </div>
+                        <div class="gallery-item">
+                            <img class="gallery-image"
+                                src="images/508538663_29841234848857920_7529913858397432447_n.jpg" alt="Galéria 5">
+                        </div>
+                        <div class="gallery-item">
+                            <img class="gallery-image" src="images/51597284815_c985abef70_b.jpg" alt="Galéria 6">
+                        </div>
+                        <div class="gallery-item">
+                            <img class="gallery-image" src="images/IMG_5259-Enhanced-NR-1024x683.jpg" alt="Galéria 7">
+                        </div>
+                        <div class="gallery-item">
+                            <img class="gallery-image"
+                                src="images/memorial-milana-smehyla-pre-favorizovanu-kamennu-porubu-117368.1920x1080t.jpg"
+                                alt="Galéria 8">
+                        </div>
+                        <div class="gallery-item">
+                            <img class="gallery-image"
+                                src="images/memorial-milana-smehyla-pre-favorizovanu-kamennu-porubu-13661.1920x1080t.jpg"
+                                alt="Galéria 9">
+                        </div>
+                        <div class="gallery-item">
+                            <img class="gallery-image"
+                                src="images/rozhovor-kamenna-poruba-okusi-prvykrat-v-historii-klubu-krajsku-sutaz-117322.1920x1080t.jpg"
+                                alt="Galéria 10">
+                        </div>
                     </div>
-                </div>
-                <div>
-                    <h3 style="margin-bottom: 20px; color: #1a1a2e;">Pošlite nám správu</h3>
-                    <form style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);">
-                            <form action="mailto:strananekm@gmail.com" method="post" enctype="text/plain" style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);">
+                    <!-- Modal for zoomed image -->
+                    <div id="galleryModal"
+                        style="display:none; position:fixed; z-index:2000; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); justify-content:center; align-items:center;">
+                        <span id="galleryModalClose"
+                            style="position:absolute; top:30px; right:40px; color:white; font-size:48px; font-weight:bold; cursor:pointer; z-index:2100;">&times;</span>
+                        <span id="galleryModalPrev">
+                            <svg width="32" height="32" viewBox="0 0 32 32" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="16" cy="16" r="16" fill="none" />
+                                <polyline points="20,8 12,16 20,24" stroke="#003399" stroke-width="3.5"
+                                    stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                            </svg>
+                        </span>
+                        <span id="galleryModalNext">
+                            <svg width="32" height="32" viewBox="0 0 32 32" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="16" cy="16" r="16" fill="none" />
+                                <polyline points="12,8 20,16 12,24" stroke="#003399" stroke-width="3.5"
+                                    stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                            </svg>
+                        </span>
+                        <img id="galleryModalImg" src="" alt="Zoom"
+                            style="max-width:90vw; max-height:85vh; border-radius:12px; box-shadow:0 8px 32px rgba(0,0,0,0.7);">
+                    </div>
+                </section>
+
+                <!-- Contact Section -->
+                <section id="contact" style="margin-top: 40px;">
+                    <h2><i class="fas fa-envelope"></i> Kontaktujte nás</h2>
+                    <div
+                        style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 30px; margin-bottom: 0; background: transparent; min-height: 0; padding-bottom: 0;">
+                        <div>
+                            <h3 style="margin-bottom: 20px; color: #1a1a2e;">Kontaktné informácie</h3>
+                            <div
+                                style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);">
+                                <p style="margin-bottom: 20px;"><i class="fas fa-map-marker-alt"
+                                        style="color: #ffd700; width: 30px;"></i> <strong>Adresa:</strong><br>Futbalový
+                                    štadión, Kamenná Poruba, Slovensko</p>
+                                <p style="margin-bottom: 20px;"><i class="fas fa-phone"
+                                        style="color: #ffd700; width: 30px;"></i> <strong>Telefón:</strong><br>+421 123
+                                    456 789</p>
+                                <p style="margin-bottom: 20px;"><i class="fas fa-envelope"
+                                        style="color: #ffd700; width: 30px;"></i>
+                                    <strong>Email:</strong><br>info@oskamennaoruba.sk</p>
+                                <p><i class="fas fa-clock" style="color: #ffd700; width: 30px;"></i> <strong>Pracovná
+                                        doba:</strong><br>Po-Pia: 9:00 - 18:00</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 style="margin-bottom: 20px; color: #1a1a2e;">Pošlite nám správu</h3>
+                            <form action="mailto:strananekm@gmail.com" method="post" enctype="text/plain"
+                                style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);">
                                 <div class="form-group">
                                     <label for="name">Meno a priezvisko</label>
                                     <input type="text" id="name" name="Meno" placeholder="Vaše meno" required>
@@ -1291,15 +1429,36 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="message">Správa</label>
-                                    <textarea id="message" name="Správa" rows="5" placeholder="Vaša správa" required></textarea>
+                                    <textarea id="message" name="Správa" rows="5" placeholder="Vaša správa"
+                                        required></textarea>
                                 </div>
-                                <button type="submit" class="btn btn-primary" style="width: 100%;">Poslať správu</button>
+                                <button type="submit" class="btn btn-primary" style="width: 100%;">Poslať
+                                    správu</button>
                             </form>
-                </div>
-            </div>
-        </section>
+                        </div>
+                    </div>
+                </section>
     </main>
 
+    <style>
+        /* Remove extra space at the end of the page */
+        body {
+            margin-bottom: 0 !important;
+            padding-bottom: 0 !important;
+        }
+
+        @media (max-width: 700px) {
+            body {
+                margin-bottom: 0 !important;
+                padding-bottom: 0 !important;
+            }
+
+            #contact {
+                margin-bottom: 0 !important;
+                padding-bottom: 0 !important;
+            }
+        }
+    </style>
     <!-- Training View Container (loads dynamically) -->
     <div id="trainingView"></div>
 
@@ -1313,7 +1472,8 @@
             <form id="loginForm" onsubmit="handleLogin(event)">
                 <div class="form-group">
                     <label for="userRole">Vyberte si rolu:</label>
-                    <select id="userRole" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-family: inherit; font-size: 14px; transition: border 0.3s;">
+                    <select id="userRole" required
+                        style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-family: inherit; font-size: 14px; transition: border 0.3s;">
                         <option value="">-- Zvoľte rolu --</option>
                         <option value="player">Hráč</option>
                         <option value="parent">Rodič</option>
@@ -1334,12 +1494,17 @@
                         Pamätať si ma
                     </label>
                 </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 10px;">Prihlásiť sa</button>
-                <a href="#" style="display: block; text-align: center; color: #ffd700; text-decoration: none; font-size: 14px;">Zabudli ste heslo?</a>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 10px;">Prihlásiť
+                    sa</button>
+                <a href="#"
+                    style="display: block; text-align: center; color: #ffd700; text-decoration: none; font-size: 14px;">Zabudli
+                    ste heslo?</a>
                 <a>milan_kuba,jozef_adamcik,jan_klimo
                     heslo123</a>
             </form>
-            <div id="loginError" style="display:none; color:#e74c3c; background:rgba(231,76,60,0.08); border:1px solid #e74c3c; border-radius:5px; padding:10px; margin-bottom:10px; text-align:center; font-weight:bold; animation: shake 0.3s;"></div>
+            <div id="loginError"
+                style="display:none; color:#e74c3c; background:rgba(231,76,60,0.08); border:1px solid #e74c3c; border-radius:5px; padding:10px; margin-bottom:10px; text-align:center; font-weight:bold; animation: shake 0.3s;">
+            </div>
         </div>
     </div>
 
@@ -1354,8 +1519,10 @@
                 <p>Ste prihlásený ako <b id="logoutUserName"></b>.</p>
                 <p>Čo chcete urobiť?</p>
             </div>
-            <button class="btn btn-primary" style="width:100%;margin-bottom:10px;background:#e74c3c;color:white;" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Odhlásiť sa</button>
-            <button class="btn btn-secondary" style="width:100%;background:#ffd700;color:#003399;" onclick="handleSwitchAccount()"><i class="fas fa-user-switch"></i> Prepnúť účet</button>
+            <button class="btn btn-primary" style="width:100%;margin-bottom:10px;background:#e74c3c;color:white;"
+                onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Odhlásiť sa</button>
+            <button class="btn btn-secondary" style="width:100%;background:#ffd700;color:#003399;"
+                onclick="handleSwitchAccount()"><i class="fas fa-user-switch"></i> Prepnúť účet</button>
         </div>
     </div>
 
@@ -1365,9 +1532,11 @@
             <div class="footer-section">
                 <h3><i class="fas fa-futbol"></i> OŠK Kamenná Poruba</h3>
                 <div class="social-icons">
-                    <a href="https://www.facebook.com/100057309406135/mentions/" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="https://sportnet.sme.sk/futbalnet/k/osk-kamenna-poruba/" title="Sportsnet" target="_blank" rel="noopener">
-                        <i class="fas fa-futbol"></i>  </a>
+                    <a href="https://www.facebook.com/100057309406135/mentions/" title="Facebook"><i
+                            class="fab fa-facebook-f"></i></a>
+                    <a href="https://sportnet.sme.sk/futbalnet/k/osk-kamenna-poruba/" title="Sportsnet" target="_blank"
+                        rel="noopener">
+                        <i class="fas fa-futbol"></i> </a>
                     <a href="https://www.obeckamennaporuba.sk" title="Stránka obce" target="_blank" rel="noopener">
                         <i class="fas fa-landmark"></i>
                     </a>
@@ -1391,7 +1560,7 @@
                     <li><a href="#">Často kladené otázky</a></li>
                     <li><a href="#">Rezervácia vstupeniek</a></li>
                 </ul>
-        </div>
+            </div>
         </div>
         <div class="footer-bottom">
             <p>&copy; 2026 OŠK Kamenná Poruba. Všetky práva vyhradené.</p>
@@ -1414,23 +1583,23 @@
         }
         // ...existing code...
         // Po prihlásení/načítaní stránky
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             showCoachPlayerCardButton();
         });
         // Ak sa mení užívateľ (napr. login/logout)
         window.showCoachPlayerCardButton = showCoachPlayerCardButton;
         // Scroll to main section when logo is clicked
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             var logo = document.getElementById('mainLogo');
             if (logo) {
-                logo.addEventListener('click', function() {
+                logo.addEventListener('click', function () {
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 });
             }
             // Always set login/logout button click handler
             const loginBtn = document.getElementById('loginBtnText');
             if (loginBtn) {
-                loginBtn.onclick = function(e) {
+                loginBtn.onclick = function (e) {
                     e.preventDefault();
                     if (currentUser && currentUser.isLoggedIn) {
                         openLogoutModal();
@@ -1456,13 +1625,13 @@
 
         function filterPlayers(category) {
             currentPlayerFilter = category;
-            
+
             // Update active button
             document.querySelectorAll('.category-filter').forEach(btn => {
                 btn.classList.remove('active');
             });
             document.querySelector(`[data-category="${category}"]`).classList.add('active');
-            
+
             renderPlayerStats(category);
         }
 
@@ -1487,8 +1656,7 @@
             let html = '';
             filteredPlayers.forEach(player => {
                 const initials = player.fullName.split(' ').map(n => n[0]).join('');
-                const stats = player.stats || { dribbling: 0, passing: 0, shooting: 0, defense: 0 };
-                
+                const stats = player.stats || { matches: 0, minutes: 0, goals: 0, yellowCards: 0, secondYellow: 0, redCards: 0 };
                 html += `
                     <div class="player-stat-item">
                         <div class="player-stat-info">
@@ -1499,10 +1667,12 @@
                             </div>
                         </div>
                         <div class="player-stat-values">
-                            <div class="stat-value">0</div>
-                            <div class="stat-value">0</div>
-                            <div class="stat-value">0</div>
-                            <div class="stat-value">0</div>
+                            <div class="stat-value" title="Zápasy">${stats.matches}</div>
+                            <div class="stat-value" title="Minúty">${stats.minutes}</div>
+                            <div class="stat-value" title="Góly">${stats.goals}</div>
+                            <div class="stat-value" title="Žlté karty">${stats.yellowCards}</div>
+                            <div class="stat-value" title="Druhá ŽK">${stats.secondYellow}</div>
+                            <div class="stat-value" title="Červené karty">${stats.redCards}</div>
                         </div>
                     </div>
                 `;
@@ -1513,7 +1683,8 @@
 
         function getCategoryLabel(cat) {
             const labels = {
-                'pripravky': 'Prípravky',
+                'pripravka_u9': 'Prípravka U9',
+                'pripravka_u11': 'Prípravka U11',
                 'ziaci': 'Žiaci',
                 'dorastenci': 'Dorastenci',
                 'adults_young': 'Dospelí - Mladí',
@@ -1534,7 +1705,7 @@
         }
 
         // Close modal when clicking outside
-        document.getElementById('loginModal').addEventListener('click', function(e) {
+        document.getElementById('loginModal').addEventListener('click', function (e) {
             if (e.target === this) {
                 closeLoginModal();
             }
@@ -1544,17 +1715,97 @@
         function updateLoginButtonText() {
             const loginBtn = document.getElementById('loginBtnText');
             const trainingNavLink = document.getElementById('trainingNavLink');
+            const infoNavLink = document.getElementById('infoNavLink');
             const matchesNavLink = document.getElementById('matchesNavLink');
             if (currentUser.isLoggedIn) {
                 loginBtn.textContent = currentUser.username;
                 trainingNavLink.style.display = 'block';
+                infoNavLink.style.display = 'block';
                 matchesNavLink.style.display = 'block';
             } else {
                 loginBtn.textContent = 'Prihlásiť sa';
                 trainingNavLink.style.display = 'none';
+                infoNavLink.style.display = 'none';
                 // keep matchesNavLink visible for all users (including guests)
             }
+            updateImportantInfoNavBadge();
         }
+
+        const IMPORTANT_INFO_ANNOUNCEMENTS_KEY = 'club_announcements';
+        const IMPORTANT_INFO_POLLS_KEY = 'club_polls';
+        const IMPORTANT_INFO_SEEN_PREFIX = 'importantInfoSeenEvents_';
+
+        function getImportantInfoSeenKey() {
+            const username = currentUser && currentUser.username ? currentUser.username : 'guest';
+            return IMPORTANT_INFO_SEEN_PREFIX + username;
+        }
+
+        function canUserSeeImportantEvent(target) {
+            if (!currentUser || !currentUser.isLoggedIn) {
+                return false;
+            }
+            if (currentUser.role === 'coach') {
+                return true;
+            }
+            if (target === 'all') {
+                return true;
+            }
+            if (target === 'players') {
+                return currentUser.role === 'player';
+            }
+            if (target === 'parents') {
+                return currentUser.role === 'parent';
+            }
+            if (target === 'coaches') {
+                return currentUser.role === 'coach';
+            }
+            return false;
+        }
+
+        function getImportantEventsForUser() {
+            const announcements = JSON.parse(localStorage.getItem(IMPORTANT_INFO_ANNOUNCEMENTS_KEY) || '[]');
+            const polls = JSON.parse(localStorage.getItem(IMPORTANT_INFO_POLLS_KEY) || '[]');
+            if (!currentUser || !currentUser.isLoggedIn) {
+                return [];
+            }
+            return [...announcements, ...polls].filter(event => canUserSeeImportantEvent(event.target));
+        }
+
+        function hasUnseenImportantInfo() {
+            if (!currentUser || !currentUser.isLoggedIn) {
+                return false;
+            }
+            const seen = JSON.parse(localStorage.getItem(getImportantInfoSeenKey()) || '[]');
+            return getImportantEventsForUser().some(event => !seen.includes(event.id));
+        }
+
+        function updateImportantInfoNavBadge() {
+            const infoNavLink = document.getElementById('infoNavLink');
+            if (!infoNavLink) {
+                return;
+            }
+            const hasUnseen = hasUnseenImportantInfo();
+            const existingDot = infoNavLink.querySelector('.nav-dot');
+            if (hasUnseen) {
+                if (!existingDot) {
+                    const dot = document.createElement('span');
+                    dot.className = 'nav-dot';
+                    dot.setAttribute('aria-label', 'Nové dôležité správy');
+                    infoNavLink.appendChild(dot);
+                }
+            } else if (existingDot) {
+                existingDot.remove();
+            }
+        }
+
+        window.addEventListener('storage', function (event) {
+            if (!event.key) {
+                return;
+            }
+            if (event.key === IMPORTANT_INFO_ANNOUNCEMENTS_KEY || event.key === IMPORTANT_INFO_POLLS_KEY || event.key.startsWith(IMPORTANT_INFO_SEEN_PREFIX)) {
+                updateImportantInfoNavBadge();
+            }
+        });
         // Logout Modal Functions
         function openLogoutModal() {
             const modal = document.getElementById('logoutModal');
@@ -1593,10 +1844,10 @@
         }
 
         // Close logout modal when clicking outside
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const logoutModal = document.getElementById('logoutModal');
             if (logoutModal) {
-                logoutModal.addEventListener('click', function(e) {
+                logoutModal.addEventListener('click', function (e) {
                     if (e.target === this) {
                         closeLogoutModal();
                     }
@@ -1614,18 +1865,23 @@
             window.location.href = 'matches.html';
         }
 
+        function goToImportantInfo(e) {
+            e.preventDefault();
+            window.location.href = 'important_info.html';
+        }
+
         // Handle Login
         function handleLogin(event) {
             event.preventDefault();
             const username = document.getElementById('username').value;
             const userRole = document.getElementById('userRole').value;
-            
+
             // Validate role selection
             if (!userRole) {
                 alert('Prosím vyberte si rolu!');
                 return;
             }
-            
+
             // Validate with database
             const password = document.getElementById('password').value;
             const errorDiv = document.getElementById('loginError');
@@ -1639,22 +1895,31 @@
             } else {
                 errorDiv.style.display = 'none';
             }
-            
+
+            const actualRole = authResult.user.role;
+            if (userRole !== actualRole) {
+                errorDiv.textContent = `Tento účet má rolu: ${getRoleLabel(actualRole)}.`;
+                errorDiv.style.display = 'block';
+                errorDiv.style.animation = 'shake 0.3s';
+                setTimeout(() => { errorDiv.style.animation = ''; }, 400);
+                return;
+            }
+
             // Set current user
             currentUser = {
                 username: username,
-                role: userRole,
+                role: actualRole,
                 isLoggedIn: true
             };
-            
+
             // Save to localStorage for cross-page access (for coach-only pages)
             localStorage.setItem('currentUser', JSON.stringify(currentUser));
             localStorage.setItem('lastLogin', username);
-            localStorage.setItem('lastRole', userRole);
-            console.log('Saved to localStorage:', username, userRole);
-            
+            localStorage.setItem('lastRole', actualRole);
+            console.log('Saved to localStorage:', username, actualRole);
+
             // Load parent's children from database.js if parent
-            if (userRole === 'parent') {
+            if (actualRole === 'parent') {
                 parentChildren = {}; // Reset to ensure clean state
                 if (typeof USERS !== 'undefined') {
                     const parentUser = USERS[username];
@@ -1665,7 +1930,7 @@
                     }
                 }
             }
-            
+
             // Close modal and refresh UI
             closeLoginModal();
             document.getElementById('loginForm').reset();
@@ -1720,7 +1985,7 @@
 
         // Smooth scrolling for navigation
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
+            anchor.addEventListener('click', function (e) {
                 const href = this.getAttribute('href');
                 if (href !== '#' && document.querySelector(href)) {
                     e.preventDefault();
@@ -1732,7 +1997,7 @@
         });
 
         // Load last login if available
-        window.addEventListener('load', function() {
+        window.addEventListener('load', function () {
             const lastLogin = localStorage.getItem('lastLogin');
             const lastRole = localStorage.getItem('lastRole');
             if (lastLogin && lastRole) {
@@ -1769,27 +2034,27 @@
             }
 
             galleryImages.forEach((img, i) => {
-                img.addEventListener('click', function() {
+                img.addEventListener('click', function () {
                     showModalAtIndex(i);
                 });
             });
 
-            modalClose.addEventListener('click', function() {
+            modalClose.addEventListener('click', function () {
                 modal.style.display = 'none';
                 modalImg.src = '';
             });
 
-            modalPrev.addEventListener('click', function(e) {
+            modalPrev.addEventListener('click', function (e) {
                 e.stopPropagation();
                 showModalAtIndex(currentImgIndex - 1);
             });
-            modalNext.addEventListener('click', function(e) {
+            modalNext.addEventListener('click', function (e) {
                 e.stopPropagation();
                 showModalAtIndex(currentImgIndex + 1);
             });
 
             // Keyboard navigation
-            document.addEventListener('keydown', function(e) {
+            document.addEventListener('keydown', function (e) {
                 if (modal.style.display === 'flex') {
                     if (e.key === 'ArrowLeft') {
                         showModalAtIndex(currentImgIndex - 1);
@@ -1803,7 +2068,7 @@
             });
 
             // Close modal on click outside image
-            modal.addEventListener('click', function(e) {
+            modal.addEventListener('click', function (e) {
                 if (e.target === modal) {
                     modal.style.display = 'none';
                     modalImg.src = '';
@@ -1812,4 +2077,5 @@
         });
     </script>
 </body>
+
 </html>

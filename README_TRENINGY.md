@@ -26,11 +26,17 @@ Tréneri:
 - peter_novak
 
 Hráči:
+- adam_hrasko
+- michal_kovac
+- simon_ziak
+- martin_kral
 - jozef_adamcik
 - marko_adamcik
 - lukas_kuba
 - jakub_horvath
+- michal_urban
 - robert_sabo
+- julius_mikula
 - stefan_polak
 - tomas_kamenicky
 

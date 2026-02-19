@@ -116,6 +116,13 @@
             font-size: 13px;
             margin-bottom: 2px;
         }
+        .player-stats-mini {
+            color: #fff;
+            font-size: 13px;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255,255,255,0.15);
+        }
     </style>
 </head>
 <body>
@@ -145,8 +152,25 @@
     </div>
     <script src="database.js"></script>
     <script>
+    function normalizeText(text) {
+        return (text || '')
+            .toString()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase()
+            .trim();
+    }
+
+    function getCategoryLabel(category) {
+        if (category === 'pripravka_u9') return 'Prípravka U9';
+        if (category === 'pripravka_u11') return 'Prípravka U11';
+        if (category === 'adults_young') return 'Dospelí - Mladí';
+        if (category === 'adults_pro') return 'Dospelí - Skúsení';
+        return category;
+    }
+
     function renderPlayerList() {
-        const search = document.getElementById('searchInput').value.toLowerCase();
+        const search = normalizeText(document.getElementById('searchInput').value);
         const container = document.getElementById('playerListContainer');
         container.innerHTML = '';
         if (typeof PLAYERS === 'undefined') {
@@ -156,12 +180,21 @@
         let found = false;
         for (const username in PLAYERS) {
             const p = PLAYERS[username];
+            const categoryLabel = getCategoryLabel(p.category);
+            const searchable = [
+                normalizeText(p.fullName),
+                normalizeText(p.position),
+                normalizeText(categoryLabel)
+            ];
+
             if (
-                p.fullName.toLowerCase().includes(search) ||
-                p.category.toLowerCase().includes(search) ||
-                p.position.toLowerCase().includes(search)
+                search === '' || searchable.some(value => value.includes(search))
             ) {
                 found = true;
+                const stats = (p.stats && typeof p.stats === 'object') ? p.stats : {};
+                const matches = (typeof stats.matches === 'number') ? stats.matches : 0;
+                const goals = (typeof stats.goals === 'number') ? stats.goals : 0;
+
                 const card = document.createElement('div');
                 card.className = 'player-card';
                 card.onclick = () => {
@@ -171,8 +204,9 @@
                     <div class="player-avatar"><i class='fas fa-user'></i></div>
                     <div class="player-name">${p.fullName}</div>
                     <div class="player-info">${p.dateOfBirth} | #${p.shirtNumber}</div>
-                    <div class="player-category">${p.category}</div>
+                    <div class="player-category">${categoryLabel}</div>
                     <div class="player-position">${p.position}</div>
+                    <div class="player-stats-mini">Zápasy: ${matches} • Góly: ${goals}</div>
                 `;
                 container.appendChild(card);
             }

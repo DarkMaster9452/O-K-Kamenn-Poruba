@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="sk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dôležité informácie - OŠK Kamenná Poruba</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #003399 0%, #1a5ccc 100%);
+            color: white;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 40px;
+            background: rgba(0, 0, 0, 0.25);
+            border-bottom: 3px solid #ffd700;
+        }
+
+        .header h1 {
+            color: #ffd700;
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 0;
+        }
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffd700;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 32px auto;
+            padding: 0 20px 30px;
+        }
+
+        .user-badge {
+            margin-bottom: 20px;
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        .coach-panel {
+            display: none;
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 28px;
+        }
+
+        .coach-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .box {
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 8px;
+            padding: 14px;
+        }
+
+        .box h3 {
+            margin: 0 0 12px;
+            color: #ffd700;
+            font-size: 18px;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #ffd700;
+            font-weight: bold;
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #ffd700;
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 14px;
+            color: #003399;
+            background: #fff;
+        }
+
+        .btn {
+            background: #ffd700;
+            color: #003399;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .events-list {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 16px;
+        }
+
+        .events-list h2 {
+            margin: 0 0 12px;
+            color: #ffd700;
+            font-size: 22px;
+        }
+
+        .events-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .events-seen-status {
+            font-size: 12px;
+            color: #d6dcf5;
+            font-weight: 700;
+        }
+
+        .event-type {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            border-radius: 99px;
+            padding: 2px 8px;
+            margin-bottom: 8px;
+        }
+
+        .event-type.notice {
+            background: rgba(255, 215, 0, 0.22);
+            border-color: rgba(255, 215, 0, 0.7);
+            color: #ffd700;
+        }
+
+        .event-type.poll {
+            background: rgba(90, 170, 255, 0.22);
+            border-color: rgba(132, 198, 255, 0.75);
+            color: #a8d7ff;
+        }
+
+        .item {
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .item.notice {
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .item.notice-important {
+            border: 2px solid #ffd700;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.18) 0%, rgba(0, 0, 0, 0.2) 100%);
+            box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.2);
+        }
+
+        .item.poll {
+            border: 1px solid rgba(132, 198, 255, 0.45);
+            background: rgba(18, 46, 94, 0.35);
+        }
+
+        .item:last-child {
+            margin-bottom: 0;
+        }
+
+        .meta {
+            font-size: 12px;
+            color: #cdd8ff;
+            margin-bottom: 8px;
+        }
+
+        .title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #ffd700;
+        }
+
+        .badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: bold;
+            background: #ffd700;
+            color: #003399;
+            padding: 2px 8px;
+            border-radius: 99px;
+            margin-left: 8px;
+        }
+
+        .poll-options {
+            display: grid;
+            gap: 8px;
+            margin: 10px 0;
+        }
+
+        .poll-option-btn {
+            width: 100%;
+            text-align: left;
+            background: rgba(255, 255, 255, 0.12);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            border-radius: 6px;
+            padding: 8px 10px;
+            cursor: pointer;
+        }
+
+        .poll-option-btn.selected {
+            border-color: #ffd700;
+            background: rgba(255, 215, 0, 0.2);
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .empty {
+            color: #d6dcf5;
+            text-align: center;
+            padding: 16px 8px;
+        }
+
+        .delete-btn {
+            background: #e74c3c;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 7px 10px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        .seen-btn {
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.12);
+            color: #fff;
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: border 0.2s, color 0.2s;
+        }
+
+        .seen-btn:hover {
+            border-color: #ffd700;
+            color: #ffd700;
+        }
+
+        @media (max-width: 900px) {
+            .coach-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        (function () {
+            let user = null;
+            try {
+                user = JSON.parse(localStorage.getItem('currentUser'));
+            } catch (e) { }
+            if (!user || !user.isLoggedIn || !['coach', 'player', 'parent'].includes(user.role)) {
+                window.location.href = 'index.html';
+            }
+        })();
+    </script>
+
+    <div class="header">
+        <h1><i class="fas fa-bullhorn"></i> Dôležité informácie</h1>
+        <button class="btn-back" onclick="window.location.href='index.html'"><i class="fas fa-arrow-left"></i>
+            Späť</button>
+    </div>
+
+    <div class="container">
+        <div class="user-badge" id="userBadge"></div>
+
+        <div class="coach-panel" id="coachPanel">
+            <h2 style="margin-top:0;color:#ffd700;">Trénerská správa oznamov</h2>
+            <div class="coach-grid">
+                <div class="box">
+                    <h3><i class="fas fa-bullhorn"></i> Nové oznámenie</h3>
+                    <div class="form-group">
+                        <label for="noticeTitle">Nadpis</label>
+                        <input id="noticeTitle" type="text" placeholder="Napr. Zmena času tréningu">
+                    </div>
+                    <div class="form-group">
+                        <label for="noticeMessage">Správa</label>
+                        <textarea id="noticeMessage" rows="4" placeholder="Text oznámenia..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="noticeTarget">Pre koho</label>
+                        <select id="noticeTarget">
+                            <option value="all">Všetci</option>
+                            <option value="players">Hráči</option>
+                            <option value="parents">Rodičia</option>
+                            <option value="coaches">Tréneri</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label><input id="noticeImportant" type="checkbox" style="width:auto;vertical-align:middle;">
+                            Dôležité</label>
+                    </div>
+                    <button class="btn" onclick="createNotice()"><i class="fas fa-plus"></i> Pridať oznámenie</button>
+                </div>
+
+                <div class="box">
+                    <h3><i class="fas fa-square-poll-vertical"></i> Nová anketa</h3>
+                    <div class="form-group">
+                        <label for="pollQuestion">Otázka</label>
+                        <input id="pollQuestion" type="text" placeholder="Napr. Kedy vám vyhovuje tréning?">
+                    </div>
+                    <div class="form-group">
+                        <label for="pollOptions">Možnosti (1 riadok = 1 možnosť)</label>
+                        <textarea id="pollOptions" rows="4" placeholder="Pondelok 17:00&#10;Utorok 18:00"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="pollTarget">Pre koho</label>
+                        <select id="pollTarget">
+                            <option value="all">Všetci</option>
+                            <option value="players">Hráči</option>
+                            <option value="parents">Rodičia</option>
+                            <option value="coaches">Tréneri</option>
+                        </select>
+                    </div>
+                    <button class="btn" onclick="createPoll()"><i class="fas fa-plus"></i> Pridať anketu</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="events-list">
+            <h2><i class="fas fa-list"></i> Udalosti (správy + ankety)</h2>
+            <div class="events-actions">
+                <button id="markAllSeenBtn" class="seen-btn" onclick="markAllEventsSeen()">Videl som</button>
+                <span id="seenAllStatus" class="events-seen-status"></span>
+            </div>
+            <div id="eventsContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_NOTICES = 'club_announcements';
+        const STORAGE_POLLS = 'club_polls';
+        const STORAGE_VOTES = 'club_poll_votes';
+        const STORAGE_SEEN_PREFIX = 'importantInfoSeenEvents_';
+
+        let currentUser = null;
+        let notices = [];
+        let polls = [];
+        let votes = {};
+        let seenEvents = [];
+
+        function loadState() {
+            currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+            notices = JSON.parse(localStorage.getItem(STORAGE_NOTICES) || '[]');
+            polls = JSON.parse(localStorage.getItem(STORAGE_POLLS) || '[]');
+            votes = JSON.parse(localStorage.getItem(STORAGE_VOTES) || '{}');
+        }
+
+        function saveState() {
+            localStorage.setItem(STORAGE_NOTICES, JSON.stringify(notices));
+            localStorage.setItem(STORAGE_POLLS, JSON.stringify(polls));
+            localStorage.setItem(STORAGE_VOTES, JSON.stringify(votes));
+        }
+
+        function roleLabel(role) {
+            if (role === 'coach') return 'Tréner';
+            if (role === 'player') return 'Hráč';
+            if (role === 'parent') return 'Rodič';
+            return role;
+        }
+
+        function canSeeTarget(target) {
+            if (target === 'all') return true;
+            if (target === 'players') return currentUser.role === 'player';
+            if (target === 'parents') return currentUser.role === 'parent';
+            if (target === 'coaches') return currentUser.role === 'coach';
+            return false;
+        }
+
+        function targetLabel(target) {
+            if (target === 'all') return 'Všetci';
+            if (target === 'players') return 'Hráči';
+            if (target === 'parents') return 'Rodičia';
+            if (target === 'coaches') return 'Tréneri';
+            return target;
+        }
+
+        function formatDate(ts) {
+            return new Date(ts).toLocaleString('sk-SK');
+        }
+
+        function getSeenEventsKey() {
+            const username = currentUser && currentUser.username ? currentUser.username : 'guest';
+            return STORAGE_SEEN_PREFIX + username;
+        }
+
+        function loadSeenEvents() {
+            seenEvents = JSON.parse(localStorage.getItem(getSeenEventsKey()) || '[]');
+        }
+
+        function saveSeenEvents() {
+            localStorage.setItem(getSeenEventsKey(), JSON.stringify(seenEvents));
+        }
+
+        function getVisibleEvents() {
+            const noticeEvents = notices
+                .filter(n => canSeeTarget(n.target) || currentUser.role === 'coach')
+                .map(n => ({ type: 'notice', createdAt: n.createdAt, data: n }));
+
+            const pollEvents = polls
+                .filter(p => canSeeTarget(p.target) || currentUser.role === 'coach')
+                .map(p => ({ type: 'poll', createdAt: p.createdAt, data: p }));
+
+            return [...noticeEvents, ...pollEvents].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        }
+
+        function markAllEventsSeen() {
+            const events = getVisibleEvents();
+            const unseenIds = events
+                .map(event => event.data.id)
+                .filter(id => !seenEvents.includes(id));
+
+            if (unseenIds.length === 0) {
+                renderEvents();
+                return;
+            }
+
+            seenEvents = [...seenEvents, ...unseenIds];
+            saveSeenEvents();
+            renderEvents();
+        }
+
+        function updateSeenAllAction(unseenCount) {
+            const markAllBtn = document.getElementById('markAllSeenBtn');
+            const seenAllStatus = document.getElementById('seenAllStatus');
+            if (!markAllBtn || !seenAllStatus) {
+                return;
+            }
+
+            if (unseenCount > 0) {
+                markAllBtn.style.display = 'inline-flex';
+                seenAllStatus.textContent = `Nové: ${unseenCount}`;
+            } else {
+                markAllBtn.style.display = 'none';
+                seenAllStatus.textContent = 'Všetko videné';
+            }
+        }
+
+        function renderHeader() {
+            document.getElementById('userBadge').textContent = `Prihlásený: ${currentUser.username} (${roleLabel(currentUser.role)})`;
+            document.getElementById('coachPanel').style.display = currentUser.role === 'coach' ? 'block' : 'none';
+        }
+
+        function createNotice() {
+            const title = document.getElementById('noticeTitle').value.trim();
+            const message = document.getElementById('noticeMessage').value.trim();
+            const target = document.getElementById('noticeTarget').value;
+            const important = document.getElementById('noticeImportant').checked;
+
+            if (!title || !message) {
+                alert('Vyplňte nadpis aj správu.');
+                return;
+            }
+
+            notices.unshift({
+                id: Date.now(),
+                title,
+                message,
+                target,
+                important,
+                createdBy: currentUser.username,
+                createdAt: new Date().toISOString()
+            });
+
+            saveState();
+            document.getElementById('noticeTitle').value = '';
+            document.getElementById('noticeMessage').value = '';
+            document.getElementById('noticeImportant').checked = false;
+            renderEvents();
+        }
+
+        function createPoll() {
+            const question = document.getElementById('pollQuestion').value.trim();
+            const target = document.getElementById('pollTarget').value;
+            const options = document.getElementById('pollOptions').value
+                .split('\n')
+                .map(x => x.trim())
+                .filter(Boolean);
+
+            if (!question || options.length < 2) {
+                alert('Anketa musí mať otázku a aspoň 2 možnosti.');
+                return;
+            }
+
+            polls.unshift({
+                id: Date.now(),
+                question,
+                options,
+                target,
+                createdBy: currentUser.username,
+                createdAt: new Date().toISOString(),
+                active: true
+            });
+
+            saveState();
+            document.getElementById('pollQuestion').value = '';
+            document.getElementById('pollOptions').value = '';
+            renderEvents();
+        }
+
+        function deleteNotice(id) {
+            notices = notices.filter(n => n.id !== id);
+            saveState();
+            renderEvents();
+        }
+
+        function deletePoll(id) {
+            polls = polls.filter(p => p.id !== id);
+            delete votes[id];
+            saveState();
+            renderEvents();
+        }
+
+        function votePoll(pollId, optionIndex) {
+            if (currentUser.role === 'coach') return;
+            if (!votes[pollId]) votes[pollId] = {};
+            votes[pollId][currentUser.username] = optionIndex;
+            saveState();
+            renderEvents();
+        }
+
+        function getPollResults(poll) {
+            const map = votes[poll.id] || {};
+            const counts = new Array(poll.options.length).fill(0);
+            Object.values(map).forEach(index => {
+                if (counts[index] !== undefined) counts[index] += 1;
+            });
+            return counts;
+        }
+
+        function renderEvents() {
+            const container = document.getElementById('eventsContainer');
+            const events = getVisibleEvents();
+            const unseenCount = events.filter(event => !seenEvents.includes(event.data.id)).length;
+            updateSeenAllAction(unseenCount);
+
+            if (events.length === 0) {
+                container.innerHTML = '<div class="empty">Žiadne udalosti.</div>';
+                return;
+            }
+
+            container.innerHTML = events.map(event => {
+                if (event.type === 'notice') {
+                    const n = event.data;
+                    return `
+                        <div class="item notice ${n.important ? 'notice-important' : ''}">
+                            <div class="event-type notice">${n.important ? 'DÔLEŽITÁ SPRÁVA' : 'SPRÁVA'}</div>
+                            <div class="meta">${formatDate(n.createdAt)} • ${n.createdBy} • ${targetLabel(n.target)}</div>
+                            <div class="title">${n.title}</div>
+                            <div>${n.message}</div>
+                            ${currentUser.role === 'coach' ? `<button class="delete-btn" onclick="deleteNotice(${n.id})"><i class='fas fa-trash'></i> Zmazať</button>` : ''}
+                        </div>
+                    `;
+                }
+
+                const p = event.data;
+                const pollVotes = votes[p.id] || {};
+                const selected = pollVotes[currentUser.username];
+                const counts = getPollResults(p);
+                const totalVotes = counts.reduce((a, b) => a + b, 0);
+
+                const optionsHtml = p.options.map((opt, idx) => {
+                    const isSelected = selected === idx;
+                    const cnt = counts[idx] || 0;
+                    const percent = totalVotes > 0 ? Math.round((cnt / totalVotes) * 100) : 0;
+
+                    if (currentUser.role === 'coach') {
+                        return `<div class="result-row"><span>${opt}</span><span>${cnt} hlasov (${percent}%)</span></div>`;
+                    }
+
+                    return `
+                        <button class="poll-option-btn ${isSelected ? 'selected' : ''}" onclick="votePoll(${p.id}, ${idx})">
+                            ${opt}
+                        </button>
+                    `;
+                }).join('');
+
+                return `
+                    <div class="item poll">
+                        <div class="event-type poll">ANKETA</div>
+                        <div class="meta">${formatDate(p.createdAt)} • ${p.createdBy} • ${targetLabel(p.target)}</div>
+                        <div class="title">${p.question}</div>
+                            <div class="poll-options">${optionsHtml}</div>
+                            ${currentUser.role !== 'coach' ? `<div class="meta">Hlasov spolu: ${totalVotes}</div>` : ''}
+                            ${currentUser.role === 'coach' ? `<button class="delete-btn" onclick="deletePoll(${p.id})"><i class='fas fa-trash'></i> Zmazať</button>` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function init() {
+            loadState();
+            if (!currentUser || !currentUser.isLoggedIn) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            loadSeenEvents();
+
+            renderHeader();
+            renderEvents();
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+
+</html>
