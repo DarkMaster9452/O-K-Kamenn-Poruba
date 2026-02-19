@@ -6,6 +6,95 @@
     <title>OŠK Kamenná Poruba - Oficiálna webová stránka</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+                /* Ensure modal arrows are always the same size */
+                #galleryModalPrev, #galleryModalNext {
+                    width: 56px !important;
+                    height: 56px !important;
+                    min-width: 56px;
+                    min-height: 56px;
+                    max-width: 56px;
+                    max-height: 56px;
+                }
+                #galleryModalPrev svg, #galleryModalNext svg {
+                    width: 32px;
+                    height: 32px;
+                    display: block;
+                    margin: auto;
+                }
+        /* Gallery Modal Navigation Arrows - Modern SVG style */
+        #galleryModalPrev, #galleryModalNext {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.92);
+            color: #003399;
+            border-radius: 50%;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+            cursor: pointer;
+            z-index: 2100;
+            user-select: none;
+            border: 2px solid #ffd700;
+            transition: background 0.2s, color 0.2s, border 0.2s, box-shadow 0.2s;
+        }
+        #galleryModalPrev:hover, #galleryModalNext:hover {
+            background: #ffd700;
+            color: #003399;
+            border: 2px solid #003399;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.25);
+        }
+        #galleryModalPrev {
+            left: 40px;
+            right: auto;
+        }
+        #galleryModalNext {
+            right: 40px;
+            left: auto;
+        }
+                /* Gallery Modal Zoom */
+                #galleryModal {
+                    display: none;
+                    position: fixed;
+                    z-index: 2000;
+                    left: 0;
+                    top: 0;
+                    width: 100vw;
+                    height: 100vh;
+                    background: rgba(0,0,0,0.85);
+                    justify-content: center;
+                    align-items: center;
+                    transition: opacity 0.3s;
+                }
+                #galleryModal[style*="display: flex"] {
+                    display: flex !important;
+                }
+                #galleryModalImg {
+                    max-width: 90vw;
+                    max-height: 85vh;
+                    border-radius: 12px;
+                    box-shadow: 0 8px 32px rgba(0,0,0,0.7);
+                    transition: transform 0.3s;
+                    background: #fff;
+                }
+                #galleryModalClose {
+                    position: absolute;
+                    top: 30px;
+                    right: 40px;
+                    color: white;
+                    font-size: 48px;
+                    font-weight: bold;
+                    cursor: pointer;
+                    z-index: 2100;
+                    text-shadow: 0 2px 8px rgba(0,0,0,0.7);
+                    transition: color 0.2s;
+                }
+                #galleryModalClose:hover {
+                    color: #ffd700;
+                }
         * {
             margin: 0;
             padding: 0;
@@ -575,9 +664,18 @@
 
         .gallery-image {
             width: 100%;
-            height: 160px;
+            max-width: 320px;
+            min-width: 220px;
+            height: 220px;
             object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
             display: block;
+            margin-left: auto;
+            margin-right: auto;
+            background: #eaeaea;
         }
 
         .gallery-caption {
@@ -1117,7 +1215,7 @@
             <h2><i class="fas fa-images"></i> Galéria</h2>
             <div class="gallery-grid">
                 <div class="gallery-item">
-                    <img class="gallery-image" src="images/10750142878023431842.jpg" alt="Galéria 1">
+                    <img class="gallery-image" src="images/10750142878023431842.jpg" alt="Galéria 1" style="min-width:220px; min-height:220px; background:#eaeaea;">
                 </div>
                 <div class="gallery-item">
                     <img class="gallery-image" src="images/2.jpg" alt="Galéria 2">
@@ -1146,6 +1244,23 @@
                 <div class="gallery-item">
                     <img class="gallery-image" src="images/rozhovor-kamenna-poruba-okusi-prvykrat-v-historii-klubu-krajsku-sutaz-117322.1920x1080t.jpg" alt="Galéria 10">
                 </div>
+            </div>
+            <!-- Modal for zoomed image -->
+            <div id="galleryModal" style="display:none; position:fixed; z-index:2000; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); justify-content:center; align-items:center;">
+                <span id="galleryModalClose" style="position:absolute; top:30px; right:40px; color:white; font-size:48px; font-weight:bold; cursor:pointer; z-index:2100;">&times;</span>
+                <span id="galleryModalPrev">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="16" cy="16" r="16" fill="none"/>
+                        <polyline points="20,8 12,16 20,24" stroke="#003399" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    </svg>
+                </span>
+                <span id="galleryModalNext">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="16" cy="16" r="16" fill="none"/>
+                        <polyline points="12,8 20,16 12,24" stroke="#003399" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    </svg>
+                </span>
+                <img id="galleryModalImg" src="" alt="Zoom" style="max-width:90vw; max-height:85vh; border-radius:12px; box-shadow:0 8px 32px rgba(0,0,0,0.7);">
             </div>
         </section>
 
@@ -1630,6 +1745,67 @@
             // Initialize players stats
             initializePlayers();
             showCoachPlayerCardButton();
+
+            // Gallery zoom modal logic
+            const galleryImages = Array.from(document.querySelectorAll('.gallery-image'));
+            const modal = document.getElementById('galleryModal');
+            const modalImg = document.getElementById('galleryModalImg');
+            const modalClose = document.getElementById('galleryModalClose');
+            const modalPrev = document.getElementById('galleryModalPrev');
+            const modalNext = document.getElementById('galleryModalNext');
+            let currentImgIndex = 0;
+
+            function showModalAtIndex(idx) {
+                if (idx < 0) idx = galleryImages.length - 1;
+                if (idx >= galleryImages.length) idx = 0;
+                currentImgIndex = idx;
+                const img = galleryImages[currentImgIndex];
+                modalImg.src = img.src;
+                modalImg.alt = img.alt;
+                modal.style.display = 'flex';
+            }
+
+            galleryImages.forEach((img, i) => {
+                img.addEventListener('click', function() {
+                    showModalAtIndex(i);
+                });
+            });
+
+            modalClose.addEventListener('click', function() {
+                modal.style.display = 'none';
+                modalImg.src = '';
+            });
+
+            modalPrev.addEventListener('click', function(e) {
+                e.stopPropagation();
+                showModalAtIndex(currentImgIndex - 1);
+            });
+            modalNext.addEventListener('click', function(e) {
+                e.stopPropagation();
+                showModalAtIndex(currentImgIndex + 1);
+            });
+
+            // Keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (modal.style.display === 'flex') {
+                    if (e.key === 'ArrowLeft') {
+                        showModalAtIndex(currentImgIndex - 1);
+                    } else if (e.key === 'ArrowRight') {
+                        showModalAtIndex(currentImgIndex + 1);
+                    } else if (e.key === 'Escape') {
+                        modal.style.display = 'none';
+                        modalImg.src = '';
+                    }
+                }
+            });
+
+            // Close modal on click outside image
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                    modalImg.src = '';
+                }
+            });
         });
     </script>
 </body>
