@@ -2093,14 +2093,7 @@
         // Handle Login
         async function handleLogin(event) {
             event.preventDefault();
-            const username = document.getElementById('username').value;
-            const userRole = document.getElementById('userRole').value;
-
-            // Validate role selection
-            if (!userRole) {
-                alert('Prosím vyberte si rolu!');
-                return;
-            }
+            const username = document.getElementById('username').value.trim();
 
             const password = document.getElementById('password').value;
             const errorDiv = document.getElementById('loginError');
@@ -2118,36 +2111,24 @@
                 });
 
                 if (!loginResponse.ok) {
+                    const loginErrorPayload = await loginResponse.json().catch(() => ({}));
                     if (loginResponse.status === 401) {
-                        throw new Error('AUTH_INVALID');
+                        throw new Error(loginErrorPayload.message || 'Nesprávne prihlasovacie údaje.');
                     }
 
                     if (loginResponse.status === 403) {
-                        throw new Error('CSRF_FAILED');
+                        throw new Error('Bezpečnostná kontrola zlyhala. Obnov stránku a skús to znova.');
                     }
 
-                    throw new Error('LOGIN_REQUEST_FAILED');
+                    throw new Error(loginErrorPayload.message || 'Prihlásenie zlyhalo. Skúste to znova.');
                 }
 
                 const loginPayload = await loginResponse.json();
                 const actualRole = loginPayload.user.role;
 
-                if (userRole !== actualRole) {
-                    errorDiv.textContent = 'Prihlásenie zlyhalo. Skontrolujte údaje a skúste znova.';
-                    errorDiv.style.display = 'block';
-                    errorDiv.style.animation = 'shake 0.3s';
-                    setTimeout(() => { errorDiv.style.animation = ''; }, 400);
-
-                    const roleCsrf = await ensureCsrfToken();
-                    await fetch(`${API_BASE}/auth/logout`, {
-                        method: 'POST',
-                        credentials: 'include',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'x-csrf-token': roleCsrf
-                        }
-                    });
-                    return;
+                const roleSelect = document.getElementById('userRole');
+                if (roleSelect) {
+                    roleSelect.value = actualRole;
                 }
 
                 errorDiv.style.display = 'none';
@@ -2177,7 +2158,7 @@
                 updateLoginButtonText();
                 showCoachPlayerCardButton();
             } catch (error) {
-                errorDiv.textContent = 'Prihlásenie zlyhalo. Skontrolujte údaje a skúste znova.';
+                errorDiv.textContent = error.message || 'Prihlásenie zlyhalo. Skontrolujte údaje a skúste znova.';
                 errorDiv.style.display = 'block';
                 errorDiv.style.animation = 'shake 0.3s';
                 setTimeout(() => { errorDiv.style.animation = ''; }, 400);
