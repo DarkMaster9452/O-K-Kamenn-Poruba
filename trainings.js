@@ -169,7 +169,7 @@ async function loadTrainingData() {
         });
     }
 
-    if (currentUser && currentUser.role === 'coach') {
+    if (currentUser && (currentUser.role === 'coach' || currentUser.role === 'admin')) {
         refreshCoachRoster();
     } else if (currentUser && (currentUser.role === 'player' || currentUser.role === 'parent')) {
         refreshPlayerTrainings();

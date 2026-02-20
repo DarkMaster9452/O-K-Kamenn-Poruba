@@ -161,7 +161,7 @@
 
                 const payload = await response.json();
                 const user = payload.user;
-                if (!user || user.role !== 'coach') {
+                if (!user || (user.role !== 'coach' && user.role !== 'admin')) {
                     window.location.href = 'index.html';
                     return;
                 }
@@ -176,7 +176,6 @@
             }
         }
 
-        guardCoachAccess();
     </script>
     <div class="header">
         <h1><i class="fas fa-users"></i> Zoznam hráčov</h1>
@@ -193,6 +192,53 @@
     <script>
         const PLAYERS = {};
 
+        function sleep(ms) {
+            return new Promise((resolve) => setTimeout(resolve, ms));
+        }
+
+        async function fetchPlayersWithRetry() {
+            let lastError = null;
+
+            for (let attempt = 1; attempt <= 2; attempt += 1) {
+                try {
+                    const response = await fetch(`${API_BASE}/players`, {
+                        method: 'GET',
+                        credentials: 'include'
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Nepodarilo sa načítať hráčov.');
+                    }
+
+                    return response.json();
+                } catch (error) {
+                    lastError = error;
+                    if (attempt < 2) {
+                        await sleep(1200);
+                    }
+                }
+            }
+
+            throw lastError || new Error('Nepodarilo sa načítať hráčov.');
+        }
+
+        async function loadPlayers() {
+            const payload = await fetchPlayersWithRetry();
+            const items = Array.isArray(payload && payload.items) ? payload.items : [];
+
+            Object.keys(PLAYERS).forEach((key) => delete PLAYERS[key]);
+            items.forEach((item) => {
+                PLAYERS[item.username] = {
+                    fullName: item.fullName || item.username,
+                    dateOfBirth: item.dateOfBirth || '--',
+                    shirtNumber: item.shirtNumber || '--',
+                    category: item.category,
+                    position: item.position || '--',
+                    stats: item.stats || { matches: 0, goals: 0 }
+                };
+            });
+        }
+
         function normalizeText(text) {
             return (text || '')
                 .toString()
@@ -205,6 +251,8 @@
         function getCategoryLabel(category) {
             if (category === 'pripravka_u9') return 'Prípravka U9';
             if (category === 'pripravka_u11') return 'Prípravka U11';
+            if (category === 'ziaci') return 'Žiaci';
+            if (category === 'dorastenci') return 'Dorastenci';
             if (category === 'adults_young') return 'Dospelí - Mladí';
             if (category === 'adults_pro') return 'Dospelí - Skúsení';
             return category;
@@ -256,7 +304,19 @@
                 container.innerHTML = '<div style="color:#ffd700;text-align:center;font-size:22px;padding:40px 0;">Žiadni hráči neboli nájdení.</div>';
             }
         }
-        document.addEventListener('DOMContentLoaded', renderPlayerList);
+        document.addEventListener('DOMContentLoaded', async () => {
+            await guardCoachAccess();
+            const container = document.getElementById('playerListContainer');
+            container.innerHTML = '<div style="color:#ffd700;text-align:center;font-size:20px;padding:40px 0;">Načítavam hráčov...</div>';
+            try {
+                await loadPlayers();
+            } catch (error) {
+                console.error(error);
+                container.innerHTML = '<div style="color:#ffd700;text-align:center;font-size:20px;padding:40px 0;">Server sa pravdepodobne prebúdza. Skús obnoviť stránku o pár sekúnd.</div>';
+                return;
+            }
+            renderPlayerList();
+        });
     </script>
 </body>
 

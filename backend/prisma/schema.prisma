@@ -8,6 +8,7 @@ datasource db {
 }
 
 enum Role {
+  admin
   coach
   player
   parent
@@ -42,6 +43,7 @@ enum TargetGroup {
   players
   parents
   coaches
+  admins
 }
 
 enum AttendanceStatus {

@@ -310,7 +310,7 @@
 
                 const payload = await response.json();
                 const user = payload.user;
-                if (!user || !['coach', 'player', 'parent'].includes(user.role)) {
+                if (!user || !['admin', 'coach', 'player', 'parent'].includes(user.role)) {
                     window.location.href = 'index.html';
                     return;
                 }
@@ -358,6 +358,7 @@
                             <option value="players">Hráči</option>
                             <option value="parents">Rodičia</option>
                             <option value="coaches">Tréneri</option>
+                            <option value="admins">Admini</option>
                         </select>
                     </div>
                     <div class="form-group" id="noticeCategoryGroup" style="display:none;">
@@ -396,6 +397,7 @@
                             <option value="players">Hráči</option>
                             <option value="parents">Rodičia</option>
                             <option value="coaches">Tréneri</option>
+                            <option value="admins">Admini</option>
                         </select>
                     </div>
                     <div class="form-group" id="pollCategoryGroup" style="display:none;">
@@ -476,7 +478,7 @@
         }
 
         async function loadState() {
-            currentUser = window.__sessionUser || JSON.parse(localStorage.getItem('currentUser') || 'null');
+            currentUser = window.__sessionUser || null;
 
             try {
                 const [noticesPayload, pollsPayload] = await Promise.all([
@@ -494,6 +496,7 @@
         }
 
         function roleLabel(role) {
+            if (role === 'admin') return 'Admin';
             if (role === 'coach') return 'Tréner';
             if (role === 'player') return 'Hráč';
             if (role === 'parent') return 'Rodič';
@@ -504,7 +507,8 @@
             if (target === 'all') return true;
             if (target === 'players') return currentUser.role === 'player';
             if (target === 'parents') return currentUser.role === 'parent';
-            if (target === 'coaches') return currentUser.role === 'coach';
+            if (target === 'coaches') return currentUser.role === 'coach' || currentUser.role === 'admin';
+            if (target === 'admins') return currentUser.role === 'admin';
             return false;
         }
 
@@ -537,6 +541,7 @@
             if (target === 'players') return 'Hráči';
             if (target === 'parents') return 'Rodičia';
             if (target === 'coaches') return 'Tréneri';
+            if (target === 'admins') return 'Admini';
             return target;
         }
 
@@ -560,7 +565,8 @@
         function getVisibleEvents() {
             const noticeEvents = notices
                 .filter(n => {
-                    if (currentUser.role === 'coach') return true;
+                    if (n.target === 'admins') return currentUser.role === 'admin';
+                    if (currentUser.role === 'coach' || currentUser.role === 'admin') return true;
                     if (!canSeeTarget(n.target)) return false;
                     if (n.target !== 'players') return true;
                     return !n.playerCategory || n.playerCategory === currentUser.playerCategory;
@@ -569,7 +575,8 @@
 
             const pollEvents = polls
                 .filter(p => {
-                    if (currentUser.role === 'coach') return true;
+                    if (p.target === 'admins') return currentUser.role === 'admin';
+                    if (currentUser.role === 'coach' || currentUser.role === 'admin') return true;
                     if (!canSeeTarget(p.target)) return false;
                     if (p.target !== 'players') return true;
                     return !p.playerCategory || p.playerCategory === currentUser.playerCategory;
@@ -613,7 +620,7 @@
 
         function renderHeader() {
             document.getElementById('userBadge').textContent = `Prihlásený: ${currentUser.username} (${roleLabel(currentUser.role)})`;
-            document.getElementById('coachPanel').style.display = currentUser.role === 'coach' ? 'block' : 'none';
+            document.getElementById('coachPanel').style.display = (currentUser.role === 'coach' || currentUser.role === 'admin') ? 'block' : 'none';
         }
 
         async function createNotice() {
@@ -724,7 +731,7 @@
         }
 
         async function votePoll(pollId, optionIndex) {
-            if (currentUser.role === 'coach') return;
+            if (currentUser.role === 'coach' || currentUser.role === 'admin') return;
 
             try {
                 const csrfToken = await ensureCsrfToken();
@@ -791,7 +798,7 @@
                             <div class="meta">${formatDate(n.createdAt)} • ${n.createdBy} • ${targetLabel(n.target)}${n.playerCategory ? ' • ' + categoryLabel(n.playerCategory) : ''}</div>
                             <div class="title">${n.title}</div>
                             <div>${n.message}</div>
-                            ${currentUser.role === 'coach' ? `<button class="delete-btn" onclick="deleteNotice('${n.id}')"><i class='fas fa-trash'></i> Zmazať</button>` : ''}
+                            ${(currentUser.role === 'coach' || currentUser.role === 'admin') ? `<button class="delete-btn" onclick="deleteNotice('${n.id}')"><i class='fas fa-trash'></i> Zmazať</button>` : ''}
                         </div>
                     `;
                 }
@@ -806,7 +813,7 @@
                     const cnt = counts[idx] || 0;
                     const percent = totalVotes > 0 ? Math.round((cnt / totalVotes) * 100) : 0;
 
-                    if (currentUser.role === 'coach' || !p.active) {
+                    if (currentUser.role === 'coach' || currentUser.role === 'admin' || !p.active) {
                         return `<div class="result-row"><span>${opt}</span><span>${cnt} hlasov (${percent}%)</span></div>`;
                     }
 
@@ -823,8 +830,8 @@
                         <div class="meta">${formatDate(p.createdAt)} • ${p.createdBy} • ${targetLabel(p.target)}${p.playerCategory ? ' • ' + categoryLabel(p.playerCategory) : ''}</div>
                         <div class="title">${p.question}</div>
                             <div class="poll-options">${optionsHtml}</div>
-                            ${currentUser.role !== 'coach' ? `<div class="meta">Hlasov spolu: ${totalVotes}</div>` : ''}
-                            ${currentUser.role === 'coach' ? `
+                            ${(currentUser.role !== 'coach' && currentUser.role !== 'admin') ? `<div class="meta">Hlasov spolu: ${totalVotes}</div>` : ''}
+                            ${(currentUser.role === 'coach' || currentUser.role === 'admin') ? `
                                 ${p.active ? `<button class="btn" style="margin-right:8px;" onclick="closePoll('${p.id}')"><i class='fas fa-stop'></i> Ukončiť anketu</button>` : ''}
                                 <button class="delete-btn" onclick="deletePoll('${p.id}')"><i class='fas fa-trash'></i> Zmazať</button>
                             ` : ''}

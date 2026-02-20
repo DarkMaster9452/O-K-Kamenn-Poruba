@@ -52,7 +52,7 @@ router.get('/', requireAuth, async (req, res) => {
   return res.json({ items });
 });
 
-router.post('/', requireAuth, requireRole('coach'), validateBody(createTrainingSchema), async (req, res) => {
+router.post('/', requireAuth, requireRole('coach', 'admin'), validateBody(createTrainingSchema), async (req, res) => {
   const row = await createTraining(req.body, req.user.id);
   const item = {
     id: row.id,
@@ -122,7 +122,7 @@ router.post('/:id/attendance', requireAuth, validateBody(attendanceSchema), asyn
   });
 });
 
-router.patch('/:id/close', requireAuth, requireRole('coach'), async (req, res) => {
+router.patch('/:id/close', requireAuth, requireRole('coach', 'admin'), async (req, res) => {
   const training = await findTrainingById(req.params.id);
   if (!training) {
     return res.status(404).json({ message: 'Tréning neexistuje.' });
@@ -153,7 +153,7 @@ router.patch('/:id/close', requireAuth, requireRole('coach'), async (req, res) =
   });
 });
 
-router.delete('/:id', requireAuth, requireRole('coach'), async (req, res) => {
+router.delete('/:id', requireAuth, requireRole('coach', 'admin'), async (req, res) => {
   const training = await findTrainingById(req.params.id);
   if (!training) {
     return res.status(404).json({ message: 'Tréning neexistuje.' });

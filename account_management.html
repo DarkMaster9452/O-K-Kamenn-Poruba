@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="sk">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Správa účtov | OŠK Kamenná Poruba</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #003399 0%, #1a4db8 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .title {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 6px;
+            padding: 10px 14px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: #ffd700;
+            color: #003399;
+        }
+
+        .btn-secondary {
+            background: #fff;
+            color: #003399;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: #fff;
+        }
+
+        .btn-success {
+            background: #198754;
+            color: #fff;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.96);
+            color: #222;
+            border-radius: 10px;
+            padding: 18px;
+            margin-bottom: 18px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            align-items: end;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        input,
+        select {
+            width: 100%;
+            border: 1px solid #cfd6e4;
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 10px;
+            border-bottom: 1px solid #e6e9f0;
+            vertical-align: middle;
+        }
+
+        th {
+            color: #003399;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .status-badge {
+            display: inline-block;
+            border-radius: 999px;
+            padding: 4px 10px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .status-active {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-inactive {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .error {
+            color: #b00020;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        .success {
+            color: #0f5132;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-box {
+            width: min(460px, calc(100vw - 24px));
+            background: #fff;
+            color: #222;
+            border-radius: 10px;
+            padding: 16px;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="topbar">
+            <h1 class="title"><i class="fas fa-users-cog"></i> Správa účtov</h1>
+            <button class="btn btn-secondary" onclick="goBack()"><i class="fas fa-arrow-left"></i> Späť</button>
+        </div>
+
+        <div class="card">
+            <h3>Vytvoriť nový účet</h3>
+            <form id="createUserForm" class="grid">
+                <div>
+                    <label for="newUsername">Používateľské meno</label>
+                    <input id="newUsername" required minlength="3" />
+                </div>
+                <div>
+                    <label for="newPassword">Počiatočné heslo</label>
+                    <input id="newPassword" type="password" required minlength="8" />
+                </div>
+                <div>
+                    <label for="newRole">Rola</label>
+                    <select id="newRole" required>
+                        <option value="admin">Admin</option>
+                        <option value="coach">Tréner</option>
+                        <option value="player">Hráč</option>
+                        <option value="parent">Rodič</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="newCategory">Kategória hráča</label>
+                    <select id="newCategory">
+                        <option value="">—</option>
+                        <option value="pripravka_u9">Prípravka U9</option>
+                        <option value="pripravka_u11">Prípravka U11</option>
+                        <option value="ziaci">Žiaci</option>
+                        <option value="dorastenci">Dorastenci</option>
+                        <option value="adults_young">Dospelí - Mladí</option>
+                        <option value="adults_pro">Dospelí - Skúsení</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="newIsActive">Stav</label>
+                    <select id="newIsActive">
+                        <option value="true">Aktívny</option>
+                        <option value="false">Neaktívny</option>
+                    </select>
+                </div>
+                <div>
+                    <button class="btn btn-primary" type="submit"><i class="fas fa-user-plus"></i> Vytvoriť</button>
+                </div>
+            </form>
+            <div id="createMessage"></div>
+        </div>
+
+        <div class="card">
+            <h3>Zoznam účtov</h3>
+            <div id="listMessage"></div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Používateľ</th>
+                        <th>Rola</th>
+                        <th>Kategória</th>
+                        <th>Stav</th>
+                        <th>Akcie</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                    <tr>
+                        <td colspan="5">Načítavam...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal" id="passwordModal">
+        <div class="modal-box">
+            <h3>Reset hesla</h3>
+            <p id="resetUserLabel"></p>
+            <label for="resetPasswordInput">Nové heslo</label>
+            <input id="resetPasswordInput" type="password" minlength="8" />
+            <div id="resetMessage"></div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" type="button" onclick="closePasswordModal()">Zrušiť</button>
+                <button class="btn btn-primary" type="button" onclick="submitPasswordReset()">Uložiť</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="editProfileModal">
+        <div class="modal-box">
+            <h3>Upraviť rolu a kategóriu</h3>
+            <p id="editUserLabel"></p>
+            <label for="editRoleSelect">Rola</label>
+            <select id="editRoleSelect">
+                <option value="admin">Admin</option>
+                <option value="coach">Tréner</option>
+                <option value="player">Hráč</option>
+                <option value="parent">Rodič</option>
+            </select>
+            <label for="editCategorySelect" style="margin-top:10px;">Kategória hráča</label>
+            <select id="editCategorySelect">
+                <option value="">—</option>
+                <option value="pripravka_u9">Prípravka U9</option>
+                <option value="pripravka_u11">Prípravka U11</option>
+                <option value="ziaci">Žiaci</option>
+                <option value="dorastenci">Dorastenci</option>
+                <option value="adults_young">Dospelí - Mladí</option>
+                <option value="adults_pro">Dospelí - Skúsení</option>
+            </select>
+            <div id="editProfileMessage"></div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" type="button" onclick="closeEditProfileModal()">Zrušiť</button>
+                <button class="btn btn-primary" type="button" onclick="submitUserProfileUpdate()">Uložiť</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = `${window.location.protocol}//${window.location.hostname}:4000/api`;
+        let csrfToken = null;
+        let users = [];
+        let resetUserId = null;
+        let resetUsername = null;
+        let editUserId = null;
+        let editUsername = null;
+
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+
+        function message(el, text, type) {
+            const node = document.getElementById(el);
+            if (!node) return;
+            node.className = type === 'error' ? 'error' : 'success';
+            node.textContent = text || '';
+        }
+
+        function categoryLabel(value) {
+            const map = {
+                pripravka_u9: 'Prípravka U9',
+                pripravka_u11: 'Prípravka U11',
+                ziaci: 'Žiaci',
+                dorastenci: 'Dorastenci',
+                adults_young: 'Dospelí - Mladí',
+                adults_pro: 'Dospelí - Skúsení'
+            };
+            return map[value] || '—';
+        }
+
+        async function ensureCsrfToken() {
+            if (csrfToken) return csrfToken;
+            const res = await fetch(`${API_BASE}/csrf-token`, { credentials: 'include' });
+            if (!res.ok) throw new Error('Nepodarilo sa získať CSRF token.');
+            const data = await res.json();
+            csrfToken = data.csrfToken;
+            return csrfToken;
+        }
+
+        async function ensureAdminAccess() {
+            const res = await fetch(`${API_BASE}/auth/me`, { credentials: 'include' });
+            if (!res.ok) {
+                window.location.href = 'index.html';
+                return false;
+            }
+            const data = await res.json();
+            if (!data.user || data.user.role !== 'admin') {
+                window.location.href = 'index.html';
+                return false;
+            }
+            return true;
+        }
+
+        async function fetchUsers() {
+            try {
+                const res = await fetch(`${API_BASE}/users`, { credentials: 'include' });
+                if (!res.ok) {
+                    throw new Error('Načítanie účtov zlyhalo.');
+                }
+                const data = await res.json();
+                users = data.items || [];
+                renderUsers();
+            } catch (err) {
+                message('listMessage', err.message || 'Načítanie účtov zlyhalo.', 'error');
+                document.getElementById('usersTableBody').innerHTML = '<tr><td colspan="5">Nepodarilo sa načítať účty.</td></tr>';
+            }
+        }
+
+        function renderUsers() {
+            const tbody = document.getElementById('usersTableBody');
+            if (!users.length) {
+                tbody.innerHTML = '<tr><td colspan="5">Zatiaľ nie sú žiadne účty.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = users.map((user) => {
+                const statusClass = user.isActive ? 'status-active' : 'status-inactive';
+                const statusText = user.isActive ? 'Aktívny' : 'Neaktívny';
+                const toggleLabel = user.isActive ? 'Deaktivovať' : 'Aktivovať';
+                const toggleClass = user.isActive ? 'btn-danger' : 'btn-success';
+                return `
+                    <tr>
+                        <td>${user.username}</td>
+                        <td>${user.role}</td>
+                        <td>${categoryLabel(user.playerCategory)}</td>
+                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                        <td class="actions">
+                            <button class="btn btn-secondary" onclick="openEditProfileModal('${user.id}','${user.username}','${user.role}','${user.playerCategory || ''}')">Upraviť rolu</button>
+                            <button class="btn btn-secondary" onclick="openPasswordModal('${user.id}','${user.username}')">Reset hesla</button>
+                            <button class="btn ${toggleClass}" onclick="toggleUserStatus('${user.id}', ${user.isActive})">${toggleLabel}</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        async function createUser(event) {
+            event.preventDefault();
+            message('createMessage', '', 'success');
+
+            const username = document.getElementById('newUsername').value.trim();
+            const password = document.getElementById('newPassword').value;
+            const role = document.getElementById('newRole').value;
+            const categoryValue = document.getElementById('newCategory').value || null;
+            const isActive = document.getElementById('newIsActive').value === 'true';
+
+            if (role === 'player' && !categoryValue) {
+                message('createMessage', 'Pre hráča treba zvoliť kategóriu.', 'error');
+                return;
+            }
+
+            try {
+                const token = await ensureCsrfToken();
+                const res = await fetch(`${API_BASE}/users`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-csrf-token': token
+                    },
+                    body: JSON.stringify({
+                        username,
+                        password,
+                        role,
+                        playerCategory: role === 'player' ? categoryValue : null,
+                        isActive
+                    })
+                });
+
+                const payload = await res.json().catch(() => ({}));
+                if (!res.ok) throw new Error(payload.message || 'Vytvorenie účtu zlyhalo.');
+
+                message('createMessage', `Účet ${payload.item.username} bol vytvorený.`, 'success');
+                document.getElementById('createUserForm').reset();
+                document.getElementById('newRole').value = 'admin';
+                await fetchUsers();
+            } catch (err) {
+                message('createMessage', err.message || 'Vytvorenie účtu zlyhalo.', 'error');
+            }
+        }
+
+        function openPasswordModal(userId, username) {
+            resetUserId = userId;
+            resetUsername = username;
+            document.getElementById('resetUserLabel').textContent = `Používateľ: ${username}`;
+            document.getElementById('resetPasswordInput').value = '';
+            message('resetMessage', '', 'success');
+            document.getElementById('passwordModal').classList.add('active');
+        }
+
+        function closePasswordModal() {
+            resetUserId = null;
+            resetUsername = null;
+            document.getElementById('passwordModal').classList.remove('active');
+        }
+
+        function openEditProfileModal(userId, username, role, playerCategory) {
+            editUserId = userId;
+            editUsername = username;
+
+            document.getElementById('editUserLabel').textContent = `Používateľ: ${username}`;
+            document.getElementById('editRoleSelect').value = role;
+            document.getElementById('editCategorySelect').value = playerCategory || '';
+            message('editProfileMessage', '', 'success');
+
+            handleEditRoleToggle();
+            document.getElementById('editProfileModal').classList.add('active');
+        }
+
+        function closeEditProfileModal() {
+            editUserId = null;
+            editUsername = null;
+            document.getElementById('editProfileModal').classList.remove('active');
+        }
+
+        function handleEditRoleToggle() {
+            const role = document.getElementById('editRoleSelect').value;
+            const category = document.getElementById('editCategorySelect');
+            if (role === 'player') {
+                category.disabled = false;
+            } else {
+                category.value = '';
+                category.disabled = true;
+            }
+        }
+
+        async function submitUserProfileUpdate() {
+            const role = document.getElementById('editRoleSelect').value;
+            const playerCategory = document.getElementById('editCategorySelect').value || null;
+
+            if (role === 'player' && !playerCategory) {
+                message('editProfileMessage', 'Pre hráča treba zvoliť kategóriu.', 'error');
+                return;
+            }
+
+            try {
+                const token = await ensureCsrfToken();
+                const res = await fetch(`${API_BASE}/users/${editUserId}/profile`, {
+                    method: 'PATCH',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-csrf-token': token
+                    },
+                    body: JSON.stringify({
+                        role,
+                        playerCategory: role === 'player' ? playerCategory : null
+                    })
+                });
+
+                const payload = await res.json().catch(() => ({}));
+                if (!res.ok) throw new Error(payload.message || 'Úprava roly/kategórie zlyhala.');
+
+                message('editProfileMessage', `Profil používateľa ${editUsername} bol upravený.`, 'success');
+                await fetchUsers();
+                setTimeout(() => closeEditProfileModal(), 700);
+            } catch (err) {
+                message('editProfileMessage', err.message || 'Úprava roly/kategórie zlyhala.', 'error');
+            }
+        }
+
+        async function submitPasswordReset() {
+            const newPassword = document.getElementById('resetPasswordInput').value;
+            if (!newPassword || newPassword.length < 8) {
+                message('resetMessage', 'Heslo musí mať aspoň 8 znakov.', 'error');
+                return;
+            }
+
+            try {
+                const token = await ensureCsrfToken();
+                const res = await fetch(`${API_BASE}/users/${resetUserId}/reset-password`, {
+                    method: 'PATCH',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-csrf-token': token
+                    },
+                    body: JSON.stringify({ newPassword })
+                });
+
+                const payload = await res.json().catch(() => ({}));
+                if (!res.ok) throw new Error(payload.message || 'Reset hesla zlyhal.');
+
+                message('resetMessage', `Heslo pre ${resetUsername} bolo resetované.`, 'success');
+                setTimeout(() => closePasswordModal(), 700);
+            } catch (err) {
+                message('resetMessage', err.message || 'Reset hesla zlyhal.', 'error');
+            }
+        }
+
+        async function toggleUserStatus(userId, currentlyActive) {
+            try {
+                const token = await ensureCsrfToken();
+                const res = await fetch(`${API_BASE}/users/${userId}/status`, {
+                    method: 'PATCH',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-csrf-token': token
+                    },
+                    body: JSON.stringify({ isActive: !currentlyActive })
+                });
+
+                const payload = await res.json().catch(() => ({}));
+                if (!res.ok) throw new Error(payload.message || 'Zmena stavu zlyhala.');
+
+                await fetchUsers();
+            } catch (err) {
+                message('listMessage', err.message || 'Zmena stavu zlyhala.', 'error');
+            }
+        }
+
+        document.getElementById('newRole').addEventListener('change', function () {
+            const category = document.getElementById('newCategory');
+            if (this.value === 'player') {
+                category.disabled = false;
+            } else {
+                category.value = '';
+                category.disabled = true;
+            }
+        });
+
+        document.getElementById('createUserForm').addEventListener('submit', createUser);
+
+        document.getElementById('passwordModal').addEventListener('click', function (e) {
+            if (e.target === this) closePasswordModal();
+        });
+
+        document.getElementById('editProfileModal').addEventListener('click', function (e) {
+            if (e.target === this) closeEditProfileModal();
+        });
+
+        document.getElementById('editRoleSelect').addEventListener('change', handleEditRoleToggle);
+
+        (async function init() {
+            const ok = await ensureAdminAccess();
+            if (!ok) return;
+
+            const category = document.getElementById('newCategory');
+            category.disabled = true;
+            await fetchUsers();
+        })();
+    </script>
+</body>
+
+</html>

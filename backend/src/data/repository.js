@@ -12,12 +12,114 @@ async function findUserById(id) {
   });
 }
 
+async function listUsersForManagement() {
+  return prisma.user.findMany({
+    orderBy: { createdAt: 'asc' },
+    select: {
+      id: true,
+      username: true,
+      role: true,
+      playerCategory: true,
+      isActive: true,
+      createdAt: true,
+      lastPasswordChangeAt: true
+    }
+  });
+}
+
+async function createManagedUser(input) {
+  return prisma.user.create({
+    data: input,
+    select: {
+      id: true,
+      username: true,
+      role: true,
+      playerCategory: true,
+      isActive: true,
+      createdAt: true,
+      lastPasswordChangeAt: true
+    }
+  });
+}
+
+async function setUserActiveStatus(id, isActive) {
+  return prisma.user.update({
+    where: { id },
+    data: { isActive },
+    select: {
+      id: true,
+      username: true,
+      role: true,
+      playerCategory: true,
+      isActive: true,
+      createdAt: true,
+      lastPasswordChangeAt: true
+    }
+  });
+}
+
+async function resetUserPasswordByAdmin(id, passwordHash) {
+  return prisma.user.update({
+    where: { id },
+    data: {
+      passwordHash,
+      lastPasswordChangeAt: null
+    },
+    select: {
+      id: true,
+      username: true,
+      role: true,
+      playerCategory: true,
+      isActive: true,
+      createdAt: true,
+      lastPasswordChangeAt: true
+    }
+  });
+}
+
+async function updateUserRoleAndCategory(id, role, playerCategory) {
+  return prisma.user.update({
+    where: { id },
+    data: {
+      role,
+      playerCategory
+    },
+    select: {
+      id: true,
+      username: true,
+      role: true,
+      playerCategory: true,
+      isActive: true,
+      createdAt: true,
+      lastPasswordChangeAt: true
+    }
+  });
+}
+
 async function updateUserPassword(id, passwordHash) {
   return prisma.user.update({
     where: { id },
     data: {
       passwordHash,
       lastPasswordChangeAt: new Date()
+    }
+  });
+}
+
+async function listActivePlayers() {
+  return prisma.user.findMany({
+    where: {
+      role: 'player',
+      isActive: true
+    },
+    orderBy: [
+      { playerCategory: 'asc' },
+      { username: 'asc' }
+    ],
+    select: {
+      id: true,
+      username: true,
+      playerCategory: true
     }
   });
 }
@@ -219,7 +321,13 @@ async function createAuditLog(input) {
 module.exports = {
   findUserByUsername,
   findUserById,
+  listUsersForManagement,
+  createManagedUser,
+  setUserActiveStatus,
+  resetUserPasswordByAdmin,
+  updateUserRoleAndCategory,
   updateUserPassword,
+  listActivePlayers,
   listTrainings,
   findTrainingById,
   createTraining,

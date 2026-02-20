@@ -982,10 +982,10 @@
             document.getElementById('backBtn').style.display = 'inline-flex';
             document.getElementById('userDisplay').style.display = 'flex'; // This line remains unchanged
 
-            const roleLabel = { 'coach': 'Tréner', 'player': 'Hráč', 'parent': 'Rodič' }[currentUser.role];
+            const roleLabel = { 'admin': 'Admin', 'coach': 'Tréner', 'player': 'Hráč', 'parent': 'Rodič' }[currentUser.role];
             document.getElementById('userDisplay2').textContent = `${currentUser.username} (${roleLabel})`;
 
-            if (currentUser.role === 'coach') {
+            if (currentUser.role === 'coach' || currentUser.role === 'admin') {
                 document.getElementById('coachSection').classList.add('active');
                 document.getElementById('playerSection').classList.remove('active');
                 refreshCoachRoster();

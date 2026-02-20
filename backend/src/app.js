@@ -10,6 +10,8 @@ const authRoutes = require('./routes/auth.routes');
 const trainingsRoutes = require('./routes/trainings.routes');
 const announcementsRoutes = require('./routes/announcements.routes');
 const pollsRoutes = require('./routes/polls.routes');
+const usersRoutes = require('./routes/users.routes');
+const playersRoutes = require('./routes/players.routes');
 const { notFoundHandler, errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
@@ -73,6 +75,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/trainings', trainingsRoutes);
 app.use('/api/announcements', announcementsRoutes);
 app.use('/api/polls', pollsRoutes);
+app.use('/api/users', usersRoutes);
+app.use('/api/players', playersRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

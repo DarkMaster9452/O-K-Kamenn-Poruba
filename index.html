@@ -150,6 +150,7 @@
             display: flex;
             align-items: center;
             gap: 15px;
+            margin-right: 24px;
         }
 
         .logo-img {
@@ -1116,6 +1117,8 @@
                                 class="fas fa-calendar"></i> Všetky zápasy</a></li>
                     <li id="coachPlayerCardBtn" style="display:none;"><a href="players_list_coach.html"><i
                                 class="fas fa-id-card"></i> Karty hráčov</a></li>
+                    <li id="coachAccountMgmtBtn" style="display:none;"><a href="account_management.html"><i
+                                class="fas fa-users-cog"></i> Správa účtov</a></li>
                     <li><a href="#" id="trainingNavLink" style="cursor: pointer; display: none;"
                             onclick="goToTrainings(event)"><i class="fas fa-dumbbell"></i> Tréningy</a></li>
                     <li><a href="#" id="infoNavLink" style="cursor: pointer; display: none;"
@@ -1486,16 +1489,6 @@
             </div>
             <form id="loginForm" onsubmit="handleLogin(event)">
                 <div class="form-group">
-                    <label for="userRole">Vyberte si rolu:</label>
-                    <select id="userRole" required
-                        style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-family: inherit; font-size: 14px; transition: border 0.3s;">
-                        <option value="">-- Zvoľte rolu --</option>
-                        <option value="player">Hráč</option>
-                        <option value="parent">Rodič</option>
-                        <option value="coach">Tréner</option>
-                    </select>
-                </div>
-                <div class="form-group">
                     <label for="username">Používateľské meno</label>
                     <input type="text" id="username" placeholder="Zadajte vaše používateľské meno" required>
                 </div>
@@ -1622,13 +1615,19 @@
     <script>
         // Zobraziť tlačidlo 'Karta hráča' len pre coachov
         function showCoachPlayerCardButton() {
-            // Oprava: kontroluj currentUser.isLoggedIn a či je coach
+            // Oprava: kontroluj currentUser.isLoggedIn a rolu
             var btn = document.getElementById('coachPlayerCardBtn');
-            if (!btn) return;
-            if (currentUser && currentUser.isLoggedIn && currentUser.role === 'coach') {
-                btn.style.display = '';
+            var mgmtBtn = document.getElementById('coachAccountMgmtBtn');
+            if (currentUser && currentUser.isLoggedIn && (currentUser.role === 'coach' || currentUser.role === 'admin')) {
+                if (btn) btn.style.display = '';
             } else {
-                btn.style.display = 'none';
+                if (btn) btn.style.display = 'none';
+            }
+
+            if (currentUser && currentUser.isLoggedIn && currentUser.role === 'admin') {
+                if (mgmtBtn) mgmtBtn.style.display = '';
+            } else {
+                if (mgmtBtn) mgmtBtn.style.display = 'none';
             }
         }
         // ...existing code...
@@ -1707,8 +1706,6 @@
             if (!user) {
                 currentUser = { username: null, role: null, isLoggedIn: false };
                 localStorage.removeItem('currentUser');
-                localStorage.removeItem('lastLogin');
-                localStorage.removeItem('lastRole');
                 updateLoginButtonText();
                 return;
             }
@@ -1720,16 +1717,84 @@
             };
 
             localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            localStorage.setItem('lastLogin', currentUser.username);
-            localStorage.setItem('lastRole', currentUser.role);
             updateLoginButtonText();
         }
 
         // ====== FILTROVANIE A ZOBRAZENIE HRÁČOV ======
-        let currentPlayerFilter = 'pripravky';
+        let currentPlayerFilter = 'pripravka_u9';
 
-        function initializePlayers() {
-            renderPlayerStats('pripravky');
+        function sleep(ms) {
+            return new Promise((resolve) => setTimeout(resolve, ms));
+        }
+
+        async function fetchPlayersPayloadWithRetry() {
+            let lastError = null;
+
+            for (let attempt = 1; attempt <= 2; attempt += 1) {
+                try {
+                    const response = await fetch(`${API_BASE}/players`, {
+                        method: 'GET',
+                        credentials: 'include'
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Nepodarilo sa načítať hráčov zo servera.');
+                    }
+
+                    return response.json();
+                } catch (error) {
+                    lastError = error;
+                    if (attempt < 2) {
+                        await sleep(1200);
+                    }
+                }
+            }
+
+            throw lastError || new Error('Nepodarilo sa načítať hráčov zo servera.');
+        }
+
+        async function loadPlayersFromApi() {
+            const payload = await fetchPlayersPayloadWithRetry();
+            const items = Array.isArray(payload && payload.items) ? payload.items : [];
+
+            Object.keys(PLAYERS).forEach((key) => delete PLAYERS[key]);
+            items.forEach((player) => {
+                PLAYERS[player.username] = {
+                    username: player.username,
+                    fullName: player.fullName || player.username,
+                    category: player.category,
+                    position: player.position || '--',
+                    shirtNumber: player.shirtNumber || '--',
+                    dateOfBirth: player.dateOfBirth || '--',
+                    stats: player.stats || {
+                        matches: 0,
+                        minutes: 0,
+                        goals: 0,
+                        yellowCards: 0,
+                        secondYellow: 0,
+                        redCards: 0
+                    }
+                };
+            });
+        }
+
+        async function initializePlayers() {
+            const container = document.getElementById('playersListContainer');
+            if (container) {
+                container.innerHTML = '<div class="empty-category">Načítavam hráčov...</div>';
+            }
+
+            try {
+                await loadPlayersFromApi();
+            } catch (error) {
+                console.error(error);
+                if (container) {
+                    container.innerHTML = '<div class="empty-category">Server sa pravdepodobne prebúdza. Skús obnoviť stránku o pár sekúnd.</div>';
+                }
+                return;
+            }
+
+            renderPlayerStats(currentPlayerFilter);
         }
 
         function filterPlayers(category) {
@@ -1857,7 +1922,7 @@
             if (!currentUser || !currentUser.isLoggedIn) {
                 return false;
             }
-            if (currentUser.role === 'coach') {
+            if (currentUser.role === 'coach' || currentUser.role === 'admin') {
                 return true;
             }
             if (target === 'all') {
@@ -1870,7 +1935,7 @@
                 return currentUser.role === 'parent';
             }
             if (target === 'coaches') {
-                return currentUser.role === 'coach';
+                return currentUser.role === 'coach' || currentUser.role === 'admin';
             }
             return false;
         }
@@ -1975,9 +2040,10 @@
         }
 
         async function handleLogout() {
+            let logoutSucceeded = false;
             try {
                 const csrfToken = await ensureCsrfToken();
-                await fetch(`${API_BASE}/auth/logout`, {
+                const response = await fetch(`${API_BASE}/auth/logout`, {
                     method: 'POST',
                     credentials: 'include',
                     headers: {
@@ -1985,17 +2051,28 @@
                         'x-csrf-token': csrfToken
                     }
                 });
+
+                logoutSucceeded = response.ok;
             } catch (error) {
                 console.error(error);
             }
 
             currentUser = { username: null, role: null, isLoggedIn: false };
             localStorage.removeItem('currentUser');
-            localStorage.removeItem('lastLogin');
-            localStorage.removeItem('lastRole');
             closeLogoutModal();
             updateLoginButtonText();
             showCoachPlayerCardButton();
+
+            if (!logoutSucceeded) {
+                try {
+                    await syncCurrentUserFromSession();
+                    showCoachPlayerCardButton();
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+
+            return logoutSucceeded;
         }
 
         async function submitPasswordChange() {
@@ -2049,8 +2126,8 @@
             }
         }
 
-        function handleSwitchAccount() {
-            handleLogout();
+        async function handleSwitchAccount() {
+            await handleLogout();
             openLoginModal();
         }
 
@@ -2126,11 +2203,6 @@
                 const loginPayload = await loginResponse.json();
                 const actualRole = loginPayload.user.role;
 
-                const roleSelect = document.getElementById('userRole');
-                if (roleSelect) {
-                    roleSelect.value = actualRole;
-                }
-
                 errorDiv.style.display = 'none';
 
                 currentUser = {
@@ -2140,8 +2212,6 @@
                 };
 
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                localStorage.setItem('lastLogin', username);
-                localStorage.setItem('lastRole', actualRole);
 
                 if (actualRole === 'parent') {
                     parentChildren = {};
@@ -2171,7 +2241,8 @@
             const roleLabels = {
                 'player': 'Hráč',
                 'parent': 'Rodič',
-                'coach': 'Tréner'
+                'coach': 'Tréner',
+                'admin': 'Admin'
             };
             return roleLabels[role] || role;
         }
@@ -2199,7 +2270,7 @@
                     updateChildrenList();
                 }
                 refreshPlayerTrainings();
-            } else if (currentUser.role === 'coach') {
+            } else if (currentUser.role === 'coach' || currentUser.role === 'admin') {
                 document.getElementById('coachCreateTrainingArea').style.display = 'block';
                 document.getElementById('playerTrainingArea').style.display = 'none';
                 document.getElementById('parentChildrenArea').style.display = 'none';
@@ -2239,7 +2310,7 @@
             }
 
             // Initialize players stats
-            initializePlayers();
+            await initializePlayers();
             showCoachPlayerCardButton();
 
             // Gallery zoom modal logic

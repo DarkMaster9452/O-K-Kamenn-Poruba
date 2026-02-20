@@ -185,7 +185,7 @@
 
                 const payload = await response.json();
                 const user = payload.user;
-                if (!user || user.role !== 'coach') {
+                if (!user || (user.role !== 'coach' && user.role !== 'admin')) {
                     window.location.href = 'index.html';
                     return;
                 }
@@ -210,65 +210,112 @@
         <!-- Player detail will be loaded here -->
     </div>
     <script>
-        const PLAYERS = {};
-        const USERS = {};
-        const FAMILIES = {};
-
-        // Get username from query string
         function getUsernameFromQuery() {
             const params = new URLSearchParams(window.location.search);
             return params.get('username');
         }
-        function renderPlayerDetail() {
-            const username = getUsernameFromQuery();
-            if (!username || typeof PLAYERS === 'undefined' || !PLAYERS[username]) {
-                document.getElementById('playerDetailContainer').innerHTML = '<div style="color:#ffd700;text-align:center;font-size:22px;padding:40px 0;">Hráč nebol nájdený.</div>';
-                return;
-            }
-            const p = PLAYERS[username];
-            let user = (typeof USERS !== 'undefined' && USERS[username]) ? USERS[username] : {};
-            let address = '-';
-            if (typeof FAMILIES !== 'undefined') {
-                for (const famKey in FAMILIES) {
-                    if (FAMILIES[famKey].children.includes(username)) {
-                        address = FAMILIES[famKey].address;
-                        break;
+
+        function getCategoryLabel(category) {
+            if (category === 'pripravka_u9') return 'Prípravka U9';
+            if (category === 'pripravka_u11') return 'Prípravka U11';
+            if (category === 'ziaci') return 'Žiaci';
+            if (category === 'dorastenci') return 'Dorastenci';
+            if (category === 'adults_young') return 'Dospelí - Mladí';
+            if (category === 'adults_pro') return 'Dospelí - Skúsení';
+            return category || '--';
+        }
+
+        function sleep(ms) {
+            return new Promise((resolve) => setTimeout(resolve, ms));
+        }
+
+        async function fetchPlayersWithRetry() {
+            let lastError = null;
+
+            for (let attempt = 1; attempt <= 2; attempt += 1) {
+                try {
+                    const response = await fetch(`${API_BASE}/players`, {
+                        method: 'GET',
+                        credentials: 'include'
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Načítanie hráča zlyhalo.');
+                    }
+
+                    return response.json();
+                } catch (error) {
+                    lastError = error;
+                    if (attempt < 2) {
+                        await sleep(1200);
                     }
                 }
             }
-            document.getElementById('playerDetailContainer').innerHTML = `
-            <div class="player-avatar"><i class='fas fa-user'></i></div>
-            <div class="player-name">${p.fullName}</div>
-            <div class="player-info">${p.dateOfBirth} | #${p.shirtNumber}</div>
-            <div class="player-category">${p.category}</div>
-            <div class="player-position">${p.position}</div>
-            <div class="player-details">
-                <div><b>Dátum narodenia:</b> ${p.dateOfBirth}</div>
-                <div><b>Kategória:</b> ${p.category}</div>
-                <div><b>Pozícia:</b> ${p.position}</div>
-                <div><b>Výška:</b> ${p.height} cm</div>
-                <div><b>Váha:</b> ${p.weight} kg</div>
-                <div><b>V klube od:</b> ${p.joinedClub}</div>
-                <div><b>Rodič:</b> ${user.parentUsername || '-'}</div>
-                <div><b>Email:</b> ${user.email || '-'}</div>
-                <div><b>Telefón:</b> ${user.phone || '-'}</div>
-                <div><b>Adresa:</b> ${address}</div>
-            </div>
-            <div class="skills-section">
-                <div class="skills-title">Zručnosti</div>
-                <div class="skills-list">
-                    <div class="skill-item"><div class="skill-label">Dribling</div><div class="skill-value">${p.skills.dribbling}</div></div>
-                    <div class="skill-item"><div class="skill-label">Prihrávky</div><div class="skill-value">${p.skills.passing}</div></div>
-                    <div class="skill-item"><div class="skill-label">Streľba</div><div class="skill-value">${p.skills.shooting}</div></div>
-                    <div class="skill-item"><div class="skill-label">Obrana</div><div class="skill-value">${p.skills.defense}</div></div>
-                </div>
-            </div>
-            <div class="notes-section">
-                <div class="notes-title">Poznámky trénera</div>
-                <div class="notes-content"><i>Sem môže tréner zapísať súkromné poznámky o hráčovi...</i></div>
-            </div>
-        `;
+
+            throw lastError || new Error('Načítanie hráča zlyhalo.');
         }
+
+        async function renderPlayerDetail() {
+            const username = getUsernameFromQuery();
+            const container = document.getElementById('playerDetailContainer');
+            container.innerHTML = '<div style="color:#ffd700;text-align:center;font-size:20px;padding:40px 0;">Načítavam detail hráča...</div>';
+
+            if (!username) {
+                container.innerHTML = '<div style="color:#ffd700;text-align:center;font-size:22px;padding:40px 0;">Hráč nebol nájdený.</div>';
+                return;
+            }
+
+            try {
+                const payload = await fetchPlayersWithRetry();
+                const items = Array.isArray(payload && payload.items) ? payload.items : [];
+                const p = items.find((item) => item.username === username);
+
+                if (!p) {
+                    container.innerHTML = '<div style="color:#ffd700;text-align:center;font-size:22px;padding:40px 0;">Hráč nebol nájdený.</div>';
+                    return;
+                }
+
+                const stats = p.stats || {};
+                const category = getCategoryLabel(p.category);
+
+                container.innerHTML = `
+                <div class="player-avatar"><i class='fas fa-user'></i></div>
+                <div class="player-name">${p.fullName || p.username}</div>
+                <div class="player-info">${p.dateOfBirth || '--'} | #${p.shirtNumber || '--'}</div>
+                <div class="player-category">${category}</div>
+                <div class="player-position">${p.position || '--'}</div>
+                <div class="player-details">
+                    <div><b>Dátum narodenia:</b> ${p.dateOfBirth || '--'}</div>
+                    <div><b>Kategória:</b> ${category}</div>
+                    <div><b>Pozícia:</b> ${p.position || '--'}</div>
+                    <div><b>Výška:</b> --</div>
+                    <div><b>Váha:</b> --</div>
+                    <div><b>V klube od:</b> --</div>
+                    <div><b>Rodič:</b> --</div>
+                    <div><b>Email:</b> --</div>
+                    <div><b>Telefón:</b> --</div>
+                    <div><b>Adresa:</b> --</div>
+                </div>
+                <div class="skills-section">
+                    <div class="skills-title">Štatistiky</div>
+                    <div class="skills-list">
+                        <div class="skill-item"><div class="skill-label">Zápasy</div><div class="skill-value">${stats.matches || 0}</div></div>
+                        <div class="skill-item"><div class="skill-label">Minúty</div><div class="skill-value">${stats.minutes || 0}</div></div>
+                        <div class="skill-item"><div class="skill-label">Góly</div><div class="skill-value">${stats.goals || 0}</div></div>
+                        <div class="skill-item"><div class="skill-label">Karty</div><div class="skill-value">${(stats.yellowCards || 0) + (stats.redCards || 0)}</div></div>
+                    </div>
+                </div>
+                <div class="notes-section">
+                    <div class="notes-title">Poznámky trénera</div>
+                    <div class="notes-content"><i>Zatiaľ bez poznámok.</i></div>
+                </div>
+            `;
+            } catch (error) {
+                console.error(error);
+                container.innerHTML = '<div style="color:#ffd700;text-align:center;font-size:22px;padding:40px 0;">Server sa pravdepodobne prebúdza. Skús obnoviť stránku o pár sekúnd.</div>';
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', renderPlayerDetail);
     </script>
 </body>

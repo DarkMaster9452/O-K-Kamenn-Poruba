@@ -9,7 +9,7 @@ const router = express.Router();
 const createAnnouncementSchema = z.object({
   title: z.string().min(3).max(120),
   message: z.string().min(3).max(4000),
-  target: z.enum(['all', 'players', 'parents', 'coaches']),
+  target: z.enum(['all', 'players', 'parents', 'coaches', 'admins']),
   playerCategory: z.enum(['pripravka_u9', 'pripravka_u11', 'ziaci', 'dorastenci', 'adults_young', 'adults_pro']).nullable().optional(),
   important: z.boolean().default(false)
 });
@@ -25,14 +25,15 @@ async function writeAuditSafe(payload) {
 router.get('/', requireAuth, async (req, res) => {
   const rows = await listAnnouncements();
   const visibleRows = rows.filter((row) => {
-    if (req.user.role === 'coach') return true;
+    if (row.target === 'admins') return req.user.role === 'admin';
+    if (req.user.role === 'coach' || req.user.role === 'admin') return true;
     if (row.target === 'all') return true;
     if (row.target === 'players') {
       if (req.user.role !== 'player') return false;
       return !row.playerCategory || row.playerCategory === req.user.playerCategory;
     }
     if (row.target === 'parents') return req.user.role === 'parent';
-    if (row.target === 'coaches') return req.user.role === 'coach';
+    if (row.target === 'coaches') return req.user.role === 'coach' || req.user.role === 'admin';
     return false;
   });
   const items = visibleRows.map((row) => ({
@@ -48,7 +49,7 @@ router.get('/', requireAuth, async (req, res) => {
   return res.json({ items });
 });
 
-router.post('/', requireAuth, requireRole('coach'), validateBody(createAnnouncementSchema), async (req, res) => {
+router.post('/', requireAuth, requireRole('coach', 'admin'), validateBody(createAnnouncementSchema), async (req, res) => {
   if (req.body.target !== 'players' && req.body.playerCategory) {
     return res.status(400).json({ message: 'Kategóriu hráčov je možné zvoliť len pre cieľ Hráči.' });
   }
@@ -84,7 +85,7 @@ router.post('/', requireAuth, requireRole('coach'), validateBody(createAnnouncem
   return res.status(201).json({ item });
 });
 
-router.delete('/:id', requireAuth, requireRole('coach'), async (req, res) => {
+router.delete('/:id', requireAuth, requireRole('coach', 'admin'), async (req, res) => {
   await writeAuditSafe({
     actorUserId: req.user.id,
     action: 'announcement_deleted',
