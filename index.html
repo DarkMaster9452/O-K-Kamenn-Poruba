@@ -238,10 +238,12 @@
             transition: background 0.3s;
             font-weight: bold;
             display: inline-block;
-            max-width: 160px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            max-width: none;
+            overflow: visible;
+            text-overflow: clip;
+            white-space: normal;
+            word-break: break-word;
+            text-align: center;
             vertical-align: middle;
         }
 
@@ -1102,7 +1104,7 @@
 
             .header-actions .login-btn {
                 display: inline-block;
-                max-width: 120px;
+                max-width: none;
                 padding: 8px 12px;
                 font-size: 13px;
             }
