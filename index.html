@@ -124,6 +124,10 @@
             background: #f4f4f4;
         }
 
+        :root {
+            --header-offset: 110px;
+        }
+
         /* Header & Navigation */
         header {
             background: linear-gradient(135deg, #003399 0%, #1a5ccc 100%);
@@ -398,6 +402,14 @@
 
         section {
             margin-bottom: 0;
+        }
+
+        #about,
+        #players,
+        #matches,
+        #gallery,
+        #contact {
+            scroll-margin-top: calc(var(--header-offset) + 16px);
         }
 
         h2 {
@@ -1798,6 +1810,12 @@
 
     <script src="trainings.js"></script>
     <script>
+        function updateHeaderScrollOffset() {
+            const header = document.querySelector('header');
+            if (!header) return;
+            document.documentElement.style.setProperty('--header-offset', `${header.offsetHeight}px`);
+        }
+
         function toggleAboutMore() {
             const content = document.getElementById('aboutMoreContent');
             const button = document.getElementById('aboutToggleBtn');
@@ -1823,11 +1841,14 @@
             } else {
                 if (mgmtBtn) mgmtBtn.style.display = 'none';
             }
+
+            updateHeaderScrollOffset();
         }
         // ...existing code...
         // Po prihlásení/načítaní stránky
         document.addEventListener('DOMContentLoaded', function () {
             showCoachPlayerCardButton();
+            updateHeaderScrollOffset();
         });
         // Ak sa mení užívateľ (napr. login/logout)
         window.showCoachPlayerCardButton = showCoachPlayerCardButton;
@@ -1879,6 +1900,7 @@
                     if (window.innerWidth > 768) {
                         closeMobileMenu();
                     }
+                    updateHeaderScrollOffset();
                 });
             }
 
@@ -2166,6 +2188,7 @@
                 // keep matchesNavLink visible for all users (including guests)
             }
             updateImportantInfoNavBadge();
+            updateHeaderScrollOffset();
         }
 
         const IMPORTANT_INFO_ANNOUNCEMENTS_KEY = 'club_announcements';
