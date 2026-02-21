@@ -876,6 +876,16 @@
             }
         }
 
+        @keyframes loginSpin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
         .logout-modal-header {
             display: flex;
             justify-content: space-between;
@@ -1502,8 +1512,12 @@
                         Pamätať si ma
                     </label>
                 </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 10px;">Prihlásiť
-                    sa</button>
+                <button id="loginSubmitBtn" type="submit" class="btn btn-primary"
+                    style="width: 100%; margin-bottom: 10px; display:flex; justify-content:center; align-items:center; gap:10px;">
+                    <span id="loginSubmitSpinner"
+                        style="display:none;width:16px;height:16px;border:2px solid rgba(255,255,255,0.45);border-top-color:#fff;border-radius:50%;animation:loginSpin 0.8s linear infinite;"></span>
+                    <span id="loginSubmitText">Prihlásiť sa</span>
+                </button>
                 <a href="#"
                     style="display: block; text-align: center; color: #ffd700; text-decoration: none; font-size: 14px;">Zabudli
                     ste heslo?</a>
@@ -2176,12 +2190,33 @@
         }
 
         // Handle Login
+        function setLoginLoading(isLoading) {
+            const submitBtn = document.getElementById('loginSubmitBtn');
+            const spinner = document.getElementById('loginSubmitSpinner');
+            const text = document.getElementById('loginSubmitText');
+
+            if (submitBtn) {
+                submitBtn.disabled = Boolean(isLoading);
+                submitBtn.style.opacity = isLoading ? '0.85' : '1';
+                submitBtn.style.cursor = isLoading ? 'wait' : 'pointer';
+            }
+
+            if (spinner) {
+                spinner.style.display = isLoading ? 'inline-block' : 'none';
+            }
+
+            if (text) {
+                text.textContent = isLoading ? 'Prihlasujem...' : 'Prihlásiť sa';
+            }
+        }
+
         async function handleLogin(event) {
             event.preventDefault();
             const username = document.getElementById('username').value.trim();
 
             const password = document.getElementById('password').value;
             const errorDiv = document.getElementById('loginError');
+            setLoginLoading(true);
 
             try {
                 const csrfToken = await ensureCsrfToken();
@@ -2241,6 +2276,8 @@
                 errorDiv.style.animation = 'shake 0.3s';
                 setTimeout(() => { errorDiv.style.animation = ''; }, 400);
                 console.error(error);
+            } finally {
+                setLoginLoading(false);
             }
         }
 
