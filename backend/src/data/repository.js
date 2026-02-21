@@ -1,5 +1,21 @@
 const prisma = require('./db');
 
+function isMissingUserEmailColumnError(error) {
+  if (!error || error.code !== 'P2022') {
+    return false;
+  }
+
+  const column = String(error.meta?.column || '').toLowerCase();
+  return column.includes('email');
+}
+
+function withNullEmail(items) {
+  return items.map((item) => ({
+    ...item,
+    email: null
+  }));
+}
+
 async function findUserByUsername(username) {
   return prisma.user.findUnique({
     where: { username }
@@ -13,92 +29,219 @@ async function findUserById(id) {
 }
 
 async function listUsersForManagement() {
-  return prisma.user.findMany({
-    orderBy: { createdAt: 'asc' },
-    select: {
-      id: true,
-      username: true,
-      email: true,
-      role: true,
-      playerCategory: true,
-      isActive: true,
-      createdAt: true,
-      lastPasswordChangeAt: true
+  try {
+    return await prisma.user.findMany({
+      orderBy: { createdAt: 'asc' },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        role: true,
+        playerCategory: true,
+        isActive: true,
+        createdAt: true,
+        lastPasswordChangeAt: true
+      }
+    });
+  } catch (error) {
+    if (!isMissingUserEmailColumnError(error)) {
+      throw error;
     }
-  });
+
+    const rows = await prisma.user.findMany({
+      orderBy: { createdAt: 'asc' },
+      select: {
+        id: true,
+        username: true,
+        role: true,
+        playerCategory: true,
+        isActive: true,
+        createdAt: true,
+        lastPasswordChangeAt: true
+      }
+    });
+
+    return withNullEmail(rows);
+  }
 }
 
 async function createManagedUser(input) {
-  return prisma.user.create({
-    data: input,
-    select: {
-      id: true,
-      username: true,
-      email: true,
-      role: true,
-      playerCategory: true,
-      isActive: true,
-      createdAt: true,
-      lastPasswordChangeAt: true
+  try {
+    return await prisma.user.create({
+      data: input,
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        role: true,
+        playerCategory: true,
+        isActive: true,
+        createdAt: true,
+        lastPasswordChangeAt: true
+      }
+    });
+  } catch (error) {
+    if (!isMissingUserEmailColumnError(error)) {
+      throw error;
     }
-  });
+
+    const { email, ...fallbackInput } = input;
+    const row = await prisma.user.create({
+      data: fallbackInput,
+      select: {
+        id: true,
+        username: true,
+        role: true,
+        playerCategory: true,
+        isActive: true,
+        createdAt: true,
+        lastPasswordChangeAt: true
+      }
+    });
+
+    return {
+      ...row,
+      email: null
+    };
+  }
 }
 
 async function setUserActiveStatus(id, isActive) {
-  return prisma.user.update({
-    where: { id },
-    data: { isActive },
-    select: {
-      id: true,
-      username: true,
-      email: true,
-      role: true,
-      playerCategory: true,
-      isActive: true,
-      createdAt: true,
-      lastPasswordChangeAt: true
+  try {
+    return await prisma.user.update({
+      where: { id },
+      data: { isActive },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        role: true,
+        playerCategory: true,
+        isActive: true,
+        createdAt: true,
+        lastPasswordChangeAt: true
+      }
+    });
+  } catch (error) {
+    if (!isMissingUserEmailColumnError(error)) {
+      throw error;
     }
-  });
+
+    const row = await prisma.user.update({
+      where: { id },
+      data: { isActive },
+      select: {
+        id: true,
+        username: true,
+        role: true,
+        playerCategory: true,
+        isActive: true,
+        createdAt: true,
+        lastPasswordChangeAt: true
+      }
+    });
+
+    return {
+      ...row,
+      email: null
+    };
+  }
 }
 
 async function resetUserPasswordByAdmin(id, passwordHash) {
-  return prisma.user.update({
-    where: { id },
-    data: {
-      passwordHash,
-      lastPasswordChangeAt: null
-    },
-    select: {
-      id: true,
-      username: true,
-      email: true,
-      role: true,
-      playerCategory: true,
-      isActive: true,
-      createdAt: true,
-      lastPasswordChangeAt: true
+  try {
+    return await prisma.user.update({
+      where: { id },
+      data: {
+        passwordHash,
+        lastPasswordChangeAt: null
+      },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        role: true,
+        playerCategory: true,
+        isActive: true,
+        createdAt: true,
+        lastPasswordChangeAt: true
+      }
+    });
+  } catch (error) {
+    if (!isMissingUserEmailColumnError(error)) {
+      throw error;
     }
-  });
+
+    const row = await prisma.user.update({
+      where: { id },
+      data: {
+        passwordHash,
+        lastPasswordChangeAt: null
+      },
+      select: {
+        id: true,
+        username: true,
+        role: true,
+        playerCategory: true,
+        isActive: true,
+        createdAt: true,
+        lastPasswordChangeAt: true
+      }
+    });
+
+    return {
+      ...row,
+      email: null
+    };
+  }
 }
 
 async function updateUserRoleAndCategory(id, role, playerCategory) {
-  return prisma.user.update({
-    where: { id },
-    data: {
-      role,
-      playerCategory
-    },
-    select: {
-      id: true,
-      username: true,
-      email: true,
-      role: true,
-      playerCategory: true,
-      isActive: true,
-      createdAt: true,
-      lastPasswordChangeAt: true
+  try {
+    return await prisma.user.update({
+      where: { id },
+      data: {
+        role,
+        playerCategory
+      },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        role: true,
+        playerCategory: true,
+        isActive: true,
+        createdAt: true,
+        lastPasswordChangeAt: true
+      }
+    });
+  } catch (error) {
+    if (!isMissingUserEmailColumnError(error)) {
+      throw error;
     }
-  });
+
+    const row = await prisma.user.update({
+      where: { id },
+      data: {
+        role,
+        playerCategory
+      },
+      select: {
+        id: true,
+        username: true,
+        role: true,
+        playerCategory: true,
+        isActive: true,
+        createdAt: true,
+        lastPasswordChangeAt: true
+      }
+    });
+
+    return {
+      ...row,
+      email: null
+    };
+  }
 }
 
 async function updateUserPassword(id, passwordHash) {
