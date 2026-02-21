@@ -64,7 +64,7 @@ enum AuditEntityType {
 model User {
   id           String   @id @default(cuid())
   username     String   @unique
-  email        String?  @unique
+  email        String   @unique
   role         Role
   playerCategory PlayerCategory?
   passwordHash String

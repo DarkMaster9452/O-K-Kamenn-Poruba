@@ -194,8 +194,8 @@
                     <input id="newUsername" required minlength="3" />
                 </div>
                 <div>
-                    <label for="newEmail">Email (voliteľné)</label>
-                    <input id="newEmail" type="email" placeholder="meno@domena.sk" />
+                    <label for="newEmail">Email</label>
+                    <input id="newEmail" type="email" placeholder="meno@domena.sk" required />
                 </div>
                 <div>
                     <label for="newPassword">Počiatočné heslo</label>
@@ -454,7 +454,7 @@
             message('createMessage', '', 'success');
 
             const username = document.getElementById('newUsername').value.trim();
-            const email = document.getElementById('newEmail').value.trim() || null;
+            const email = document.getElementById('newEmail').value.trim();
             const password = document.getElementById('newPassword').value;
             const role = document.getElementById('newRole').value;
             const categoryValue = document.getElementById('newCategory').value || null;

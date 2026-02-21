@@ -26,7 +26,7 @@ const playerCategorySchema = z.enum([
 
 const createUserSchema = z.object({
   username: z.string().min(3).max(100),
-  email: z.string().email().max(254).nullable().optional(),
+  email: z.string().email().max(254),
   password: z.string().min(8).max(200),
   role: z.enum(['admin', 'coach', 'player', 'parent']),
   playerCategory: playerCategorySchema.nullable().optional(),
@@ -76,7 +76,7 @@ router.post('/', validateBody(createUserSchema), async (req, res) => {
 
   const created = await createManagedUser({
     username: username.trim(),
-    email: email ? email.trim().toLowerCase() : null,
+    email: email.trim().toLowerCase(),
     role,
     playerCategory: role === 'player' ? playerCategory : null,
     passwordHash,
