@@ -365,18 +365,57 @@
             return true;
         }
 
-        async function fetchUsers() {
+        function wait(ms) {
+            return new Promise((resolve) => setTimeout(resolve, ms));
+        }
+
+        async function isBackendHealthy() {
             try {
-                const res = await fetch(`${API_BASE}/users`, { credentials: 'include' });
-                if (!res.ok) {
-                    const payload = await res.json().catch(() => ({}));
-                    throw new Error(payload.message || `Načítanie účtov zlyhalo (HTTP ${res.status}).`);
+                const res = await fetch(`${API_BASE}/health`, { credentials: 'include' });
+                return res.ok;
+            } catch (_) {
+                return false;
+            }
+        }
+
+        async function fetchUsers() {
+            let lastError = null;
+
+            for (let attempt = 1; attempt <= 3; attempt += 1) {
+                try {
+                    const res = await fetch(`${API_BASE}/users`, { credentials: 'include' });
+                    if (!res.ok) {
+                        const payload = await res.json().catch(() => ({}));
+                        const error = new Error(payload.message || `Načítanie účtov zlyhalo (HTTP ${res.status}).`);
+                        error.httpStatus = res.status;
+                        throw error;
+                    }
+
+                    const data = await res.json();
+                    users = data.items || [];
+                    renderUsers();
+                    return;
+                } catch (err) {
+                    lastError = err;
+                    if (attempt < 3) {
+                        await wait(700 * attempt);
+                    }
                 }
-                const data = await res.json();
-                users = data.items || [];
-                renderUsers();
-            } catch (err) {
-                message('listMessage', err.message || 'Načítanie účtov zlyhalo.', 'error');
+            }
+
+            try {
+                if (lastError && lastError.httpStatus === 502) {
+                    const healthy = await isBackendHealthy();
+                    const text = healthy
+                        ? 'Backend odpovedá, ale endpoint účtov momentálne vracia 502. Skús to znovu o pár sekúnd alebo reštartuj backend službu.'
+                        : 'Backend je momentálne nedostupný (HTTP 502). Počkajte chvíľu, kým sa služba prebudí, alebo ju reštartujte.';
+                    message('listMessage', text, 'error');
+                } else {
+                    message('listMessage', (lastError && lastError.message) || 'Načítanie účtov zlyhalo.', 'error');
+                }
+            } catch (_) {
+                message('listMessage', (lastError && lastError.message) || 'Načítanie účtov zlyhalo.', 'error');
+            } finally {
                 document.getElementById('usersTableBody').innerHTML = '<tr><td colspan="6">Nepodarilo sa načítať účty.</td></tr>';
             }
         }
