@@ -9,8 +9,10 @@ const {
   closeTraining,
   deleteTraining,
   upsertTrainingAttendance,
-  createAuditLog
+  createAuditLog,
+  listActivePlayerEmailsByTrainingCategory
 } = require('../data/repository');
+const { sendTrainingCreatedEmails } = require('../services/email.service');
 
 const router = express.Router();
 
@@ -78,6 +80,23 @@ router.post('/', requireAuth, requireRole('coach', 'admin'), validateBody(create
       type: row.type
     }
   });
+
+  try {
+    const recipients = await listActivePlayerEmailsByTrainingCategory(row.category);
+    const emailResult = await sendTrainingCreatedEmails({
+      training: row,
+      recipients,
+      createdByUsername: row.createdBy.username
+    });
+
+    if (emailResult.skipped) {
+      console.info(`Training email notifications skipped: ${emailResult.skipped}`);
+    } else {
+      console.info(`Training email notifications sent: ${emailResult.sent}`);
+    }
+  } catch (error) {
+    console.error('Training email notification failed:', error);
+  }
 
   return res.status(201).json({ item });
 });

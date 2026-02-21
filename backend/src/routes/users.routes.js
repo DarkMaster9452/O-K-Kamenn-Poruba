@@ -26,6 +26,7 @@ const playerCategorySchema = z.enum([
 
 const createUserSchema = z.object({
   username: z.string().min(3).max(100),
+  email: z.string().email().max(254).nullable().optional(),
   password: z.string().min(8).max(200),
   role: z.enum(['admin', 'coach', 'player', 'parent']),
   playerCategory: playerCategorySchema.nullable().optional(),
@@ -61,7 +62,7 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', validateBody(createUserSchema), async (req, res) => {
-  const { username, password, role, playerCategory, isActive } = req.body;
+  const { username, email, password, role, playerCategory, isActive } = req.body;
 
   if (role === 'player' && !playerCategory) {
     return res.status(400).json({ message: 'Pre hráča je povinná kategória.' });
@@ -75,6 +76,7 @@ router.post('/', validateBody(createUserSchema), async (req, res) => {
 
   const created = await createManagedUser({
     username: username.trim(),
+    email: email ? email.trim().toLowerCase() : null,
     role,
     playerCategory: role === 'player' ? playerCategory : null,
     passwordHash,

@@ -194,6 +194,10 @@
                     <input id="newUsername" required minlength="3" />
                 </div>
                 <div>
+                    <label for="newEmail">Email (voliteľné)</label>
+                    <input id="newEmail" type="email" placeholder="meno@domena.sk" />
+                </div>
+                <div>
                     <label for="newPassword">Počiatočné heslo</label>
                     <input id="newPassword" type="password" required minlength="8" />
                 </div>
@@ -239,6 +243,7 @@
                 <thead>
                     <tr>
                         <th>Používateľ</th>
+                        <th>Email</th>
                         <th>Rola</th>
                         <th>Kategória</th>
                         <th>Stav</th>
@@ -247,7 +252,7 @@
                 </thead>
                 <tbody id="usersTableBody">
                     <tr>
-                        <td colspan="5">Načítavam...</td>
+                        <td colspan="6">Načítavam...</td>
                     </tr>
                 </tbody>
             </table>
@@ -371,14 +376,14 @@
                 renderUsers();
             } catch (err) {
                 message('listMessage', err.message || 'Načítanie účtov zlyhalo.', 'error');
-                document.getElementById('usersTableBody').innerHTML = '<tr><td colspan="5">Nepodarilo sa načítať účty.</td></tr>';
+                document.getElementById('usersTableBody').innerHTML = '<tr><td colspan="6">Nepodarilo sa načítať účty.</td></tr>';
             }
         }
 
         function renderUsers() {
             const tbody = document.getElementById('usersTableBody');
             if (!users.length) {
-                tbody.innerHTML = '<tr><td colspan="5">Zatiaľ nie sú žiadne účty.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6">Zatiaľ nie sú žiadne účty.</td></tr>';
                 return;
             }
 
@@ -390,6 +395,7 @@
                 return `
                     <tr>
                         <td>${user.username}</td>
+                        <td>${user.email || '—'}</td>
                         <td>${user.role}</td>
                         <td>${categoryLabel(user.playerCategory)}</td>
                         <td><span class="status-badge ${statusClass}">${statusText}</span></td>
@@ -408,6 +414,7 @@
             message('createMessage', '', 'success');
 
             const username = document.getElementById('newUsername').value.trim();
+            const email = document.getElementById('newEmail').value.trim() || null;
             const password = document.getElementById('newPassword').value;
             const role = document.getElementById('newRole').value;
             const categoryValue = document.getElementById('newCategory').value || null;
@@ -429,6 +436,7 @@
                     },
                     body: JSON.stringify({
                         username,
+                        email,
                         password,
                         role,
                         playerCategory: role === 'player' ? categoryValue : null,

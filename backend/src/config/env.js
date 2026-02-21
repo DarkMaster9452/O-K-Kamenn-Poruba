@@ -13,7 +13,15 @@ const env = {
   jwtAccessExpires: process.env.JWT_ACCESS_EXPIRES || '15m',
   cookieName: process.env.COOKIE_NAME || 'osk_session',
   cookieSecure: String(process.env.COOKIE_SECURE || 'false') === 'true',
-  csrfProtection: String(process.env.CSRF_PROTECTION || 'true') === 'true'
+  csrfProtection: String(process.env.CSRF_PROTECTION || 'true') === 'true',
+  emailNotificationsEnabled: String(process.env.EMAIL_NOTIFICATIONS_ENABLED || 'false') === 'true',
+  smtpHost: process.env.SMTP_HOST || '',
+  smtpPort: Number(process.env.SMTP_PORT || 587),
+  smtpSecure: String(process.env.SMTP_SECURE || 'false') === 'true',
+  smtpUser: process.env.SMTP_USER || '',
+  smtpPass: process.env.SMTP_PASS || '',
+  smtpFromEmail: process.env.SMTP_FROM_EMAIL || '',
+  smtpFromName: process.env.SMTP_FROM_NAME || 'OŠK Kamenná Poruba'
 };
 
 if (env.nodeEnv === 'production' && env.jwtAccessSecret === 'dev_only_change_me') {

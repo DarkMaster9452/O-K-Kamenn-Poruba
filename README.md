@@ -30,6 +30,7 @@ Citlivé dáta (účty, roly, oznamy, ankety, tréningy a účasť) sú spravova
 - CSRF ochrana pre write operácie
 - role-based prístup (RBAC)
 - tréningy: create/list/attendance/close/delete
+- email notifikácie pri vytvorení tréningu pre hráčov vo vybranej kategórii (ak je nastavené SMTP)
 - udalosti: create/list/delete (s cieľovou skupinou)
 - ankety: create/list/vote/close/delete
 - audit záznamy vybraných akcií v backende
@@ -106,10 +107,28 @@ Citlivé dáta (účty, roly, oznamy, ankety, tréningy a účasť) sú spravova
    - `DATABASE_URL`
    - `JWT_ACCESS_SECRET`
    - `FRONTEND_ORIGIN`
-5. Prisma:
+5. voliteľne pre email notifikácie tréningov nastav:
+
+- `EMAIL_NOTIFICATIONS_ENABLED=true`
+- `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`
+- `SMTP_USER`, `SMTP_PASS`
+- `SMTP_FROM_EMAIL` (odosielateľ)
+
+6. Prisma:
    - `npx prisma generate`
    - `npx prisma db push`
-6. spusti server: `npm run dev`
+7. spusti server: `npm run dev`
+
+### Email notifikácie tréningov
+
+- po vytvorení tréningu sa odošle email aktívnym hráčom danej kategórie, ktorí majú vyplnený email
+- mapovanie kategórií:
+  - `pripravky` -> `pripravka_u9`, `pripravka_u11`
+  - `ziaci` -> `ziaci`
+  - `dorastenci` -> `dorastenci`
+  - `adults_young` -> `adults_young`
+  - `adults_pro` -> `adults_pro`
+- email používateľa zadáš pri vytvorení účtu v správe účtov
 
 ### Frontend
 

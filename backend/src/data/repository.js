@@ -18,6 +18,7 @@ async function listUsersForManagement() {
     select: {
       id: true,
       username: true,
+      email: true,
       role: true,
       playerCategory: true,
       isActive: true,
@@ -33,6 +34,7 @@ async function createManagedUser(input) {
     select: {
       id: true,
       username: true,
+      email: true,
       role: true,
       playerCategory: true,
       isActive: true,
@@ -49,6 +51,7 @@ async function setUserActiveStatus(id, isActive) {
     select: {
       id: true,
       username: true,
+      email: true,
       role: true,
       playerCategory: true,
       isActive: true,
@@ -68,6 +71,7 @@ async function resetUserPasswordByAdmin(id, passwordHash) {
     select: {
       id: true,
       username: true,
+      email: true,
       role: true,
       playerCategory: true,
       isActive: true,
@@ -87,6 +91,7 @@ async function updateUserRoleAndCategory(id, role, playerCategory) {
     select: {
       id: true,
       username: true,
+      email: true,
       role: true,
       playerCategory: true,
       isActive: true,
@@ -119,6 +124,46 @@ async function listActivePlayers() {
     select: {
       id: true,
       username: true,
+      playerCategory: true
+    }
+  });
+}
+
+function playerCategoriesForTrainingCategory(trainingCategory) {
+  const map = {
+    pripravky: ['pripravka_u9', 'pripravka_u11'],
+    ziaci: ['ziaci'],
+    dorastenci: ['dorastenci'],
+    adults_young: ['adults_young'],
+    adults_pro: ['adults_pro']
+  };
+
+  return map[trainingCategory] || [];
+}
+
+async function listActivePlayerEmailsByTrainingCategory(trainingCategory) {
+  const playerCategories = playerCategoriesForTrainingCategory(trainingCategory);
+  if (!playerCategories.length) {
+    return [];
+  }
+
+  return prisma.user.findMany({
+    where: {
+      role: 'player',
+      isActive: true,
+      email: {
+        not: null
+      },
+      playerCategory: {
+        in: playerCategories
+      }
+    },
+    orderBy: {
+      username: 'asc'
+    },
+    select: {
+      username: true,
+      email: true,
       playerCategory: true
     }
   });
@@ -328,6 +373,7 @@ module.exports = {
   updateUserRoleAndCategory,
   updateUserPassword,
   listActivePlayers,
+  listActivePlayerEmailsByTrainingCategory,
   listTrainings,
   findTrainingById,
   createTraining,
