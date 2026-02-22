@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="sk">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -271,6 +272,7 @@
                 transform: translateY(-50px);
                 opacity: 0;
             }
+
             to {
                 transform: translateY(0);
                 opacity: 1;
@@ -542,6 +544,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Header -->
     <header>
@@ -856,13 +859,13 @@
         let currentUser = null;
 
         // ====== INICIALIZÁCIA ======
-        window.addEventListener('load', function() {
+        window.addEventListener('load', function () {
             renderMatches();
         });
 
         function renderMatches() {
             const container = document.getElementById('matchesContainer');
-            
+
             if (Object.keys(MATCHES).length === 0) {
                 container.innerHTML = '<div class="no-matches"><p>Žiadne zápasy na zobrazenie</p></div>';
                 return;
@@ -871,7 +874,7 @@
             let html = '';
             Object.values(MATCHES).forEach(match => {
                 const dateObj = new Date(match.date + 'T' + match.time);
-                const formattedDate = dateObj.toLocaleDateString('sk-SK', { 
+                const formattedDate = dateObj.toLocaleDateString('sk-SK', {
                     weekday: 'long',
                     day: 'numeric',
                     month: 'long',
@@ -948,7 +951,7 @@
 
         function generateMatchDetail(match) {
             const dateObj = new Date(match.date + 'T' + match.time);
-            const formattedDate = dateObj.toLocaleDateString('sk-SK', { 
+            const formattedDate = dateObj.toLocaleDateString('sk-SK', {
                 weekday: 'long',
                 day: 'numeric',
                 month: 'long',
@@ -1083,7 +1086,7 @@
         }
 
         // Zatvorenie modalu kliknutím mimo
-        document.addEventListener('click', function(event) {
+        document.addEventListener('click', function (event) {
             const modal = document.getElementById('matchModal');
             if (event.target === modal) {
                 closeMatchModal();
@@ -1091,11 +1094,13 @@
         });
 
         // Zatvorenie modalu klávesom ESC
-        document.addEventListener('keydown', function(event) {
+        document.addEventListener('keydown', function (event) {
             if (event.key === 'Escape') {
                 closeMatchModal();
             }
         });
     </script>
+    <script defer src="/_vercel/speed-insights/script.js"></script>
 </body>
+
 </html>
