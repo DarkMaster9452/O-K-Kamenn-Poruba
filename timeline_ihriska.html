@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="sk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fototimeline ihriska - OŠK Kamenná Poruba</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f4f7ff 0%, #eef2ff 100%);
+            color: #1f2a44;
+            min-height: 100vh;
+        }
+
+        .page-wrap {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 28px 18px 50px;
+        }
+
+        .site-nav {
+            background: linear-gradient(135deg, #003399 0%, #1a5ccc 100%);
+            padding: 0 24px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .site-nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            min-height: 72px;
+        }
+
+        .site-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: #fff;
+            font-weight: 700;
+            font-size: 16px;
+            letter-spacing: 0.2px;
+        }
+
+        .site-logo {
+            width: 42px;
+            height: 42px;
+            object-fit: contain;
+            border-radius: 50%;
+            background: #fff;
+            padding: 2px;
+        }
+
+        .btn-back {
+            text-decoration: none;
+            color: #fff;
+            padding: 0;
+            border-radius: 0;
+            font-weight: 700;
+            border: none;
+            background: transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+        }
+
+        .page-title {
+            color: #003399;
+            font-size: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 0 14px;
+        }
+
+        .intro {
+            background: #fff;
+            border: 1px solid rgba(0, 51, 153, 0.12);
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 20px;
+            line-height: 1.7;
+            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
+        }
+
+        .timeline {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            gap: 18px;
+        }
+
+        .event {
+            background: #fff;
+            border: 1px solid rgba(0, 51, 153, 0.14);
+            border-radius: 14px;
+            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .event::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 6px;
+            background: linear-gradient(180deg, #ffd700 0%, #ffed4e 100%);
+        }
+
+        .event-body {
+            padding: 16px 16px 14px 18px;
+        }
+
+        .event-head {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .year {
+            background: #003399;
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .title {
+            color: #003399;
+            font-size: 20px;
+            font-weight: 800;
+            line-height: 1.35;
+        }
+
+        .points {
+            margin: 0;
+            padding-left: 18px;
+            line-height: 1.65;
+        }
+
+        .points li {
+            margin-bottom: 6px;
+        }
+
+        .photo-grid {
+            margin-top: 12px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 12px;
+        }
+
+        .photo-card {
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 51, 153, 0.12);
+            background: #f9fbff;
+        }
+
+        .photo-card img {
+            width: 100%;
+            height: 170px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .caption {
+            font-size: 12px;
+            font-weight: 600;
+            color: #003399;
+            padding: 8px 10px;
+            background: #fff;
+        }
+
+        @media (max-width: 768px) {
+            .site-nav {
+                padding: 0 14px;
+            }
+
+            .site-nav-inner {
+                min-height: 62px;
+            }
+
+            .page-title {
+                font-size: 24px;
+            }
+
+            .photo-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="site-nav">
+        <div class="site-nav-inner">
+            <div class="site-brand">
+                <img src="OŠK Kamenná Poruba Logo.png" alt="Logo OŠK Kamenná Poruba" class="site-logo">
+                <span>OŠK Kamenná Poruba</span>
+            </div>
+            <a class="btn-back" href="index.html"><i class="fas fa-arrow-left"></i> Späť na hlavnú stránku</a>
+        </div>
+    </header>
+
+    <div class="page-wrap">
+        <h1 class="page-title"><i class="fas fa-timeline"></i> Fototimeline: Ako vznikalo ihrisko</h1>
+
+        <div class="intro">
+            Chronologická postupnosť budovania areálu OŠK Kamenná Poruba. Každá etapa obsahuje krátky popis
+            a fotografie, ktoré dokumentujú rozvoj ihriska, zázemia a infraštruktúry.
+        </div>
+
+        <ol class="timeline">
+            <li class="event">
+                <div class="event-body">
+                    <div class="event-head">
+                        <span class="year">1955 – 1969</span>
+                        <span class="title">Začiatky futbalu v obci</span>
+                    </div>
+                    <ul class="points">
+                        <li>Vznik telovýchovného hnutia a prvé futbalové zázemie.</li>
+                        <li>Hrávalo sa na pôvodnom ihrisku v Porubskej doline.</li>
+                    </ul>
+                    <div class="photo-grid">
+                        <div class="photo-card">
+                            <img src="images/51597284815_c985abef70_b.jpg" alt="Historické začiatky klubu">
+                            <div class="caption">Historické začiatky klubu</div>
+                        </div>
+                        <div class="photo-card">
+                            <img src="images/IMG_5259-Enhanced-NR-1024x683.jpg" alt="Prvé obdobie futbalu v obci">
+                            <div class="caption">Prvé obdobie futbalu v obci</div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+
+            <li class="event">
+                <div class="event-body">
+                    <div class="event-head">
+                        <span class="year">1969+</span>
+                        <span class="title">Presun na Skotňu</span>
+                    </div>
+                    <ul class="points">
+                        <li>Futbal sa presunul na ihrisko na Skotni.</li>
+                        <li>Riešil sa náročný prístup a technický stav hracej plochy.</li>
+                    </ul>
+                    <div class="photo-grid">
+                        <div class="photo-card">
+                            <img src="images/2.jpg" alt="Obdobie presunu na nové miesto">
+                            <div class="caption">Obdobie presunu na nové miesto</div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+
+            <li class="event">
+                <div class="event-body">
+                    <div class="event-head">
+                        <span class="year">1980+</span>
+                        <span class="title">Nové ihrisko v lokalite Dub</span>
+                    </div>
+                    <ul class="points">
+                        <li>Vybudovanie nového ihriska za pomoci miestnych nadšencov.</li>
+                        <li>Stabilizácia zázemia a pravidelná údržba areálu.</li>
+                    </ul>
+                    <div class="photo-grid">
+                        <div class="photo-card">
+                            <img src="images/359sk_1.jpg" alt="Nové ihrisko a areál">
+                            <div class="caption">Nové ihrisko a areál</div>
+                        </div>
+                        <div class="photo-card">
+                            <img src="images/10750142878023431842.jpg" alt="Postupné zveľaďovanie plochy">
+                            <div class="caption">Postupné zveľaďovanie plochy</div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+
+            <li class="event">
+                <div class="event-body">
+                    <div class="event-head">
+                        <span class="year">2006 – 2010</span>
+                        <span class="title">Budovanie šatní a zázemia</span>
+                    </div>
+                    <ul class="points">
+                        <li>Budovanie šatní pri ihrisku.</li>
+                        <li>Dokončenie základného technického a prevádzkového zázemia.</li>
+                    </ul>
+                    <div class="photo-grid">
+                        <div class="photo-card">
+                            <img src="images/508120564_29838519272462811_2048504803720081817_n.jpg"
+                                alt="Rozvoj klubového zázemia">
+                            <div class="caption">Rozvoj klubového zázemia</div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+
+            <li class="event">
+                <div class="event-body">
+                    <div class="event-head">
+                        <span class="year">2018+</span>
+                        <span class="title">Modernizácia: zavlažovanie, osvetlenie, tribúna</span>
+                    </div>
+                    <ul class="points">
+                        <li>Vybudované umelé zavlažovanie hracej plochy.</li>
+                        <li>Rozvoj osvetlenia areálu a lepších podmienok pre tréningy.</li>
+                        <li>Výstavba menšej tribúny pre divákov.</li>
+                    </ul>
+                    <div class="photo-grid">
+                        <div class="photo-card">
+                            <img src="images/508433324_29841234952191243_3332785514084510977_n.jpg"
+                                alt="Modernizácia areálu">
+                            <div class="caption">Modernizácia areálu</div>
+                        </div>
+                        <div class="photo-card">
+                            <img src="images/508538663_29841234848857920_7529913858397432447_n.jpg"
+                                alt="Súčasný stav štadióna">
+                            <div class="caption">Súčasný stav štadióna</div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ol>
+    </div>
+</body>
+
+</html>

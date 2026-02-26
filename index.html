@@ -891,6 +891,128 @@
             margin-bottom: 6px;
         }
 
+        .development-photo-timeline {
+            list-style: none;
+            margin: 14px 0 0;
+            padding: 0;
+            display: grid;
+            gap: 18px;
+            position: relative;
+        }
+
+        .development-phase {
+            position: relative;
+            background: linear-gradient(135deg, #ffffff 0%, #f6f9ff 100%);
+            padding: 18px 18px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 51, 153, 0.12);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .development-phase::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 6px;
+            background: linear-gradient(180deg, #ffd700 0%, #ffed4e 100%);
+        }
+
+        .development-phase-head {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .development-phase-year {
+            background: #003399;
+            color: #fff;
+            font-weight: bold;
+            padding: 5px 11px;
+            border-radius: 999px;
+            font-size: 12px;
+            white-space: nowrap;
+            letter-spacing: 0.3px;
+        }
+
+        .development-phase-title {
+            color: #003399;
+            font-size: 18px;
+            font-weight: bold;
+            line-height: 1.35;
+        }
+
+        .development-phase-points {
+            margin: 0;
+            padding-left: 20px;
+            color: #2f2f2f;
+            line-height: 1.65;
+        }
+
+        .development-phase-points li {
+            margin-bottom: 7px;
+        }
+
+        .development-photo-grid {
+            margin-top: 12px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .development-photo-item {
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 51, 153, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .development-photo-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.14);
+        }
+
+        .development-photo-item .gallery-image {
+            width: 100%;
+            min-width: 0;
+            max-width: none;
+            height: 160px;
+            border-radius: 0;
+            margin: 0;
+        }
+
+        .development-photo-caption {
+            padding: 9px 10px;
+            font-size: 12px;
+            color: #003399;
+            font-weight: 600;
+            background: #f8fbff;
+        }
+
+        @media (max-width: 768px) {
+            .development-phase {
+                padding: 14px 14px 12px;
+            }
+
+            .development-phase-title {
+                font-size: 16px;
+            }
+
+            .development-photo-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .development-photo-item .gallery-image {
+                height: 180px;
+            }
+        }
+
         /* Forms */
         .form-group {
             margin-bottom: 20px;
@@ -1411,8 +1533,8 @@
                     ňom začalo v roku 1980.</p>
                 <p>V roku 2006 sa pri ihrisku začali budovať šatne, ktoré sa dokončili v roku 2010. V roku 2018 sa na
                     ihrisku vybudovalo umelé zavlažovanie a postavila sa menšia tribúna.</p>
-             
-               
+
+
             </div>
 
         </section>
@@ -1616,38 +1738,15 @@
                 <section id="development" style="margin-top: 40px;">
                     <h2><i class="fas fa-timeline"></i> Ako vznikalo ihrisko</h2>
                     <div class="club-extra-card">
-                        <p>Postup budovania areálu v časovej a vecnej postupnosti:</p>
-                        <ol class="development-timeline">
-                            <li class="development-step">
-                                <strong>1. Začiatky klubu (1955 – 1969)</strong>
-                                <ul class="development-sublist">
-                                    <li>Vznik telovýchovného hnutia a prvé futbalové zázemie.</li>
-                                    <li>Hrávalo sa na pôvodnom ihrisku v Porubskej doline.</li>
-                                </ul>
-                            </li>
-                            <li class="development-step">
-                                <strong>2. Presun na Skotňu (od 1969)</strong>
-                                <ul class="development-sublist">
-                                    <li>Futbal sa presunul na ihrisko na Skotni.</li>
-                                    <li>Riešil sa náročný prístup a technický stav plochy.</li>
-                                </ul>
-                            </li>
-                            <li class="development-step">
-                                <strong>3. Nové ihrisko v lokalite Dub (od 1980)</strong>
-                                <ul class="development-sublist">
-                                    <li>Vybudovanie nového ihriska za pomoci miestnych nadšencov.</li>
-                                    <li>Postupné zlepšovanie športového zázemia.</li>
-                                </ul>
-                            </li>
-                            <li class="development-step">
-                                <strong>4. Modernizácia areálu (2006 – 2018)</strong>
-                                <ul class="development-sublist">
-                                    <li>2006 – 2010: budovanie a dokončenie šatní.</li>
-                                    <li>2018: vybudovanie umelého zavlažovania.</li>
-                                    <li>2018: výstavba menšej tribúny pre divákov.</li>
-                                </ul>
-                            </li>
-                        </ol>
+                        <p>
+                            Kompletnú fotodokumentáciu vývoja areálu sme presunuli na samostatnú stránku,
+                            kde je prehľadná časová os so všetkými etapami budovania.
+                        </p>
+                        <p style="margin-top: 14px;">
+                            <a href="timeline_ihriska.html" class="btn btn-primary">
+                                <i class="fas fa-images"></i> Otvoriť fototimeline ihriska
+                            </a>
+                        </p>
                     </div>
                 </section>
 
@@ -1668,10 +1767,8 @@
                                     456 789</p>
                                 <p style="margin-bottom: 20px;"><i class="fas fa-envelope"
                                         style="color: #ffd700; width: 30px;"></i>
-                                    <strong>Email:</strong><br>info@oskamennaoruba.sk
-                                </p>
-                                <p><i class="fas fa-clock" style="color: #ffd700; width: 30px;"></i> <strong>Pracovná
-                                        doba:</strong><br>Po-Pia: 9:00 - 18:00</p>
+                                    <strong>Email:</strong><br>oskkamennaporuba@gmail.com
+                               
                             </div>
                         </div>
                         <div>
