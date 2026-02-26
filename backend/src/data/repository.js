@@ -75,9 +75,39 @@ async function findUserByUsername(username) {
 }
 
 async function findUserById(id) {
-  return prisma.user.findUnique({
-    where: { id }
-  });
+  try {
+    return await prisma.user.findUnique({
+      where: { id }
+    });
+  } catch (error) {
+    if (!shouldFallbackWithoutEmail(error) && !shouldFallbackWithoutShirtNumber(error)) {
+      throw error;
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        username: true,
+        role: true,
+        playerCategory: true,
+        passwordHash: true,
+        lastPasswordChangeAt: true,
+        isActive: true,
+        createdAt: true
+      }
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    return {
+      ...user,
+      email: null,
+      shirtNumber: null
+    };
+  }
 }
 
 async function listUsersForManagement() {
@@ -149,18 +179,29 @@ async function createManagedUser(input) {
       delete fallbackInput.shirtNumber;
     }
 
-    const row = await prisma.user.create({
-      data: fallbackInput,
-      select: {
-        id: true,
-        username: true,
-        role: true,
-        playerCategory: true,
-        isActive: true,
-        createdAt: true,
-        lastPasswordChangeAt: true
+    let row;
+    try {
+      row = await prisma.user.create({
+        data: fallbackInput,
+        select: {
+          id: true,
+          username: true,
+          role: true,
+          playerCategory: true,
+          isActive: true,
+          createdAt: true,
+          lastPasswordChangeAt: true
+        }
+      });
+    } catch (fallbackError) {
+      const fallbackMessage = String(fallbackError?.message || '').toLowerCase();
+      if (missingEmail && fallbackMessage.includes('email') && fallbackMessage.includes('argument')) {
+        const schemaError = new Error('Databáza nie je zosynchronizovaná so serverom (chýba stĺpec email). Spustite migráciu Prisma na produkčnej DB.');
+        schemaError.status = 500;
+        throw schemaError;
       }
-    });
+      throw fallbackError;
+    }
 
     return {
       ...row,

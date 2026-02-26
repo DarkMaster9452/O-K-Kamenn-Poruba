@@ -83,15 +83,29 @@ router.post('/', validateBody(createUserSchema), async (req, res) => {
 
   const passwordHash = await bcrypt.hash(password, 12);
 
-  const created = await createManagedUser({
-    username: username.trim(),
-    email: email.trim().toLowerCase(),
-    role,
-    playerCategory: role === 'player' ? playerCategory : null,
-    shirtNumber: role === 'player' ? (shirtNumber ?? null) : null,
-    passwordHash,
-    isActive
-  });
+  let created;
+  try {
+    created = await createManagedUser({
+      username: username.trim(),
+      email: email.trim().toLowerCase(),
+      role,
+      playerCategory: role === 'player' ? playerCategory : null,
+      shirtNumber: role === 'player' ? (shirtNumber ?? null) : null,
+      passwordHash,
+      isActive
+    });
+  } catch (error) {
+    if (error?.code === 'P2002') {
+      const target = Array.isArray(error.meta?.target) ? error.meta.target.join(', ') : 'údaj';
+      return res.status(409).json({ message: `Používateľ s rovnakým údajom už existuje (${target}).` });
+    }
+
+    if (error?.status && error?.message) {
+      return res.status(error.status).json({ message: error.message });
+    }
+
+    throw error;
+  }
 
   await writeAuditSafe({
     actorUserId: req.user.id,
