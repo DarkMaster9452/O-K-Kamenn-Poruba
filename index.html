@@ -1189,6 +1189,94 @@
             color: #ffd700;
         }
 
+        /* Sponsors */
+        .sponsors-bar {
+            margin-top: 40px;
+            background: #f8fbff;
+            border-top: 2px solid #e6eefc;
+            border-bottom: 2px solid #e6eefc;
+            padding: 22px 0;
+            overflow: hidden;
+        }
+
+        .sponsors-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .sponsors-title {
+            text-align: center;
+            color: #003399;
+            font-size: 20px;
+            margin-bottom: 16px;
+        }
+
+        .sponsors-viewport {
+            overflow: hidden;
+            position: relative;
+            width: 100%;
+        }
+
+        .sponsors-track {
+            display: flex;
+            width: max-content;
+            align-items: center;
+            gap: 14px;
+            animation: sponsorsMarquee 28s linear infinite;
+        }
+
+        .sponsor-item {
+            width: 200px;
+            min-width: 200px;
+            height: 84px;
+            border-radius: 10px;
+            border: 1px solid #d9e7ff;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 14px rgba(0, 51, 153, 0.08);
+            padding: 10px;
+            user-select: none;
+        }
+
+        .sponsor-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        @keyframes sponsorsMarquee {
+            from {
+                transform: translateX(0);
+            }
+
+            to {
+                transform: translateX(-50%);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sponsors-title {
+                font-size: 18px;
+            }
+
+            .sponsor-item {
+                width: 150px;
+                min-width: 150px;
+                height: 72px;
+                padding: 8px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .sponsors-track {
+                animation: none;
+            }
+        }
+
         /* Footer */
         footer {
             background: #003399;
@@ -1768,7 +1856,7 @@
                                 <p style="margin-bottom: 20px;"><i class="fas fa-envelope"
                                         style="color: #ffd700; width: 30px;"></i>
                                     <strong>Email:</strong><br>oskkamennaporuba@gmail.com
-                               
+
                             </div>
                         </div>
                         <div>
@@ -1911,6 +1999,28 @@
                 onclick="closeChangePasswordModal()">Zrušiť</button>
         </div>
     </div>
+
+    <section class="sponsors-bar" aria-label="Partneri klubu">
+        <div class="sponsors-inner">
+            <h2 class="sponsors-title">Partneri klubu</h2>
+            <div class="sponsors-viewport">
+                <div class="sponsors-track">
+                    <div class="sponsor-item"><img src="images/tomchlad-logo-blue.png" alt="Tomchlad"></div>
+                    <div class="sponsor-item"><img src="images/Bez názvu.png" alt="OŠK Kamenná Poruba"></div>
+                    <div class="sponsor-item"><img src="images/logo_RGB.png" alt="Spinteq"></div>
+                    <div class="sponsor-item"><img src="images/kofola.png" alt="Kofola"></div>
+                    <div class="sponsor-item"><img src="images/664dfb89aff21.png" alt="Gardenteam"></div>
+                    <div class="sponsor-item"><img src="images/mas technik logo.png" alt="Mas Technik"></div>
+                    <div class="sponsor-item"><img src="images/tomchlad-logo-blue.png" alt="Tomchlad"></div>
+                    <div class="sponsor-item"><img src="images/Bez názvu.png" alt="OŠK Kamenná Poruba"></div>
+                    <div class="sponsor-item"><img src="images/logo_RGB.png" alt="Spinteq"></div>
+                    <div class="sponsor-item"><img src="images/kofola.png" alt="Kofola"></div>
+                    <div class="sponsor-item"><img src="images/664dfb89aff21.png" alt="Gardenteam"></div>
+                    <div class="sponsor-item"><img src="images/mas technik logo.png" alt="Mas Technik"></div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Footer -->
     <footer>
