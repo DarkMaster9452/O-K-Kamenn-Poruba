@@ -591,7 +591,7 @@
             }
 
             hourSelect.innerHTML = '';
-            for (let hour = 0; hour < 24; hour += 1) {
+            for (let hour = 8; hour <= 20; hour += 1) {
                 const value = String(hour).padStart(2, '0');
                 const option = document.createElement('option');
                 option.value = value;
