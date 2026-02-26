@@ -1,5 +1,15 @@
 const env = require('../config/env');
-const { verifyAccessToken } = require('../services/token.service');
+const { verifyAccessToken, signAccessToken } = require('../services/token.service');
+
+function cookieOptions() {
+  return {
+    httpOnly: true,
+    secure: env.cookieSecure,
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 1000 * 60 * 60 * 24 * 30
+  };
+}
 
 function getTokenFromRequest(req) {
   const cookieToken = req.cookies ? req.cookies[env.cookieName] : null;
@@ -14,6 +24,7 @@ function getTokenFromRequest(req) {
 }
 
 function requireAuth(req, res, next) {
+  const cookieToken = req.cookies ? req.cookies[env.cookieName] : null;
   const token = getTokenFromRequest(req);
   if (!token) {
     return res.status(401).json({ message: 'Neautorizované' });
@@ -27,6 +38,18 @@ function requireAuth(req, res, next) {
       role: payload.role,
       playerCategory: payload.playerCategory || null
     };
+
+    if (cookieToken) {
+      const refreshedToken = signAccessToken({
+        sub: payload.sub,
+        username: payload.username,
+        role: payload.role,
+        playerCategory: payload.playerCategory || null
+      });
+
+      res.cookie(env.cookieName, refreshedToken, cookieOptions());
+    }
+
     return next();
   } catch (err) {
     return res.status(401).json({ message: 'Neautorizované' });

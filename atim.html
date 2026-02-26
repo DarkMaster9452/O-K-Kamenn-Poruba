@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="sk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A-tím | OŠK Kamenná Poruba</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f4f4;
+            color: #333;
+        }
+
+        header {
+            background: linear-gradient(135deg, #003399 0%, #1a5ccc 100%);
+            color: #fff;
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .title {
+            margin: 0;
+            font-size: 28px;
+            color: #ffd700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-back {
+            background: #ffd700;
+            color: #003399;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 14px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        main {
+            max-width: 1280px;
+            margin: 28px auto;
+            padding: 0 18px 28px;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .card h3 {
+            margin: 0 0 12px;
+            color: #003399;
+        }
+
+        .group {
+            margin-bottom: 16px;
+        }
+
+        .group:last-child {
+            margin-bottom: 0;
+        }
+
+        .group h4 {
+            margin: 0 0 8px;
+            color: #003399;
+            letter-spacing: 0.3px;
+            font-size: 16px;
+            border-left: 4px solid #ffd700;
+            padding-left: 8px;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            border: 1px solid #e6ebf3;
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #f8f9fc;
+            min-width: 760px;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 9px;
+            border-bottom: 1px solid #eef2f8;
+            font-size: 14px;
+        }
+
+        th {
+            border-bottom: 1px solid #e1e6ef;
+            background: #eef3fb;
+            color: #003399;
+            font-weight: 700;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #fdfdff;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 18px;
+        }
+
+        .stat-subtitle {
+            margin: 0 0 8px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        @media (max-width: 700px) {
+            .title {
+                font-size: 23px;
+            }
+
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .btn-back {
+                width: 100%;
+            }
+
+            .card {
+                padding: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1 class="title"><i class="fas fa-shield-alt"></i> A-tím</h1>
+        <button class="btn-back" onclick="window.location.href='index.html'">Späť na hlavnú stránku</button>
+    </header>
+
+    <main>
+        <section class="card">
+            <h3>Súpiska hráčov</h3>
+
+            <div class="group">
+                <h4>BRANKÁRI</h4>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width:60px;">#</th>
+                                <th>Meno hráča</th>
+                                <th>Narodený</th>
+                                <th>Vek</th>
+                                <th>Výška</th>
+                                <th>Váha</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>—</td>
+                                <td>Tomáš Majerčík</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>—</td>
+                                <td>Erik Záň</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>—</td>
+                                <td>Adam Prieložný</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="group">
+                <h4>OBRANCOVIA</h4>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width:60px;">#</th>
+                                <th>Meno hráča</th>
+                                <th>Narodený</th>
+                                <th>Vek</th>
+                                <th>Výška</th>
+                                <th>Váha</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>—</td>
+                                <td>Michal Chupáň</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>—</td>
+                                <td>František Bielik</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>—</td>
+                                <td>Andrej Majčin</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>—</td>
+                                <td>Martin Kasman</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>—</td>
+                                <td>Daniel Chupáň</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>—</td>
+                                <td>Mário Dolník</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>—</td>
+                                <td>Ľuboš Jánošík</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>—</td>
+                                <td>Peter Horník</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>—</td>
+                                <td>Richard Kadák</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="group">
+                <h4>ZÁLOŽNÍCI</h4>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width:60px;">#</th>
+                                <th>Meno hráča</th>
+                                <th>Narodený</th>
+                                <th>Vek</th>
+                                <th>Výška</th>
+                                <th>Váha</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>—</td>
+                                <td>Tomáš Knotek</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>—</td>
+                                <td>Juraj Knapec</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>—</td>
+                                <td>Ladislav Šimkulič</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>—</td>
+                                <td>Michal Šimun</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>—</td>
+                                <td>Filip Kasman</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>—</td>
+                                <td>Martin Martinka</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>—</td>
+                                <td>Adam Lihocký</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>—</td>
+                                <td>Peter Albert</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>—</td>
+                                <td>Peter Martinka</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>—</td>
+                                <td>Jaroslav Hruška</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>—</td>
+                                <td>Daniel Pekný</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="group">
+                <h4>ÚTOČNÍCI</h4>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width:60px;">#</th>
+                                <th>Meno hráča</th>
+                                <th>Narodený</th>
+                                <th>Vek</th>
+                                <th>Výška</th>
+                                <th>Váha</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>—</td>
+                                <td>Juraj Horník</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>—</td>
+                                <td>Martin Šimkulič</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>—</td>
+                                <td>Nikolas Šimun</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>—</td>
+                                <td>Marek Šimkulič</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>—</td>
+                                <td>Pavol Vereš</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                                <td>—</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h3>Realizačný tím</h3>
+            <p>Hlavný tréner: Juraj Ihnatišin</p>
+            <p>Asistent trénera: Peter Ondrejka</p>
+            <p>Vedúci mužstva: Vincent Vereš</p>
+        </section>
+
+        <section class="grid">
+            <div class="card">
+                <h3>Najbližší zápas</h3>
+                <p class="stat-subtitle">Program A-tímu</p>
+                <p><strong>OŠK Kamenná Poruba</strong> vs. FK Šachtár Banská Bystrica</p>
+                <p>25. február 2026 o 18:30</p>
+                <p>Miesto: Domáci štadión</p>
+            </div>
+            <div class="card">
+                <h3>Posledný výsledok</h3>
+                <p class="stat-subtitle">Naposledy odohraný zápas</p>
+                <p><strong>OŠK Kamenná Poruba 2:1 FK Detva</strong></p>
+                <p>Strelci: Hodás, Turanec</p>
+                <p>Dátum: 18. február 2026</p>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>

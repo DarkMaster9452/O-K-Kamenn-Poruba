@@ -405,7 +405,8 @@
         }
 
         #about,
-        #players,
+        #ateam,
+        #academy,
         #matches,
         #gallery,
         #parking,
@@ -1355,14 +1356,11 @@
             <nav id="mainNav">
                 <ul>
                     <li><a href="#about">O nás</a></li>
-                    <li><a href="#players">Hráči</a></li>
+                    <li><a href="atim.html">A-tím</a></li>
+                    <li><a href="akademia.html">Akadémia</a></li>
                     <li><a href="#matches">Zápasy</a></li>
                     <li><a href="#gallery">Galéria</a></li>
-                    <li><a href="#parking">Parkovanie</a></li>
-                    <li><a href="#development">Ihrisko</a></li>
                     <li><a href="#contact">Kontakt</a></li>
-                    <li><a href="#" id="matchesNavLink" style="cursor: pointer;" onclick="goToMatches(event)"><i
-                                class="fas fa-calendar"></i> Všetky zápasy</a></li>
                     <li id="coachPlayerCardBtn" style="display:none;"><a href="players_list_coach.html"><i
                                 class="fas fa-id-card"></i> Karty hráčov</a></li>
                     <li id="coachAccountMgmtBtn" style="display:none;"><a href="account_management.html"><i
@@ -1392,8 +1390,7 @@
         <div class="hero-buttons">
             <button class="btn btn-primary" onclick="document.getElementById('matches').scrollIntoView()">Zobraziť
                 zápasy</button>
-            <button class="btn btn-secondary" onclick="document.getElementById('about').scrollIntoView()">Viac
-                informácií</button>
+            <button class="btn btn-secondary" onclick="window.location.href='atim.html'">A-tím</button>
         </div>
     </section>
 
@@ -1431,54 +1428,6 @@
                         Zobraziť viac
                     </button>
                 </div>
-            </div>
-
-        </section>
-
-        <!-- Players Section -->
-        <section id="players" style="margin-top: 40px;">
-            <h2><i class="fas fa-users"></i> Štatistika hráčov</h2>
-
-            <!-- Category Filter -->
-            <div
-                style="text-align: center; margin-bottom: 40px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
-                <button onclick="filterPlayers('pripravka_u9')" class="category-filter active"
-                    data-category="pripravka_u9">
-                    <i class="fas fa-child"></i> Prípravka U9
-                </button>
-                <button onclick="filterPlayers('pripravka_u11')" class="category-filter" data-category="pripravka_u11">
-                    <i class="fas fa-child"></i> Prípravka U11
-                </button>
-                <button onclick="filterPlayers('ziaci')" class="category-filter" data-category="ziaci">
-                    <i class="fas fa-graduation-cap"></i> Žiaci (U12-U15)
-                </button>
-                <button onclick="filterPlayers('dorastenci')" class="category-filter" data-category="dorastenci">
-                    <i class="fas fa-running"></i> Dorastenci (U16-U19)
-                </button>
-                <button onclick="filterPlayers('adults_young')" class="category-filter" data-category="adults_young">
-                    <i class="fas fa-dumbbell"></i> Dospelí - Mladí (18-25)
-                </button>
-                <button onclick="filterPlayers('adults_pro')" class="category-filter" data-category="adults_pro">
-                    <i class="fas fa-star"></i> Dospelí - Skúsení (25+)
-                </button>
-            </div>
-
-            <!-- Stats Display -->
-            <div id="playersStatsContainer"
-                style="background: white; border-radius: 0; padding: 30px; box-shadow: 0 8px 20px rgba(0,0,0,0.12); margin-bottom: 40px;">
-                <div
-                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 2px solid #f0f0f0;">
-                    <h3 style="margin: 0; color: #003399; font-size: 20px;">Hráči</h3>
-                    <div class="player-stat-values" style="margin-left:auto;">
-                        <div class="stat-header-value">Zápasy</div>
-                        <div class="stat-header-value">Minúty</div>
-                        <div class="stat-header-value">Góly</div>
-                        <div class="stat-header-value">Žltá</div>
-                        <div class="stat-header-value">Druhá</div>
-                        <div class="stat-header-value">Červená</div>
-                    </div>
-                </div>
-                <div id="playersListContainer"></div>
             </div>
 
         </section>
@@ -1668,11 +1617,11 @@
                             cesty k šatniam a k hlavnému vstupu.
                         </p>
                         <iframe class="parking-map"
-                            src="https://www.google.com/maps?q=O%C5%A0K%20Kamenn%C3%A1%20Poruba%20futbalov%C3%BD%20%C5%A1tadi%C3%B3n&output=embed"
+                            src="https://maps.google.com/maps?q=49.1016944,18.6856944&z=19&t=k&output=embed"
                             loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Mapa parkovania">
                         </iframe>
                         <p style="margin-top: 12px;">
-                            <a href="https://www.google.com/maps/search/?api=1&query=O%C5%A0K+Kamenn%C3%A1+Poruba+parkovanie"
+                            <a href="https://www.google.com/maps/search/?api=1&query=49.1016944,18.6856944"
                                 target="_blank" rel="noopener" style="color:#003399;font-weight:bold;">Otvoriť mapu v
                                 Google Maps</a>
                         </p>
@@ -1901,11 +1850,10 @@
                 <h3>Rýchle odkazy</h3>
                 <ul>
                     <li><a href="#about">O nás</a></li>
-                    <li><a href="#players">Hráči</a></li>
+                    <li><a href="atim.html">A-tím</a></li>
+                    <li><a href="akademia.html">Akadémia</a></li>
                     <li><a href="#matches">Zápasy</a></li>
                     <li><a href="#gallery">Galéria</a></li>
-                    <li><a href="#parking">Parkovanie</a></li>
-                    <li><a href="#development">Ihrisko</a></li>
                     <li><a href="#contact">Kontakt</a></li>
                 </ul>
             </div>
@@ -2148,7 +2096,17 @@
         }
 
         // ====== FILTROVANIE A ZOBRAZENIE HRÁČOV ======
-        let currentPlayerFilter = 'pripravka_u9';
+        let currentPlayerFilter = 'academy_all';
+
+        const ACADEMY_FILTER_MAP = {
+            academy_all: ['pripravka_u9', 'pripravka_u11', 'ziaci', 'dorastenci'],
+            u9: ['pripravka_u9'],
+            u11: ['pripravka_u11'],
+            u13: ['ziaci'],
+            u15: ['ziaci'],
+            u17: ['dorastenci'],
+            u19: ['dorastenci']
+        };
 
         function sleep(ms) {
             return new Promise((resolve) => setTimeout(resolve, ms));
@@ -2227,20 +2185,27 @@
         function filterPlayers(category) {
             currentPlayerFilter = category;
 
-            // Update active button
             document.querySelectorAll('.category-filter').forEach(btn => {
                 btn.classList.remove('active');
             });
-            document.querySelector(`[data-category="${category}"]`).classList.add('active');
+            const activeButton = document.querySelector(`[data-category="${category}"]`);
+            if (activeButton) {
+                activeButton.classList.add('active');
+            }
 
             renderPlayerStats(category);
         }
 
         function renderPlayerStats(category) {
             const container = document.getElementById('playersListContainer');
+            if (!container) {
+                return;
+            }
+
             let filteredPlayers = Object.values(PLAYERS);
 
-            filteredPlayers = filteredPlayers.filter(p => p.category === category);
+            const categoriesToShow = ACADEMY_FILTER_MAP[category] || [category];
+            filteredPlayers = filteredPlayers.filter(p => categoriesToShow.includes(p.category));
 
             if (filteredPlayers.length === 0) {
                 container.innerHTML = '<div class="empty-category">Žiadni hráči v tejto kategórii</div>';
@@ -2324,7 +2289,6 @@
             const mobileLoginBtn = document.getElementById('mobileLoginBtnText');
             const trainingNavLink = document.getElementById('trainingNavLink');
             const infoNavLink = document.getElementById('infoNavLink');
-            const matchesNavLink = document.getElementById('matchesNavLink');
             if (currentUser.isLoggedIn) {
                 const fullUsername = currentUser.username || '';
                 loginBtn.textContent = fullUsername;
@@ -2335,7 +2299,6 @@
                 }
                 trainingNavLink.style.display = 'block';
                 infoNavLink.style.display = 'block';
-                matchesNavLink.style.display = 'block';
             } else {
                 loginBtn.textContent = 'Prihlásiť sa';
                 loginBtn.title = '';
@@ -2345,7 +2308,6 @@
                 }
                 trainingNavLink.style.display = 'none';
                 infoNavLink.style.display = 'none';
-                // keep matchesNavLink visible for all users (including guests)
             }
             updateImportantInfoNavBadge();
             updateHeaderScrollOffset();
