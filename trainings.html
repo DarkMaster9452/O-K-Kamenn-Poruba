@@ -762,8 +762,16 @@
                         <input type="date" id="trainingDate">
                     </div>
                     <div class="form-group">
-                        <label for="trainingTime">Čas:</label>
-                        <input type="time" id="trainingTime" step="900">
+                        <label for="trainingHour">Čas (24h):</label>
+                        <div style="display:flex;gap:8px;">
+                            <select id="trainingHour" style="flex:1;"></select>
+                            <select id="trainingMinute" style="flex:1;">
+                                <option value="00">00</option>
+                                <option value="15">15</option>
+                                <option value="30">30</option>
+                                <option value="45">45</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="trainingType">Typ:</label>
@@ -1061,11 +1069,33 @@
             return Number.isInteger(minutes) && minutes % 15 === 0;
         }
 
+        function initializeTrainingTimeSelectors() {
+            const hourSelect = document.getElementById('trainingHour');
+            const minuteSelect = document.getElementById('trainingMinute');
+            if (!hourSelect || !minuteSelect) {
+                return;
+            }
+
+            hourSelect.innerHTML = '';
+            for (let hour = 0; hour < 24; hour += 1) {
+                const value = String(hour).padStart(2, '0');
+                const option = document.createElement('option');
+                option.value = value;
+                option.textContent = value;
+                hourSelect.appendChild(option);
+            }
+
+            hourSelect.value = '17';
+            minuteSelect.value = '00';
+        }
+
         async function createTraining() {
             console.log('createTraining called');
 
             const date = document.getElementById('trainingDate').value;
-            const time = document.getElementById('trainingTime').value;
+            const selectedHour = document.getElementById('trainingHour').value;
+            const selectedMinute = document.getElementById('trainingMinute').value;
+            const time = (selectedHour && selectedMinute) ? `${selectedHour}:${selectedMinute}` : '';
             const type = document.getElementById('trainingType').value;
             const duration = document.getElementById('trainingDuration').value;
             const category = document.getElementById('trainingCategory').value;
@@ -1150,7 +1180,8 @@
 
             // Clear form
             document.getElementById('trainingDate').value = '';
-            document.getElementById('trainingTime').value = '';
+            document.getElementById('trainingHour').value = '17';
+            document.getElementById('trainingMinute').value = '00';
             document.getElementById('trainingType').value = '';
             document.getElementById('trainingDuration').value = '90';
             document.getElementById('trainingCategory').value = '';
@@ -1413,7 +1444,10 @@
         // Kontrola každú minútu
         setInterval(autoCloseTrainingsByTime, 60000);
         // Skontroluj aj hneď po načítaní
-        window.addEventListener('load', autoCloseTrainingsByTime);
+        window.addEventListener('load', function () {
+            initializeTrainingTimeSelectors();
+            autoCloseTrainingsByTime();
+        });
 
         function deleteTraining(trainingId) {
             if (confirm('Odstrániť?')) {

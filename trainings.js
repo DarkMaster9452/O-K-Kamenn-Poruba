@@ -24,6 +24,26 @@ function isQuarterHourTime(value) {
     return Number.isInteger(minutes) && minutes % 15 === 0;
 }
 
+function initializeCoachTrainingTimeSelectors() {
+    const hourSelect = document.getElementById('coachTrainingHour');
+    const minuteSelect = document.getElementById('coachTrainingMinute');
+    if (!hourSelect || !minuteSelect) {
+        return;
+    }
+
+    hourSelect.innerHTML = '';
+    for (let hour = 0; hour < 24; hour += 1) {
+        const value = String(hour).padStart(2, '0');
+        const option = document.createElement('option');
+        option.value = value;
+        option.textContent = value;
+        hourSelect.appendChild(option);
+    }
+
+    hourSelect.value = '17';
+    minuteSelect.value = '00';
+}
+
 function getApiBase() {
     if (typeof API_BASE === 'string' && API_BASE.length > 0) {
         return API_BASE;
@@ -94,7 +114,15 @@ function initializeTrainingView() {
                         </div>
                         <div>
                             <label style="display: block; margin-bottom: 8px; color: #ffd700; font-weight: bold;">Čas:</label>
-                            <input type="time" id="coachTrainingTime" step="900" style="width: 100%; padding: 10px; border: 1px solid #ffd700; border-radius: 5px; background: rgba(255, 255, 255, 0.1); color: white;">
+                            <div style="display:flex; gap:8px;">
+                                <select id="coachTrainingHour" style="flex: 1; width: 100%; padding: 10px; border: 1px solid #ffd700; border-radius: 5px; background: rgba(255, 255, 255, 0.1); color: white;"></select>
+                                <select id="coachTrainingMinute" style="flex: 1; width: 100%; padding: 10px; border: 1px solid #ffd700; border-radius: 5px; background: rgba(255, 255, 255, 0.1); color: white;">
+                                    <option value="00">00</option>
+                                    <option value="15">15</option>
+                                    <option value="30">30</option>
+                                    <option value="45">45</option>
+                                </select>
+                            </div>
                         </div>
                         <div>
                             <label style="display: block; margin-bottom: 8px; color: #ffd700; font-weight: bold;">Typ:</label>
@@ -155,6 +183,8 @@ function initializeTrainingView() {
             </div>
         </section>
     `;
+
+    initializeCoachTrainingTimeSelectors();
 }
 
 // Load training data from backend API (fallback to localStorage)
@@ -200,7 +230,9 @@ async function createTraining() {
     }
     
     const date = document.getElementById('coachTrainingDate').value;
-    const time = document.getElementById('coachTrainingTime').value;
+    const selectedHour = document.getElementById('coachTrainingHour').value;
+    const selectedMinute = document.getElementById('coachTrainingMinute').value;
+    const time = (selectedHour && selectedMinute) ? `${selectedHour}:${selectedMinute}` : '';
     const type = document.getElementById('coachTrainingType').value;
     const duration = document.getElementById('coachTrainingDuration').value;
     const category = document.getElementById('coachTrainingCategory').value;
@@ -284,7 +316,8 @@ async function createTraining() {
     
     // Clear form
     document.getElementById('coachTrainingDate').value = '';
-    document.getElementById('coachTrainingTime').value = '';
+    document.getElementById('coachTrainingHour').value = '17';
+    document.getElementById('coachTrainingMinute').value = '00';
     document.getElementById('coachTrainingType').value = '';
     document.getElementById('coachTrainingDuration').value = '90';
     document.getElementById('coachTrainingCategory').value = '';
