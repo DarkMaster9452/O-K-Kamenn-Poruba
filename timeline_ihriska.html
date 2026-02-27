@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fototimeline ihriska - OŠK Kamenná Poruba</title>
+    <title>Timeline výstavby OŠK Kamenná Poruba</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -15,331 +15,400 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f4f7ff 0%, #eef2ff 100%);
-            color: #1f2a44;
+            color: #17223f;
+            background: linear-gradient(180deg, #f3f6ff 0%, #eef2ff 100%);
             min-height: 100vh;
         }
 
-        .page-wrap {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 28px 18px 50px;
-        }
-
-        .site-nav {
+        .topbar {
             background: linear-gradient(135deg, #003399 0%, #1a5ccc 100%);
-            padding: 0 24px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            color: #fff;
+            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
         }
 
-        .site-nav-inner {
-            max-width: 1200px;
+        .topbar-inner {
+            max-width: 1280px;
             margin: 0 auto;
+            min-height: 72px;
+            padding: 0 18px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 12px;
-            min-height: 72px;
         }
 
-        .site-brand {
+        .brand {
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            color: #fff;
-            font-weight: 700;
-            font-size: 16px;
+            font-weight: 800;
             letter-spacing: 0.2px;
         }
 
-        .site-logo {
+        .brand img {
             width: 42px;
             height: 42px;
-            object-fit: contain;
             border-radius: 50%;
+            object-fit: contain;
             background: #fff;
             padding: 2px;
         }
 
-        .btn-back {
-            text-decoration: none;
+        .back-link {
             color: #fff;
-            padding: 0;
-            border-radius: 0;
+            text-decoration: none;
             font-weight: 700;
-            border: none;
-            background: transparent;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            font-size: 16px;
         }
 
-        .page-title {
+        .page {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 24px 18px 42px;
+        }
+
+        .hero {
+            background: #fff;
+            border: 1px solid rgba(0, 51, 153, 0.1);
+            border-top: 4px solid #ffd700;
+            border-radius: 16px;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .hero h1 {
             color: #003399;
             font-size: 30px;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
             gap: 10px;
-            margin: 0 0 14px;
         }
 
-        .intro {
-            background: #fff;
-            border: 1px solid rgba(0, 51, 153, 0.12);
-            border-radius: 14px;
-            padding: 18px;
-            margin-bottom: 20px;
+        .hero h1 i {
+            color: #ffd700;
+        }
+
+        .hero p {
+            color: #33405f;
             line-height: 1.7;
-            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
+        }
+
+        .year-nav {
+            position: sticky;
+            top: 10px;
+            z-index: 20;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(0, 51, 153, 0.1);
+            border-radius: 14px;
+            padding: 10px;
+            margin-bottom: 14px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+        }
+
+        .year-nav a {
+            text-decoration: none;
+            color: #003399;
+            font-weight: 700;
+            border: 1px solid #ffd700;
+            border-radius: 999px;
+            padding: 7px 12px;
+            background: #fff;
+            font-size: 13px;
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
+        }
+
+        .year-nav a:hover {
+            background: #ffd700;
+            color: #003399;
+            border-color: #003399;
         }
 
         .timeline {
-            list-style: none;
-            margin: 0;
-            padding: 0;
             display: grid;
-            gap: 18px;
+            gap: 14px;
         }
 
-        .event {
+        .year-block {
             background: #fff;
-            border: 1px solid rgba(0, 51, 153, 0.14);
+            border: 1px solid rgba(0, 51, 153, 0.12);
+            border-left: 6px solid #ffd700;
             border-radius: 14px;
-            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
             overflow: hidden;
-            position: relative;
+            scroll-margin-top: 90px;
         }
 
-        .event::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 6px;
-            background: linear-gradient(180deg, #ffd700 0%, #ffed4e 100%);
-        }
-
-        .event-body {
-            padding: 16px 16px 14px 18px;
-        }
-
-        .event-head {
+        .year-head {
+            padding: 14px 14px 10px;
+            border-bottom: 1px solid rgba(0, 51, 153, 0.08);
             display: flex;
+            flex-wrap: wrap;
             gap: 10px;
             align-items: center;
-            flex-wrap: wrap;
-            margin-bottom: 10px;
         }
 
-        .year {
+        .year-badge {
             background: #003399;
             color: #fff;
-            padding: 4px 10px;
             border-radius: 999px;
             font-size: 12px;
-            font-weight: 700;
-        }
-
-        .title {
-            color: #003399;
-            font-size: 20px;
             font-weight: 800;
-            line-height: 1.35;
+            padding: 4px 10px;
+            letter-spacing: 0.2px;
+            border: 2px solid #ffd700;
         }
 
-        .points {
-            margin: 0;
+        .year-title {
+            color: #003399;
+            font-size: 19px;
+            font-weight: 800;
+            line-height: 1.3;
+        }
+
+        .year-body {
+            padding: 12px 14px 14px;
+        }
+
+        .year-points {
+            margin: 0 0 12px;
             padding-left: 18px;
             line-height: 1.65;
+            color: #273352;
         }
 
-        .points li {
-            margin-bottom: 6px;
+        .year-points li {
+            margin-bottom: 4px;
         }
 
-        .photo-grid {
-            margin-top: 12px;
+        .photos-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-            gap: 12px;
+            grid-auto-flow: column;
+            grid-auto-columns: minmax(160px, 1fr);
+            gap: 10px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding-bottom: 4px;
         }
 
         .photo-card {
+            border: 1px solid rgba(0, 51, 153, 0.13);
             border-radius: 10px;
             overflow: hidden;
-            border: 1px solid rgba(0, 51, 153, 0.12);
-            background: #f9fbff;
+            background: #f7faff;
+            min-width: 160px;
         }
 
         .photo-card img {
             width: 100%;
-            height: 170px;
+            height: 130px;
             object-fit: cover;
             display: block;
         }
 
-        .caption {
+        .photo-caption {
+            padding: 7px 8px;
             font-size: 12px;
-            font-weight: 600;
+            font-weight: 700;
             color: #003399;
-            padding: 8px 10px;
             background: #fff;
+            line-height: 1.35;
+            border-top: 1px solid rgba(255, 215, 0, 0.8);
+        }
+
+        .photo-card.more-card {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 170px;
+            background: linear-gradient(135deg, #003399 0%, #1a5ccc 100%);
+            color: #fff;
+            font-weight: 800;
+            font-size: 18px;
+            letter-spacing: 0.3px;
+            border: 2px solid #ffd700;
         }
 
         @media (max-width: 768px) {
-            .site-nav {
-                padding: 0 14px;
-            }
-
-            .site-nav-inner {
-                min-height: 62px;
-            }
-
-            .page-title {
+            .hero h1 {
                 font-size: 24px;
             }
 
-            .photo-grid {
-                grid-template-columns: 1fr;
+            .photos-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .photo-card img {
+                height: 120px;
             }
         }
     </style>
 </head>
 
 <body>
-    <header class="site-nav">
-        <div class="site-nav-inner">
-            <div class="site-brand">
-                <img src="OŠK Kamenná Poruba Logo.png" alt="Logo OŠK Kamenná Poruba" class="site-logo">
+    <header class="topbar">
+        <div class="topbar-inner">
+            <div class="brand">
+                <img src="OŠK Kamenná Poruba Logo.png" alt="Logo OŠK Kamenná Poruba">
                 <span>OŠK Kamenná Poruba</span>
             </div>
-            <a class="btn-back" href="index.html"><i class="fas fa-arrow-left"></i> Späť na hlavnú stránku</a>
+            <a class="back-link" href="index.html"><i class="fas fa-arrow-left"></i> Späť na hlavnú stránku</a>
         </div>
     </header>
 
-    <div class="page-wrap">
-        <h1 class="page-title"><i class="fas fa-timeline"></i> Fototimeline: Ako vznikalo ihrisko</h1>
+    <main class="page">
+        <section class="hero">
+            <h1><i class="fas fa-timeline"></i> Timeline výstavby budovy OŠK</h1>
+            <p>Nové UI pre prehľadnú správu historických fotiek klubu a etáp výstavby v rokoch 2006–2010.
+                Ku každému roku môžeš pridať veľa fotiek len doplnením položiek v dátach nižšie.</p>
+        </section>
 
-        <div class="intro">
-            Chronologická postupnosť budovania areálu OŠK Kamenná Poruba. Každá etapa obsahuje krátky popis
-            a fotografie, ktoré dokumentujú rozvoj ihriska, zázemia a infraštruktúry.
-        </div>
+        <nav class="year-nav" id="yearNav"></nav>
+        <section class="timeline" id="timeline"></section>
+    </main>
 
-        <ol class="timeline">
-            <li class="event">
-                <div class="event-body">
-                    <div class="event-head">
-                        <span class="year">1955 – 1969</span>
-                        <span class="title">Začiatky futbalu v obci</span>
-                    </div>
-                    <ul class="points">
-                        <li>Vznik telovýchovného hnutia a prvé futbalové zázemie.</li>
-                        <li>Hrávalo sa na pôvodnom ihrisku v Porubskej doline.</li>
+    <script>
+        const TIMELINE_DATA = [
+            {
+                id: 'historicke',
+                year: 'Historické',
+                title: 'Historické fotky klubu',
+                points: [
+                    'Archívne zábery klubu a areálu pred výstavbou.',
+                    'Sem môžeš pridávať ľubovoľný počet historických fotografií.'
+                ],
+                photos: [
+                    { src: 'images/51597284815_c985abef70_b.jpg', alt: 'Historické začiatky klubu', caption: 'Historické začiatky klubu' },
+                    { src: 'images/IMG_5259-Enhanced-NR-1024x683.jpg', alt: 'Prvé obdobie futbalu v obci', caption: 'Prvé obdobie futbalu v obci' },
+                    { src: 'images/2.jpg', alt: 'Archívna fotografia klubu', caption: 'Archívna fotografia klubu' },
+                    { src: 'images/359sk_1.jpg', alt: 'Historický pohľad na areál', caption: 'Historický pohľad na areál' }
+                ]
+            },
+            {
+                id: 'y2006-2007',
+                year: '2006 – 2007',
+                title: 'Začiatok výstavby budovy OŠK',
+                points: [
+                    'Spustenie výstavby klubovej budovy.',
+                    'Prvé stavebné práce a príprava etáp.'
+                ],
+                photos: [
+                    { src: 'images/10750142878023431842.jpg', alt: 'Začiatok výstavby', caption: 'Začiatok výstavby (2006–2007)' },
+                    { src: 'images/508120564_29838519272462811_2048504803720081817_n.jpg', alt: 'Stavebné práce', caption: 'Stavebné práce (2006–2007)' }
+                ]
+            },
+            {
+                id: 'y2008',
+                year: '2008',
+                title: 'Pokračovanie výstavby',
+                points: [
+                    'Rozšírenie stavebných častí objektu.',
+                    'Pokračovanie hrubej stavby a infraštruktúry.'
+                ],
+                photos: [
+                    { src: 'images/508433324_29841234952191243_3332785514084510977_n.jpg', alt: 'Výstavba 2008', caption: 'Výstavba (2008)' },
+                    { src: 'images/508538663_29841234848857920_7529913858397432447_n.jpg', alt: 'Priebeh stavby 2008', caption: 'Priebeh stavby (2008)' }
+                ]
+            },
+            {
+                id: 'y2009',
+                year: '2009',
+                title: 'Pokročilá fáza výstavby',
+                points: [
+                    'Dokončovanie stavebných a technických častí.',
+                    'Príprava objektu na finálne dokončenie.'
+                ],
+                photos: [
+                    { src: 'images/508120564_29838519272462811_2048504803720081817_n.jpg', alt: 'Pokročilá fáza 2009', caption: 'Pokročilá fáza (2009)' },
+                    { src: 'images/10750142878023431842.jpg', alt: 'Stav objektu 2009', caption: 'Stav objektu (2009)' }
+                ]
+            },
+            {
+                id: 'y2010',
+                year: '2010',
+                title: 'Dokončenie budovy OŠK Kamenná Poruba',
+                points: [
+                    'Dokončenie budovy a odovzdanie do používania.',
+                    'Vznik stabilného klubového zázemia.'
+                ],
+                photos: [
+                    { src: 'images/508433324_29841234952191243_3332785514084510977_n.jpg', alt: 'Dokončenie 2010', caption: 'Dokončenie (2010)' },
+                    { src: 'images/508538663_29841234848857920_7529913858397432447_n.jpg', alt: 'Hotové zázemie 2010', caption: 'Hotové zázemie (2010)' }
+                ]
+            }
+        ];
+
+        const timelineContainer = document.getElementById('timeline');
+        const yearNav = document.getElementById('yearNav');
+        const MIN_PHOTOS_PER_BLOCK = 20;
+        const PREVIEW_PHOTOS_PER_BLOCK = 6;
+
+        function normalizePhotos(photos, minimumCount) {
+            if (!Array.isArray(photos) || photos.length === 0) {
+                return [];
+            }
+
+            if (photos.length >= minimumCount) {
+                return photos;
+            }
+
+            const expanded = [];
+            for (let index = 0; index < minimumCount; index += 1) {
+                const basePhoto = photos[index % photos.length];
+                const cycle = Math.floor(index / photos.length) + 1;
+                expanded.push({
+                    src: basePhoto.src,
+                    alt: `${basePhoto.alt} (${index + 1})`,
+                    caption: `${basePhoto.caption} • ${cycle}`
+                });
+            }
+
+            return expanded;
+        }
+
+        const TIMELINE_DATA_WITH_MIN_PHOTOS = TIMELINE_DATA.map((block) => ({
+            ...block,
+            photos: normalizePhotos(block.photos, MIN_PHOTOS_PER_BLOCK)
+        }));
+
+        yearNav.innerHTML = TIMELINE_DATA_WITH_MIN_PHOTOS.map((block) => `
+            <a href="#${block.id}">${block.year}</a>
+        `).join('');
+
+        timelineContainer.innerHTML = TIMELINE_DATA_WITH_MIN_PHOTOS.map((block) => `
+            <article class="year-block" id="${block.id}">
+                <div class="year-head">
+                    <span class="year-badge">${block.year}</span>
+                    <h2 class="year-title">${block.title}</h2>
+                </div>
+                <div class="year-body">
+                    <ul class="year-points">
+                        ${block.points.map((point) => `<li>${point}</li>`).join('')}
                     </ul>
-                    <div class="photo-grid">
-                        <div class="photo-card">
-                            <img src="images/51597284815_c985abef70_b.jpg" alt="Historické začiatky klubu">
-                            <div class="caption">Historické začiatky klubu</div>
-                        </div>
-                        <div class="photo-card">
-                            <img src="images/IMG_5259-Enhanced-NR-1024x683.jpg" alt="Prvé obdobie futbalu v obci">
-                            <div class="caption">Prvé obdobie futbalu v obci</div>
-                        </div>
+                    <div class="photos-grid">
+                        ${block.photos.slice(0, PREVIEW_PHOTOS_PER_BLOCK).map((photo) => `
+                            <figure class="photo-card">
+                                <img src="${photo.src}" alt="${photo.alt}">
+                                <figcaption class="photo-caption">${photo.caption}</figcaption>
+                            </figure>
+                        `).join('')}
+                        ${block.photos.length > PREVIEW_PHOTOS_PER_BLOCK ? `
+                            <div class="photo-card more-card" title="${block.photos.length - PREVIEW_PHOTOS_PER_BLOCK} ďalších fotografií">
+                                +${block.photos.length - PREVIEW_PHOTOS_PER_BLOCK} viac
+                            </div>
+                        ` : ''}
                     </div>
                 </div>
-            </li>
-
-            <li class="event">
-                <div class="event-body">
-                    <div class="event-head">
-                        <span class="year">1969+</span>
-                        <span class="title">Presun na Skotňu</span>
-                    </div>
-                    <ul class="points">
-                        <li>Futbal sa presunul na ihrisko na Skotni.</li>
-                        <li>Riešil sa náročný prístup a technický stav hracej plochy.</li>
-                    </ul>
-                    <div class="photo-grid">
-                        <div class="photo-card">
-                            <img src="images/2.jpg" alt="Obdobie presunu na nové miesto">
-                            <div class="caption">Obdobie presunu na nové miesto</div>
-                        </div>
-                    </div>
-                </div>
-            </li>
-
-            <li class="event">
-                <div class="event-body">
-                    <div class="event-head">
-                        <span class="year">1980+</span>
-                        <span class="title">Nové ihrisko v lokalite Dub</span>
-                    </div>
-                    <ul class="points">
-                        <li>Vybudovanie nového ihriska za pomoci miestnych nadšencov.</li>
-                        <li>Stabilizácia zázemia a pravidelná údržba areálu.</li>
-                    </ul>
-                    <div class="photo-grid">
-                        <div class="photo-card">
-                            <img src="images/359sk_1.jpg" alt="Nové ihrisko a areál">
-                            <div class="caption">Nové ihrisko a areál</div>
-                        </div>
-                        <div class="photo-card">
-                            <img src="images/10750142878023431842.jpg" alt="Postupné zveľaďovanie plochy">
-                            <div class="caption">Postupné zveľaďovanie plochy</div>
-                        </div>
-                    </div>
-                </div>
-            </li>
-
-            <li class="event">
-                <div class="event-body">
-                    <div class="event-head">
-                        <span class="year">2006 – 2010</span>
-                        <span class="title">Budovanie šatní a zázemia</span>
-                    </div>
-                    <ul class="points">
-                        <li>Budovanie šatní pri ihrisku.</li>
-                        <li>Dokončenie základného technického a prevádzkového zázemia.</li>
-                    </ul>
-                    <div class="photo-grid">
-                        <div class="photo-card">
-                            <img src="images/508120564_29838519272462811_2048504803720081817_n.jpg"
-                                alt="Rozvoj klubového zázemia">
-                            <div class="caption">Rozvoj klubového zázemia</div>
-                        </div>
-                    </div>
-                </div>
-            </li>
-
-            <li class="event">
-                <div class="event-body">
-                    <div class="event-head">
-                        <span class="year">2018+</span>
-                        <span class="title">Modernizácia: zavlažovanie, osvetlenie, tribúna</span>
-                    </div>
-                    <ul class="points">
-                        <li>Vybudované umelé zavlažovanie hracej plochy.</li>
-                        <li>Rozvoj osvetlenia areálu a lepších podmienok pre tréningy.</li>
-                        <li>Výstavba menšej tribúny pre divákov.</li>
-                    </ul>
-                    <div class="photo-grid">
-                        <div class="photo-card">
-                            <img src="images/508433324_29841234952191243_3332785514084510977_n.jpg"
-                                alt="Modernizácia areálu">
-                            <div class="caption">Modernizácia areálu</div>
-                        </div>
-                        <div class="photo-card">
-                            <img src="images/508538663_29841234848857920_7529913858397432447_n.jpg"
-                                alt="Súčasný stav štadióna">
-                            <div class="caption">Súčasný stav štadióna</div>
-                        </div>
-                    </div>
-                </div>
-            </li>
-        </ol>
-    </div>
+            </article>
+        `).join('');
+    </script>
 </body>
 
 </html>
