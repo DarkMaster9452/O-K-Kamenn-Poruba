@@ -1223,7 +1223,8 @@
             border-top: 2px solid #e6eefc;
             border-bottom: 2px solid #e6eefc;
             padding: 22px 0;
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: visible;
         }
 
         .sponsors-inner {
@@ -1243,6 +1244,7 @@
             overflow: hidden;
             position: relative;
             width: 100%;
+            padding: 6px 0;
         }
 
         .sponsors-track {
@@ -1251,12 +1253,14 @@
             align-items: center;
             gap: 14px;
             animation: sponsorsMarquee 28s linear infinite;
+            will-change: transform;
         }
 
         .sponsor-item {
             width: 200px;
             min-width: 200px;
             height: 84px;
+            min-height: 84px;
             border-radius: 10px;
             border: 1px solid #d9e7ff;
             background: #fff;
@@ -1266,6 +1270,7 @@
             box-shadow: 0 4px 14px rgba(0, 51, 153, 0.08);
             padding: 10px;
             user-select: none;
+            overflow: visible;
         }
 
         .sponsor-link {
@@ -2073,6 +2078,11 @@
                         rel="noopener noreferrer" aria-label="Mas Technik">
                         <img src="images/mas technik logo.png" alt="Mas Technik">
                     </a>
+                    <div class="sponsor-item" aria-label="Voľné miesto pre partnera">
+                        <span
+                            style="font-weight:700;color:#003399;font-size:14px;text-align:center;line-height:1.3;">Miesto
+                            pre<br>ďalšieho sponzora</span>
+                    </div>
                     <a class="sponsor-item sponsor-link" href="https://tomchlad.sk" target="_blank"
                         rel="noopener noreferrer" aria-label="Tomchlad">
                         <img src="images/tomchlad-logo-blue.png" alt="Tomchlad">
@@ -2097,6 +2107,11 @@
                         rel="noopener noreferrer" aria-label="Mas Technik">
                         <img src="images/mas technik logo.png" alt="Mas Technik">
                     </a>
+                    <div class="sponsor-item" aria-label="Voľné miesto pre partnera">
+                        <span
+                            style="font-weight:700;color:#003399;font-size:14px;text-align:center;line-height:1.3;">Miesto
+                            pre<br>ďalšieho sponzora</span>
+                    </div>
                 </div>
             </div>
         </div>
