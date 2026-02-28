@@ -145,6 +145,15 @@ async function listUsersForManagement() {
   }
 }
 
+async function countUsersByRole(role, excludeUserId = null) {
+  return prisma.user.count({
+    where: {
+      role,
+      ...(excludeUserId ? { id: { not: excludeUserId } } : {})
+    }
+  });
+}
+
 async function createManagedUser(input) {
   try {
     return await prisma.user.create({
@@ -593,6 +602,45 @@ async function deleteAnnouncement(id) {
   });
 }
 
+async function listBlogPosts() {
+  return prisma.blogPost.findMany({
+    orderBy: { createdAt: 'desc' },
+    include: {
+      createdBy: {
+        select: { username: true }
+      }
+    }
+  });
+}
+
+async function createBlogPost(input, createdById) {
+  return prisma.blogPost.create({
+    data: {
+      title: input.title,
+      content: input.content,
+      published: input.published ?? true,
+      createdById
+    },
+    include: {
+      createdBy: {
+        select: { username: true }
+      }
+    }
+  });
+}
+
+async function findBlogPostById(id) {
+  return prisma.blogPost.findUnique({
+    where: { id }
+  });
+}
+
+async function deleteBlogPost(id) {
+  return prisma.blogPost.delete({
+    where: { id }
+  });
+}
+
 async function listPolls() {
   return prisma.poll.findMany({
     orderBy: { createdAt: 'desc' },
@@ -691,6 +739,7 @@ module.exports = {
   findUserByUsername,
   findUserById,
   listUsersForManagement,
+  countUsersByRole,
   createManagedUser,
   setUserActiveStatus,
   resetUserPasswordByAdmin,
@@ -707,6 +756,10 @@ module.exports = {
   listAnnouncements,
   createAnnouncement,
   deleteAnnouncement,
+  listBlogPosts,
+  createBlogPost,
+  findBlogPostById,
+  deleteBlogPost,
   listPolls,
   createPoll,
   findPollById,

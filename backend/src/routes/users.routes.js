@@ -5,6 +5,7 @@ const { requireAuth, requireRole } = require('../middleware/auth');
 const { validateBody } = require('../middleware/validate');
 const {
   listUsersForManagement,
+  countUsersByRole,
   createManagedUser,
   setUserActiveStatus,
   resetUserPasswordByAdmin,
@@ -30,7 +31,7 @@ const createUserSchema = z.object({
   username: z.string().min(3).max(100),
   email: z.string().email().max(254),
   password: z.string().min(8).max(200),
-  role: z.enum(['admin', 'coach', 'player', 'parent']),
+  role: z.enum(['admin', 'coach', 'player', 'parent', 'blogger']),
   playerCategory: playerCategorySchema.nullable().optional(),
   shirtNumber: shirtNumberSchema.nullable().optional(),
   isActive: z.boolean().default(true)
@@ -46,7 +47,7 @@ const userStatusSchema = z.object({
 
 const updateUserProfileSchema = z.object({
   email: z.string().email().max(254),
-  role: z.enum(['admin', 'coach', 'player', 'parent']),
+  role: z.enum(['admin', 'coach', 'player', 'parent', 'blogger']),
   playerCategory: playerCategorySchema.nullable().optional(),
   shirtNumber: shirtNumberSchema.nullable().optional()
 });
@@ -68,6 +69,13 @@ router.get('/', async (req, res) => {
 
 router.post('/', validateBody(createUserSchema), async (req, res) => {
   const { username, email, password, role, playerCategory, shirtNumber, isActive } = req.body;
+
+  if (role === 'blogger') {
+    const bloggersCount = await countUsersByRole('blogger');
+    if (bloggersCount > 0) {
+      return res.status(400).json({ message: 'Účet s rolou blogger už existuje. Povolený je iba jeden.' });
+    }
+  }
 
   if (role === 'player' && !playerCategory) {
     return res.status(400).json({ message: 'Pre hráča je povinná kategória.' });
@@ -173,6 +181,13 @@ router.patch('/:id/profile', validateBody(updateUserProfileSchema), async (req, 
   }
 
   const { email, role, playerCategory, shirtNumber } = req.body;
+
+  if (role === 'blogger') {
+    const bloggersCount = await countUsersByRole('blogger', req.params.id);
+    if (bloggersCount > 0) {
+      return res.status(400).json({ message: 'Účet s rolou blogger už existuje. Povolený je iba jeden.' });
+    }
+  }
 
   if (role === 'player' && !playerCategory) {
     return res.status(400).json({ message: 'Pre hráča je povinná kategória.' });
