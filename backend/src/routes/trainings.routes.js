@@ -16,13 +16,29 @@ const { sendTrainingCreatedEmails } = require('../services/email.service');
 
 const router = express.Router();
 
+const TRAINING_TYPES = ['technical', 'tactical', 'physical', 'friendly'];
+const TRAINING_CATEGORIES = ['pripravky', 'ziaci', 'dorastenci', 'adults_young', 'adults_pro'];
+
 const createTrainingSchema = z.object({
-  date: z.string().min(5).max(20),
-  time: z.string().min(3).max(10),
-  type: z.enum(['technical', 'tactical', 'physical', 'friendly']),
-  duration: z.number().int().min(30).max(180),
-  category: z.enum(['pripravky', 'ziaci', 'dorastenci', 'adults_young', 'adults_pro']),
-  note: z.string().trim().max(1000).optional().nullable()
+  date: z.string().trim().min(5).max(20),
+  time: z.string().trim().min(3).max(10),
+  type: z.string().trim().pipe(z.enum(TRAINING_TYPES)),
+  duration: z.coerce.number().int().min(30).max(180),
+  category: z.string().trim().pipe(z.enum(TRAINING_CATEGORIES)),
+  note: z.preprocess(
+    (value) => {
+      if (value === null || value === undefined) {
+        return null;
+      }
+
+      if (typeof value === 'string') {
+        return value.trim();
+      }
+
+      return String(value).trim();
+    },
+    z.string().max(1000).nullable()
+  ).optional()
 });
 
 const attendanceSchema = z.object({
