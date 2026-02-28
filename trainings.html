@@ -791,8 +791,7 @@
                         <label for="trainingCategory">Kategória:</label>
                         <select id="trainingCategory">
                             <option value="">-- Vybrať --</option>
-                            <option value="pripravka_u9">Prípravka U9</option>
-                            <option value="pripravka_u11">Prípravka U11</option>
+                            <option value="pripravky">Prípravky (U8-U9)</option>
                             <option value="ziaci">Žiaci (U12-U15)</option>
                             <option value="dorastenci">Dorastenci (U16-U19)</option>
                             <option value="adults_young">Dospelí - Mladí (18-25)</option>
@@ -810,7 +809,7 @@
                 </button>
             </div>
 
-            <h2><i class="fas fa-calendar"></i> Budúce tréningy</h2>
+            <h2><i class="fas fa-calendar"></i> Aktívne tréningy</h2>
             <div id="coachUpcomingTrainingsContainer" class="trainings-list"></div>
 
             <div id="coachTrainingsPanel" style="display:none;">
@@ -1196,15 +1195,11 @@
             const finishedContainer = document.getElementById('coachTrainingsContainer');
             if (!upcomingContainer || !finishedContainer) return;
 
-            const now = new Date();
             const upcomingTrainings = [];
             const finishedTrainings = [];
 
             trainings.forEach(t => {
-                const trainingDateTime = (t.date && t.time) ? new Date(t.date + 'T' + t.time) : null;
-                const isFuture = trainingDateTime ? trainingDateTime > now : false;
-
-                if (isFuture) {
+                if (t.isActive) {
                     upcomingTrainings.push(t);
                 }
 
@@ -1269,8 +1264,18 @@
                 return html;
             };
 
-            upcomingContainer.innerHTML = renderTrainings(upcomingTrainings, 'Žiadne budúce tréningy');
+            upcomingContainer.innerHTML = renderTrainings(upcomingTrainings, 'Žiadne aktívne tréningy');
             finishedContainer.innerHTML = renderTrainings(finishedTrainings, 'Žiadne ukončené tréningy');
+
+            if (upcomingTrainings.length === 0 && finishedTrainings.length > 0 && !coachTrainingsVisible) {
+                coachTrainingsVisible = true;
+                const panel = document.getElementById('coachTrainingsPanel');
+                const btn = document.getElementById('toggleTrainingsBtn');
+                if (panel) panel.style.display = 'block';
+                if (btn) {
+                    btn.innerHTML = '<i class="fas fa-eye-slash"></i> Skryť záznam tréningov';
+                }
+            }
         }
 
         function getAttendanceList(attendance, status, color) {
