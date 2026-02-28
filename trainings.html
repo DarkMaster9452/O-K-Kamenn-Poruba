@@ -928,15 +928,19 @@
                     category: item.category,
                     createdBy: item.createdBy,
                     isActive: item.isActive,
-                    attendance: {}
+                    attendance: Array.isArray(item.attendance)
+                        ? item.attendance.reduce((acc, row) => {
+                            acc[`${item.id}_${row.playerUsername}`] = row.status;
+                            return acc;
+                        }, {})
+                        : {}
                 }));
                 return;
             } catch (error) {
                 console.error(error);
             }
 
-            const saved = localStorage.getItem('trainings');
-            trainings = saved ? JSON.parse(saved) : [];
+            trainings = [];
         }
 
         window.addEventListener('load', async function () {
@@ -1121,8 +1125,6 @@
 
             // Attendance data are now backend-driven; no local player dataset is required.
 
-            let training = null;
-
             try {
                 const csrfToken = await ensureCsrfToken();
                 const response = await fetch(`${API_BASE}/trainings`, {
@@ -1145,38 +1147,17 @@
                     const payload = await response.json().catch(() => ({}));
                     throw new Error(payload.message || 'Nepodarilo sa uložiť tréning na server.');
                 }
-
-                const payload = await response.json();
-                const item = payload.item;
-                training = {
-                    id: item.id,
-                    date: item.date,
-                    time: item.time,
-                    type: item.type,
-                    duration: item.duration,
-                    category: item.category,
-                    createdBy: item.createdBy,
-                    isActive: item.isActive,
-                    attendance: {}
-                };
             } catch (error) {
                 console.error(error);
-                training = {
-                    id: Date.now().toString(),
-                    date, time, type, duration,
-                    category,
-                    createdBy: currentUser.username,
-                    isActive: true,
-                    attendance: {}
-                };
+                if (errorDiv) {
+                    errorDiv.textContent = error.message || 'Nepodarilo sa vytvoriť tréning.';
+                    errorDiv.style.display = 'block';
+                }
+                return;
             }
 
             // Attendance is managed in backend table TrainingAttendance.
-
-            trainings.push(training);
-            localStorage.setItem('trainings', JSON.stringify(trainings));
-
-            console.log('Training created:', training);
+            await loadTrainingsData();
 
             // Clear form
             document.getElementById('trainingDate').value = '';
@@ -1387,58 +1368,79 @@
             container.innerHTML = html;
         }
 
-        function markAttendance(trainingId, person, status) {
+        async function markAttendance(trainingId, person, status) {
             const t = trainings.find(x => String(x.id) === String(trainingId));
             if (!t || !t.isActive) return;
 
-            t.attendance[trainingId + '_' + person] = status;
-            localStorage.setItem('trainings', JSON.stringify(trainings));
+            try {
+                const csrfToken = await ensureCsrfToken();
+                const response = await fetch(`${API_BASE}/trainings/${trainingId}/attendance`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-csrf-token': csrfToken
+                    },
+                    body: JSON.stringify({
+                        playerUsername: person,
+                        status
+                    })
+                });
 
-            console.log('Attendance marked:', trainingId, person, status);
+                if (!response.ok) {
+                    const payload = await response.json().catch(() => ({}));
+                    throw new Error(payload.message || 'Nepodarilo sa uložiť dochádzku.');
+                }
+            } catch (error) {
+                alert(error.message || 'Nepodarilo sa uložiť dochádzku.');
+                return;
+            }
+
+            await loadTrainingsData();
             refreshPlayerTrainings();
             refreshCoachRoster();
         }
 
-        function startTraining(trainingId) {
-            const t = trainings.find(x => String(x.id) === String(trainingId));
-            if (t) {
-                // Move all 'unknown' to 'no' before closing
-                Object.keys(t.attendance).forEach(key => {
-                    if (t.attendance[key] === 'unknown') {
-                        t.attendance[key] = 'no';
+        async function startTraining(trainingId) {
+            try {
+                const csrfToken = await ensureCsrfToken();
+                const response = await fetch(`${API_BASE}/trainings/${trainingId}/close`, {
+                    method: 'PATCH',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-csrf-token': csrfToken
                     }
                 });
-                t.isActive = false;
-                localStorage.setItem('trainings', JSON.stringify(trainings));
-                refreshCoachRoster();
+
+                if (!response.ok) {
+                    const payload = await response.json().catch(() => ({}));
+                    throw new Error(payload.message || 'Nepodarilo sa uzavrieť tréning.');
+                }
+            } catch (error) {
+                alert(error.message || 'Nepodarilo sa uzavrieť tréning.');
+                return;
             }
+
+            await loadTrainingsData();
+            refreshCoachRoster();
+            refreshPlayerTrainings();
         }
 
         // Auto-close trainings and move 'unknown' to 'no' if start time has passed
         function autoCloseTrainingsByTime() {
             const now = new Date();
-            let changed = false;
             trainings.forEach(t => {
                 if (t.isActive && t.date && t.time) {
                     // Parse date and time
                     const dt = new Date(t.date + 'T' + t.time);
                     if (now >= dt) {
-                        // Move all 'unknown' to 'no'
-                        Object.keys(t.attendance).forEach(key => {
-                            if (t.attendance[key] === 'unknown') {
-                                t.attendance[key] = 'no';
-                            }
-                        });
                         t.isActive = false;
-                        changed = true;
                     }
                 }
             });
-            if (changed) {
-                localStorage.setItem('trainings', JSON.stringify(trainings));
-                refreshCoachRoster();
-                refreshPlayerTrainings();
-            }
+            refreshCoachRoster();
+            refreshPlayerTrainings();
         }
 
         // Kontrola každú minútu
@@ -1449,10 +1451,29 @@
             autoCloseTrainingsByTime();
         });
 
-        function deleteTraining(trainingId) {
+        async function deleteTraining(trainingId) {
             if (confirm('Odstrániť?')) {
-                trainings = trainings.filter(x => String(x.id) !== String(trainingId));
-                localStorage.setItem('trainings', JSON.stringify(trainings));
+                try {
+                    const csrfToken = await ensureCsrfToken();
+                    const response = await fetch(`${API_BASE}/trainings/${trainingId}`, {
+                        method: 'DELETE',
+                        credentials: 'include',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-csrf-token': csrfToken
+                        }
+                    });
+
+                    if (!response.ok) {
+                        const payload = await response.json().catch(() => ({}));
+                        throw new Error(payload.message || 'Nepodarilo sa odstrániť tréning.');
+                    }
+                } catch (error) {
+                    alert(error.message || 'Nepodarilo sa odstrániť tréning.');
+                    return;
+                }
+
+                await loadTrainingsData();
                 refreshCoachRoster();
                 refreshPlayerTrainings();
             }

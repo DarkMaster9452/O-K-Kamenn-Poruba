@@ -86,7 +86,12 @@ async function loadTrainingsFromApi() {
         createdBy: item.createdBy,
         createdDate: item.createdAt,
         isActive: item.isActive,
-        attendance: {}
+        attendance: Array.isArray(item.attendance)
+            ? item.attendance.reduce((acc, row) => {
+                acc[`${item.id}_${row.playerUsername}`] = row.status;
+                return acc;
+            }, {})
+            : {}
     }));
 }
 
@@ -187,16 +192,13 @@ function initializeTrainingView() {
     initializeCoachTrainingTimeSelectors();
 }
 
-// Load training data from backend API (fallback to localStorage)
+// Load training data from backend API
 async function loadTrainingData() {
     try {
         trainings = await loadTrainingsFromApi();
     } catch (error) {
         console.error(error);
-        const saved = localStorage.getItem('trainings');
-        if (saved) {
-            trainings = JSON.parse(saved);
-        }
+        trainings = [];
     }
     
     const savedAttendance = localStorage.getItem('playerAttendance');
@@ -247,8 +249,6 @@ async function createTraining() {
         return;
     }
 
-    let training = null;
-
     try {
         const csrfToken = typeof ensureCsrfToken === 'function' ? await ensureCsrfToken() : null;
         const response = await fetch(`${getApiBase()}/trainings`, {
@@ -271,46 +271,13 @@ async function createTraining() {
             const payload = await response.json().catch(() => ({}));
             throw new Error(payload.message || 'Nepodarilo sa vytvoriť tréning na serveri.');
         }
-
-        const payload = await response.json();
-        const item = payload.item;
-        training = {
-            id: item.id,
-            date: item.date,
-            time: item.time,
-            type: item.type,
-            duration: item.duration,
-            category: item.category,
-            createdBy: item.createdBy,
-            createdDate: item.createdAt,
-            isActive: item.isActive,
-            attendance: {}
-        };
     } catch (error) {
         console.error(error);
-        training = {
-            id: Date.now().toString(),
-            date,
-            time,
-            type,
-            duration: Number(duration),
-            category,
-            createdBy: currentUser.username,
-            createdDate: new Date().toISOString(),
-            isActive: true,
-            attendance: {}
-        };
+        alert(error.message || 'Nepodarilo sa vytvoriť tréning.');
+        return;
     }
 
-    // Initialize all players in this category with "unknown" status
-    const categoryPlayers = getPlayerUsernamesByCategory(category);
-    categoryPlayers.forEach((playerUsername) => {
-        const key = training.id + '_' + playerUsername;
-        training.attendance[key] = 'unknown';
-    });
-
-    trainings.push(training);
-    localStorage.setItem('trainings', JSON.stringify(trainings));
+    await loadTrainingData();
 
     alert('Tréning bol úspešne vytvorený! Všetci hráči majú stav "neviem".');
     
@@ -391,15 +358,15 @@ function refreshPlayerTrainings() {
             
             if (training.isActive) {
                 html += `
-                        <button onclick="markAttendance(${training.id}, '${personName}', 'yes')" 
+                        <button onclick="markAttendance('${training.id}', '${personName}', 'yes')" 
                             style="flex: 1; padding: 8px; border: none; border-radius: 3px; cursor: pointer; font-weight: bold; font-size: 12px; ${statusToUse === 'yes' ? 'background: #2ecc71; color: white;' : 'background: rgba(255, 255, 255, 0.1); color: white;'} transition: all 0.3s;">
                             <i class="fas fa-check"></i> Prídem
                         </button>
-                        <button onclick="markAttendance(${training.id}, '${personName}', 'no')" 
+                        <button onclick="markAttendance('${training.id}', '${personName}', 'no')" 
                             style="flex: 1; padding: 8px; border: none; border-radius: 3px; cursor: pointer; font-weight: bold; font-size: 12px; ${statusToUse === 'no' ? 'background: #e74c3c; color: white;' : 'background: rgba(255, 255, 255, 0.1); color: white;'} transition: all 0.3s;">
                             <i class="fas fa-times"></i> Neprídnem
                         </button>
-                        <button onclick="markAttendance(${training.id}, '${personName}', 'unknown')" 
+                        <button onclick="markAttendance('${training.id}', '${personName}', 'unknown')" 
                             style="flex: 1; padding: 8px; border: none; border-radius: 3px; cursor: pointer; font-weight: bold; font-size: 12px; ${statusToUse === 'unknown' ? 'background: #95a5a6; color: white;' : 'background: rgba(255, 255, 255, 0.1); color: white;'} transition: all 0.3s;">
                             <i class="fas fa-question"></i> Neviem
                         </button>
@@ -453,9 +420,9 @@ function updateChildrenList() {
 }
 
 // Mark attendance for player or child
-function markAttendance(trainingId, personName, status) {
+async function markAttendance(trainingId, personName, status) {
     // Find the training
-    const training = trainings.find(t => t.id === trainingId);
+    const training = trainings.find(t => String(t.id) === String(trainingId));
     if (!training) {
         console.error('Training not found:', trainingId);
         return;
@@ -467,24 +434,31 @@ function markAttendance(trainingId, personName, status) {
         return;
     }
     
-    const trainingKey = trainingId + '_' + personName;
-    
-    // Store in training attendance object
-    if (training.attendance) {
-        training.attendance[trainingKey] = status;
+    try {
+        const csrfToken = typeof ensureCsrfToken === 'function' ? await ensureCsrfToken() : null;
+        const response = await fetch(`${getApiBase()}/trainings/${training.id}/attendance`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(csrfToken ? { 'x-csrf-token': csrfToken } : {})
+            },
+            body: JSON.stringify({
+                playerUsername: personName,
+                status
+            })
+        });
+
+        if (!response.ok) {
+            const payload = await response.json().catch(() => ({}));
+            throw new Error(payload.message || 'Nepodarilo sa uložiť dochádzku.');
+        }
+    } catch (error) {
+        alert(error.message || 'Nepodarilo sa uložiť dochádzku.');
+        return;
     }
-    
-    // Also store in playerAttendance for backward compatibility
-    if (status === 'yes') {
-        playerAttendance[trainingKey] = true;
-    } else if (status === 'no') {
-        playerAttendance[trainingKey] = false;
-    } else {
-        delete playerAttendance[trainingKey];
-    }
-    
-    localStorage.setItem('trainings', JSON.stringify(trainings));
-    localStorage.setItem('playerAttendance', JSON.stringify(playerAttendance));
+
+    await loadTrainingData();
     
     const statusLabels = { yes: 'Prídem', no: 'Neprídnem', unknown: 'Neviem' };
     const message = personName === currentUser.username ? 
@@ -573,11 +547,11 @@ function refreshCoachRoster() {
                             </div>
                             <div style="display: flex; gap: 8px; flex-direction: column;">
                                 ${training.isActive ? `
-                                    <button onclick="startTraining(${training.id})" style="padding: 8px 12px; background: #f39c12; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; width: 100%;">
+                                    <button onclick="startTraining('${training.id}')" style="padding: 8px 12px; background: #f39c12; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; width: 100%;">
                                         <i class="fas fa-play"></i> Začať tréning
                                     </button>
                                 ` : ''}
-                                <button onclick="deleteTraining(${training.id})" style="padding: 8px 12px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; width: 100%;">
+                                <button onclick="deleteTraining('${training.id}')" style="padding: 8px 12px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 12px; width: 100%;">
                                     <i class="fas fa-trash"></i> Odstrániť
                                 </button>
                             </div>
@@ -642,17 +616,38 @@ function refreshCoachRoster() {
 }
 
 // Start training - lock attendance changes
-function startTraining(trainingId) {
-    const training = trainings.find(t => t.id === trainingId);
+async function startTraining(trainingId) {
+    const training = trainings.find(t => String(t.id) === String(trainingId));
     if (!training) return;
 
-    if (confirm('Naozaj chcete uzavrieť tento tréning? Hráči už nebudú môcť meniť svoje odpovede.')) {
-        training.isActive = false;
-        localStorage.setItem('trainings', JSON.stringify(trainings));
-        alert('Tréning bol uzavretý. Hráči nemôžu meniť svoje odpovede.');
-        refreshCoachRoster();
-        refreshPlayerTrainings();
+    if (!confirm('Naozaj chcete uzavrieť tento tréning? Hráči už nebudú môcť meniť svoje odpovede.')) {
+        return;
     }
+
+    try {
+        const csrfToken = typeof ensureCsrfToken === 'function' ? await ensureCsrfToken() : null;
+        const response = await fetch(`${getApiBase()}/trainings/${training.id}/close`, {
+            method: 'PATCH',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(csrfToken ? { 'x-csrf-token': csrfToken } : {})
+            }
+        });
+
+        if (!response.ok) {
+            const payload = await response.json().catch(() => ({}));
+            throw new Error(payload.message || 'Nepodarilo sa uzavrieť tréning.');
+        }
+    } catch (error) {
+        alert(error.message || 'Nepodarilo sa uzavrieť tréning.');
+        return;
+    }
+
+    await loadTrainingData();
+    alert('Tréning bol uzavretý. Hráči nemôžu meniť svoje odpovede.');
+    refreshCoachRoster();
+    refreshPlayerTrainings();
 }
 
 // Get training category label
@@ -668,12 +663,32 @@ function getTrainingCategoryLabel(category) {
 }
 
 // Delete training
-function deleteTraining(id) {
+async function deleteTraining(id) {
     if (confirm('Ste si istý, že chcete odstrániť tento tréning?')) {
-        trainings = trainings.filter(t => t.id !== id);
-        localStorage.setItem('trainings', JSON.stringify(trainings));
-        alert('Tréning bol odstrániť.');
+        try {
+            const csrfToken = typeof ensureCsrfToken === 'function' ? await ensureCsrfToken() : null;
+            const response = await fetch(`${getApiBase()}/trainings/${id}`, {
+                method: 'DELETE',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(csrfToken ? { 'x-csrf-token': csrfToken } : {})
+                }
+            });
+
+            if (!response.ok) {
+                const payload = await response.json().catch(() => ({}));
+                throw new Error(payload.message || 'Nepodarilo sa odstrániť tréning.');
+            }
+        } catch (error) {
+            alert(error.message || 'Nepodarilo sa odstrániť tréning.');
+            return;
+        }
+
+        await loadTrainingData();
+        alert('Tréning bol odstránený.');
         refreshCoachRoster();
+        refreshPlayerTrainings();
     }
 }
 
