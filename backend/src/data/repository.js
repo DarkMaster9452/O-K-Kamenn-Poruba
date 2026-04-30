@@ -81,6 +81,75 @@ function shouldFallbackWithoutBlogPostImageUrl(error) {
   );
 }
 
+function isMissingBlogPostSlugColumnError(error) {
+  const msg = String(error?.message || '').toLowerCase();
+  const column = String(error?.meta?.column || '').toLowerCase();
+  return (
+    column.includes('slug') ||
+    (msg.includes('slug') && msg.includes('does not exist'))
+  );
+}
+
+async function loadBlogPostAuthor(createdById) {
+  try {
+    const row = await prisma.user.findUnique({
+      where: { id: createdById },
+      select: { username: true }
+    });
+    return row || { username: null };
+  } catch {
+    return { username: null };
+  }
+}
+
+async function createBlogPostWithoutSlugColumn(input, createdById) {
+  const rows = await prisma.$queryRaw`
+    INSERT INTO "BlogPost" ("title", "content", "published", "createdById")
+    VALUES (${input.title}, ${input.content}, ${input.published ?? true}, ${createdById})
+    RETURNING "id", "title", "content", "published", "createdAt", "updatedAt", "createdById"
+  `;
+  const row = Array.isArray(rows) ? rows[0] : null;
+  if (!row) {
+    throw new Error('Nepodarilo sa vytvoriť blog príspevok bez slug stĺpca.');
+  }
+
+  return {
+    ...row,
+    slug: null,
+    imageUrl: null,
+    tags: [],
+    featured: false,
+    viewCount: 0,
+    createdBy: await loadBlogPostAuthor(createdById)
+  };
+}
+
+async function updateBlogPostWithoutSlugColumn(id, input) {
+  const rows = await prisma.$queryRaw`
+    UPDATE "BlogPost"
+    SET "title" = ${input.title},
+        "content" = ${input.content},
+        "published" = ${input.published ?? true},
+        "updatedAt" = NOW()
+    WHERE "id" = ${id}
+    RETURNING "id", "title", "content", "published", "createdAt", "updatedAt", "createdById"
+  `;
+  const row = Array.isArray(rows) ? rows[0] : null;
+  if (!row) {
+    throw new Error('Blog príspevok neexistuje.');
+  }
+
+  return {
+    ...row,
+    slug: null,
+    imageUrl: null,
+    tags: [],
+    featured: false,
+    viewCount: 0,
+    createdBy: await loadBlogPostAuthor(row.createdById)
+  };
+}
+
 function withNullEmail(items) {
   return items.map((item) => ({
     ...item,
@@ -1533,6 +1602,10 @@ async function createBlogPost(input, createdById) {
         }
       }
     }).catch(async (error) => {
+      if (isMissingBlogPostSlugColumnError(error)) {
+        return createBlogPostWithoutSlugColumn(input, createdById);
+      }
+
       // Robust fallback if database column is missing
       if (error.message && (error.message.includes('tags') || error.message.includes('imageUrl') || error.message.includes('featured') || error.message.includes('viewCount') || shouldFallbackWithoutBlogPostImageUrl(error))) {
         const minimalData = {
@@ -1558,6 +1631,10 @@ async function createBlogPost(input, createdById) {
       throw error;
     });
   } catch (error) {
+    if (isMissingBlogPostSlugColumnError(error)) {
+      return createBlogPostWithoutSlugColumn(input, createdById);
+    }
+
     if (!shouldFallbackWithoutBlogPostImageUrl(error)) {
       throw error;
     }
@@ -1796,6 +1873,10 @@ async function updateBlogPost(id, input) {
         }
       }
     }).catch(async (error) => {
+      if (isMissingBlogPostSlugColumnError(error)) {
+        return updateBlogPostWithoutSlugColumn(id, input);
+      }
+
       if (error.message && (error.message.includes('tags') || error.message.includes('imageUrl') || error.message.includes('featured') || error.message.includes('viewCount') || shouldFallbackWithoutBlogPostImageUrl(error))) {
         const minimalData = {
           title: input.title,
@@ -1822,6 +1903,10 @@ async function updateBlogPost(id, input) {
       throw error;
     });
   } catch (error) {
+    if (isMissingBlogPostSlugColumnError(error)) {
+      return updateBlogPostWithoutSlugColumn(id, input);
+    }
+
     if (!shouldFallbackWithoutBlogPostImageUrl(error)) {
       throw error;
     }
