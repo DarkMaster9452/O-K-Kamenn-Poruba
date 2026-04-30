@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const prisma = require('./db');
 
 const PARENT_CHILDREN_SNAPSHOT_ACTION = 'parent_children_snapshot';
@@ -102,10 +103,18 @@ async function loadBlogPostAuthor(createdById) {
   }
 }
 
+function createRawBlogPostId() {
+  return typeof crypto.randomUUID === 'function'
+    ? crypto.randomUUID()
+    : `blog-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
 async function createBlogPostWithoutSlugColumn(input, createdById) {
+  const id = createRawBlogPostId();
+  const now = new Date();
   const rows = await prisma.$queryRaw`
-    INSERT INTO "BlogPost" ("title", "content", "published", "createdById")
-    VALUES (${input.title}, ${input.content}, ${input.published ?? true}, ${createdById})
+    INSERT INTO "BlogPost" ("id", "title", "content", "published", "createdAt", "updatedAt", "createdById")
+    VALUES (${id}, ${input.title}, ${input.content}, ${input.published ?? true}, ${now}, ${now}, ${createdById})
     RETURNING "id", "title", "content", "published", "createdAt", "updatedAt", "createdById"
   `;
   const row = Array.isArray(rows) ? rows[0] : null;
