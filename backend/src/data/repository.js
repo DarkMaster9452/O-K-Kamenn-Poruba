@@ -113,9 +113,9 @@ async function createBlogPostWithoutSlugColumn(input, createdById) {
   const id = createRawBlogPostId();
   const now = new Date();
   const rows = await prisma.$queryRaw`
-    INSERT INTO "BlogPost" ("id", "title", "content", "published", "createdAt", "updatedAt", "createdById")
-    VALUES (${id}, ${input.title}, ${input.content}, ${input.published ?? true}, ${now}, ${now}, ${createdById})
-    RETURNING "id", "title", "content", "published", "createdAt", "updatedAt", "createdById"
+    INSERT INTO "BlogPost" ("id", "title", "content", "published", "createdAt", "updatedAt", "createdById", "imageUrl", "featured")
+    VALUES (${id}, ${input.title}, ${input.content}, ${input.published ?? true}, ${now}, ${now}, ${createdById}, ${input.imageUrl || null}, ${input.featured ?? false})
+    RETURNING "id", "title", "content", "published", "createdAt", "updatedAt", "createdById", "imageUrl", "featured"
   `;
   const row = Array.isArray(rows) ? rows[0] : null;
   if (!row) {
@@ -125,9 +125,9 @@ async function createBlogPostWithoutSlugColumn(input, createdById) {
   return {
     ...row,
     slug: null,
-    imageUrl: null,
+    imageUrl: row.imageUrl || null,
     tags: [],
-    featured: false,
+    featured: row.featured ?? false,
     viewCount: 0,
     createdBy: await loadBlogPostAuthor(createdById)
   };
@@ -138,10 +138,12 @@ async function updateBlogPostWithoutSlugColumn(id, input) {
     UPDATE "BlogPost"
     SET "title" = ${input.title},
         "content" = ${input.content},
+        "imageUrl" = ${input.imageUrl || null},
         "published" = ${input.published ?? true},
+        "featured" = ${input.featured ?? false},
         "updatedAt" = NOW()
     WHERE "id" = ${id}
-    RETURNING "id", "title", "content", "published", "createdAt", "updatedAt", "createdById"
+    RETURNING "id", "title", "content", "published", "createdAt", "updatedAt", "createdById", "imageUrl", "featured"
   `;
   const row = Array.isArray(rows) ? rows[0] : null;
   if (!row) {
@@ -151,9 +153,9 @@ async function updateBlogPostWithoutSlugColumn(id, input) {
   return {
     ...row,
     slug: null,
-    imageUrl: null,
+    imageUrl: row.imageUrl || null,
     tags: [],
-    featured: false,
+    featured: row.featured ?? false,
     viewCount: 0,
     createdBy: await loadBlogPostAuthor(row.createdById)
   };
