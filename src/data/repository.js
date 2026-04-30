@@ -1535,9 +1535,10 @@ async function createBlogPost(input, createdById) {
       }
     }).catch(async (error) => {
       // Robust fallback if database column is missing
-      if (error.message && (error.message.includes('tags') || error.message.includes('imageUrl') || error.message.includes('featured') || error.message.includes('viewCount') || error.message.includes('slug') || shouldFallbackWithoutBlogPostImageUrl(error))) {
+      if (error.message && (error.message.includes('tags') || error.message.includes('imageUrl') || error.message.includes('featured') || error.message.includes('viewCount') || shouldFallbackWithoutBlogPostImageUrl(error))) {
         const minimalData = {
           title: input.title,
+          slug,
           content: input.content,
           published: input.published ?? true,
           createdById
@@ -1566,6 +1567,7 @@ async function createBlogPost(input, createdById) {
     const row = await prisma.blogPost.create({
       data: {
         title: input.title,
+        slug,
         content: input.content,
         published: input.published ?? true,
         createdById
