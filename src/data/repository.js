@@ -74,7 +74,6 @@ function shouldFallbackWithoutBlogPostImageUrl(error) {
   const msg = String(error?.message || '').toLowerCase();
   return (
     error?.code === 'P2022' ||
-    error?.code === 'P2009' ||
     msg.includes('imageurl') ||
     msg.includes('tags') ||
     msg.includes('unknown field') ||
@@ -1514,7 +1513,8 @@ async function createBlogPost(input, createdById) {
     throw new Error('Prisma Client neobsahuje model blogPost. Spustite prisma generate a redeploy backendu.');
   }
 
-  const slug = await ensureUniqueSlug(generateSlug(input.title));
+  const rawSlug = generateSlug(input.title) || `post-${Date.now()}`;
+  const slug = await ensureUniqueSlug(rawSlug);
 
   try {
     return await prisma.blogPost.create({
