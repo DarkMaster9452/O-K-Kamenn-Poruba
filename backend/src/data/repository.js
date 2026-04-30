@@ -1719,9 +1719,26 @@ async function deleteBlogPost(id) {
     throw new Error('Prisma Client neobsahuje model blogPost. Spustite prisma generate a redeploy backendu.');
   }
 
-  return prisma.blogPost.delete({
-    where: { id }
-  });
+  try {
+    return await prisma.blogPost.delete({
+      where: { id }
+    });
+  } catch (error) {
+    if (!isMissingBlogPostSlugColumnError(error)) {
+      throw error;
+    }
+
+    const rows = await prisma.$queryRaw`
+      DELETE FROM "BlogPost"
+      WHERE "id" = ${id}
+      RETURNING "id"
+    `;
+    const row = Array.isArray(rows) ? rows[0] : null;
+    if (!row) {
+      throw new Error('Blog príspevok neexistuje.');
+    }
+    return row;
+  }
 }
 
 function generateSlug(title) {
