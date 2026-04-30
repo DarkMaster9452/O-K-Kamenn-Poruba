@@ -1513,8 +1513,7 @@ async function createBlogPost(input, createdById) {
     throw new Error('Prisma Client neobsahuje model blogPost. Spustite prisma generate a redeploy backendu.');
   }
 
-  const rawSlug = generateSlug(input.title) || `post-${Date.now()}`;
-  const slug = await ensureUniqueSlug(rawSlug);
+  const slug = await resolveBlogPostSlug(input.title);
 
   try {
     return await prisma.blogPost.create({
@@ -1669,6 +1668,22 @@ async function ensureUniqueSlug(baseSlug, excludeId = null) {
   }
 }
 
+async function resolveBlogPostSlug(title, excludeId = null) {
+  const generated = generateSlug(title);
+  const fallback = `post-${Date.now()}`;
+  const baseSlug = (generated && generated.length > 0) ? generated : fallback;
+  let slug;
+  try {
+    slug = await ensureUniqueSlug(baseSlug, excludeId);
+  } catch {
+    slug = baseSlug;
+  }
+  if (typeof slug !== 'string' || slug.length === 0) {
+    slug = baseSlug || fallback;
+  }
+  return slug;
+}
+
 async function findBlogPostBySlug(slug) {
   if (!prisma.blogPost) {
     throw new Error('Prisma Client neobsahuje model blogPost. Spustite prisma generate a redeploy backendu.');
@@ -1761,7 +1776,7 @@ async function updateBlogPost(id, input) {
     throw new Error('Prisma Client neobsahuje model blogPost. Spustite prisma generate a redeploy backendu.');
   }
 
-  const slug = await ensureUniqueSlug(generateSlug(input.title), id);
+  const slug = await resolveBlogPostSlug(input.title, id);
 
   try {
     return await prisma.blogPost.update({
@@ -1781,9 +1796,10 @@ async function updateBlogPost(id, input) {
         }
       }
     }).catch(async (error) => {
-      if (error.message && (error.message.includes('tags') || error.message.includes('imageUrl') || error.message.includes('featured') || error.message.includes('viewCount'))) {
+      if (error.message && (error.message.includes('tags') || error.message.includes('imageUrl') || error.message.includes('featured') || error.message.includes('viewCount') || shouldFallbackWithoutBlogPostImageUrl(error))) {
         const minimalData = {
           title: input.title,
+          slug,
           content: input.content,
           published: input.published ?? true
         };
@@ -1814,6 +1830,7 @@ async function updateBlogPost(id, input) {
       where: { id },
       data: {
         title: input.title,
+        slug,
         content: input.content,
         published: input.published ?? true
       },
