@@ -460,7 +460,7 @@
             }
         }
     </style>
-    <link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico" data-cloudinary-id="OŠKKP_logo">
+    <link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico">
 </head>
 
 <body>
@@ -607,12 +607,10 @@
             buildAlbumTabs();
             if (currentAlbum !== 'instagram') renderGallery();
             try {
-                // Use API_BASE and append refresh parameter if requested
-                const url = new URL(API_BASE + '/cloudinary/timeline', window.location.href);
-                if (forceRefresh) url.searchParams.set('refresh', '1');
-
-                console.log('[Gallery] Fetching from:', url.toString());
-                const response = await fetch(url.toString());
+                // Static manifest — zero Cloudinary API calls at runtime
+                const manifestUrl = '/assets/gallery-manifest.json' + (forceRefresh ? '?t=' + Date.now() : '');
+                console.log('[Gallery] Fetching from:', manifestUrl);
+                const response = await fetch(manifestUrl);
                 if (!response.ok) throw new Error('HTTP ' + response.status);
                 const data = await response.json();
                 const folders = Array.isArray(data.folders) ? data.folders : [];
