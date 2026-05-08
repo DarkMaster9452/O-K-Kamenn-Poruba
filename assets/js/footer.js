@@ -178,7 +178,7 @@
             '                <li><a href="/blog"><i class="fas fa-chevron-right" style="font-size: 10px; margin-right: 8px;"></i> Blog</a></li>',
             '                <li><a href="/akademia"><i class="fas fa-chevron-right" style="font-size: 10px; margin-right: 8px;"></i> Akadémia</a></li>',
             '                <li><a href="/atim"><i class="fas fa-chevron-right" style="font-size: 10px; margin-right: 8px;"></i> A-tím</a></li>',
-            '                <li><a href="https://www.youtube.com/live/8D-qibudETY?si=_LBhfPib0zkaoFvA" target="_blank" rel="noopener"><i class="fas fa-chevron-right" style="font-size: 10px; margin-right: 8px;"></i> Live Stream</a></li>',
+            '                <li><a href="https://www.youtube.com/@OSKKamennaPoruba/live" target="_blank" rel="noopener"><i class="fas fa-chevron-right" style="font-size: 10px; margin-right: 8px;"></i> Live Stream</a></li>',
             '                <li><a href="https://4mysport.sk/oskkamennaporuba/" target="_blank" rel="noopener"><i class="fas fa-chevron-right" style="font-size: 10px; margin-right: 8px;"></i> Eshop</a></li>',
             '            </ul>',
             '            </div>',

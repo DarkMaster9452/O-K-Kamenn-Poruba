@@ -389,7 +389,7 @@
             '    </a>',
             '    <nav class="sh-nav" id="shMainNav">',
             '      <ul>',
-            '        <li><a href="https://www.youtube.com/live/8D-qibudETY?si=_LBhfPib0zkaoFvA" target="_blank" rel="noopener noreferrer" class="sh-nav-live">Live Stream <span class="nav-dot"></span></a></li>',
+            '        <li><a href="https://www.youtube.com/@OSKKamennaPoruba/live" target="_blank" rel="noopener noreferrer" class="sh-nav-live">Live Stream <span class="nav-dot"></span></a></li>',
             '        <li><a href="/"><i class="fas fa-home"></i> Domov</a></li>',
             '        <li><a href="/vedenie">Vedenie klubu</a></li>',
             '        <li><a href="/atim">A-tím</a></li>',
