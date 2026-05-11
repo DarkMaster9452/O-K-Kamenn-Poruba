@@ -351,7 +351,21 @@
             if (!crew || crew.length === 0) {
                 return '<p style="color:#888;">Žiadni členovia realizačného tímu.</p>';
             }
-            return crew.map(c => {
+
+            const filteredCrew = crew.filter(member => {
+                const normalizedName = String(member && member.name || '')
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .toLowerCase()
+                    .trim();
+                return normalizedName !== 'juraj ihnatisin';
+            });
+
+            if (filteredCrew.length === 0) {
+                return '<p style="color:#888;">Žiadni členovia realizačného tímu.</p>';
+            }
+
+            return filteredCrew.map(c => {
                 let name = c.name;
                 // Client-side override to ensure correct name appears
                 if (name.includes('Strhár') || name.includes('Strhar')) {
