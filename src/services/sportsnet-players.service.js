@@ -196,8 +196,8 @@ async function fetchSportsnetPlayers({ forceRefresh = false } = {}) {
       let name = c.sportnetUser ? c.sportnetUser.name : 'Neznámy';
       
       // Override for A-team Realizačný tím
-      if (category === 'dospeli' && (name.includes('Strhár') || name.includes('Strhar'))) {
-        name = 'Juraj Ihnatišin';
+      if (category === 'dospeli' && (name.includes('Ihnatišin') || name.includes('Ihnatisín') || name.includes('Ihnat'))) {
+        name = 'Martin Strhár';
       }
 
       return {
