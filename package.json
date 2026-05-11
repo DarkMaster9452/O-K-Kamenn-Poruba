@@ -2,10 +2,10 @@
   "scripts": {
     "postinstall": "prisma generate || true",
     "build": "node node_modules/prisma/build/index.js generate && node scripts/build-public.js",
-    "vercel:build": "npx vercel build",
-    "vercel:build:prod": "npx vercel build --prod",
-    "vercel:deploy": "npx vercel deploy --prebuilt",
-    "vercel:deploy:prod": "npx vercel deploy --prebuilt --prod"
+    "vercel:build": "node scripts/vercel-frontend-deploy.js build",
+    "vercel:build:prod": "node scripts/vercel-frontend-deploy.js build",
+    "vercel:deploy": "node scripts/vercel-frontend-deploy.js deploy",
+    "vercel:deploy:prod": "node scripts/vercel-frontend-deploy.js deploy"
   },
   "dependencies": {
     "@prisma/client": "^6.16.2",

@@ -197,7 +197,7 @@ async function fetchSportsnetPlayers({ forceRefresh = false } = {}) {
       
       // Override for A-team Realizačný tím
       if (category === 'dospeli' && (name.includes('Strhár') || name.includes('Strhar'))) {
-        name = 'Juraj Ihnatišin';
+        name = 'Martin Strhár';
       }
 
       return {
