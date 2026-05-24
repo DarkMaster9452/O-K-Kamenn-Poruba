@@ -36,10 +36,10 @@ function recordView(postId, ip) {
 
 const createBlogPostSchema = z.object({
   title: z.string().min(3).max(200),
-  content: z.string().min(3).max(20000),
+  content: z.string().min(3).max(100000),
   published: z.boolean().optional().default(true),
   featured: z.boolean().optional().default(false),
-  imageUrl: z.string().url().max(2000).nullable().optional(),
+  imageUrl: z.string().max(2000).nullable().optional(),
   tags: z.array(z.string()).optional()
 });
 

@@ -1094,7 +1094,12 @@
                 });
 
                 const payload = await response.json().catch(() => ({}));
-                if (!response.ok) throw new Error(payload.message || (isEditing ? 'Nepodarilo sa upraviť blog príspevok.' : 'Nepodarilo sa vytvoriť blog príspevok.'));
+                if (!response.ok) {
+                    const details = Array.isArray(payload.errors) && payload.errors.length > 0
+                        ? ` (${payload.errors.map(e => (e.path ? e.path + ': ' : '') + e.message).join('; ')})`
+                        : '';
+                    throw new Error((payload.message || (isEditing ? 'Nepodarilo sa upraviť blog príspevok.' : 'Nepodarilo sa vytvoriť blog príspevok.')) + details);
+                }
 
                 await refresh();
                 resetComposer({ keepMessage: true });

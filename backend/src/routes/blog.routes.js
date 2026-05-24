@@ -39,7 +39,7 @@ const createBlogPostSchema = z.object({
   content: z.string().min(3).max(100000),
   published: z.boolean().optional().default(true),
   featured: z.boolean().optional().default(false),
-  imageUrl: z.string().url().max(2000).nullable().optional(),
+  imageUrl: z.string().max(2000).nullable().optional(),
   tags: z.array(z.string()).optional()
 });
 
