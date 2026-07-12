@@ -10,7 +10,6 @@ const {
   updateUserPassword,
   setUserActiveStatus,
   createAuditLog,
-  createAnnouncement,
   listParentChildrenByParentId,
   createPasswordResetToken,
   findPasswordResetTokenByHash,
@@ -169,23 +168,6 @@ async function handleAdminLoginFailure({ req, user, username }) {
     console.error('Audit log write failed:', error);
   }
 
-  const cooldownOk = !current.lastAlertAt || (now - current.lastAlertAt) > ADMIN_ALERT_COOLDOWN_MS;
-  if (current.count >= ADMIN_FAILED_THRESHOLD && cooldownOk && user) {
-    try {
-      await createAnnouncement({
-        title: 'Bezpečnostné upozornenie: Admin prihlásenie',
-        message: `Detegované ${current.count} neúspešné pokusy o admin prihlásenie pre účet ${username}. IP: ${ipAddress}.`,
-        target: 'admins',
-        playerCategory: null,
-        important: true
-      }, user.id);
-
-      current.lastAlertAt = now;
-      adminFailedTracker.set(key, current);
-    } catch (error) {
-      console.error('Security announcement creation failed:', error);
-    }
-  }
 }
 
 router.post('/login', validateBody(loginSchema), async (req, res, next) => {
