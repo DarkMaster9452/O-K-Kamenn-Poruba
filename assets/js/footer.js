@@ -171,7 +171,6 @@
             '                <li><a href="/"><i class="fas fa-chevron-right" style="font-size: 10px; margin-right: 8px;"></i> Domov</a></li>',
             '                <li><a href="/matches"><i class="fas fa-chevron-right" style="font-size: 10px; margin-right: 8px;"></i> Zápasy</a></li>',
             '                <li><a href="/tabulka"><i class="fas fa-chevron-right" style="font-size: 10px; margin-right: 8px;"></i> Tabuľka</a></li>',
-            '                <li><a href="/skupiny"><i class="fas fa-chevron-right" style="font-size: 10px; margin-right: 8px;"></i> Tímy</a></li>',
             '                <li><a href="/galeria"><i class="fas fa-chevron-right" style="font-size: 10px; margin-right: 8px;"></i> Galéria</a></li>',
             '            </ul>',
             '            <ul style="margin:0; padding:0;">',
@@ -220,11 +219,8 @@
         var path = String(window.location.pathname || '').replace(/\/+$/, '');
         var skipPatterns = [
             /\/pages\/blog(?:\.html)?$/,
-            /\/pages\/trainings(?:\.html)?$/,
-            /\/pages\/important_info(?:\.html)?$/,
             /\/pages\/account_management(?:\.html)?$/,
-            /\/pages\/player_detail_coach(?:\.html)?$/,
-            /\/pages\/skupiny(?:\.html)?$/
+            /\/pages\/player_detail_coach(?:\.html)?$/
         ];
 
         return skipPatterns.some(function(pattern) {

@@ -3324,16 +3324,6 @@
         </section>
 
         <!-- Public Announcements Section -->
-        <section id="publicAnnouncements" style="display:none; padding: 40px 20px 0;">
-            <div style="max-width: 1200px; margin: 0 auto;">
-                <h2 class="section-title">
-                    <i class="fas fa-bullhorn"></i> OZNAMY A UDALOSTI
-                </h2>
-                <div id="publicAnnouncementsList"
-                    style="display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:20px;"></div>
-            </div>
-        </section>
-
         <!-- About Section -->
         <section id="about">
             <h2 class="section-title">
@@ -3677,8 +3667,6 @@
             }
         }
     </style>
-    <!-- Training View Container (loads dynamically) -->
-    <div id="trainingView"></div>
 
     <!-- Login Modal -->
     <div id="loginModal" class="modal">
@@ -3836,11 +3824,12 @@
                     alt="LV Energy" class="logo-double" /></a>
             <a href="https://www.budis.sk/en/the-most-popular-mineral-water-in-slovakia/" target="_blank"
                 rel="noopener noreferrer"><img src="/assets/images/Budis.jpg" alt="Budis" class="logo-double" /></a>
+            <a href="https://www.kamina.sk" target="_blank" rel="noopener noreferrer"><img
+                    src="/assets/images/KAMINA_kdvmdq.png" alt="Kamina" class="logo-double" /></a>
         </div>
     </div>
     <!-- Rest of scripts -->
     <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-    <script src="/assets/js/trainings.js"></script>
     <script>
         function updateHeaderScrollOffset() {
             const header = document.querySelector('header');
@@ -4615,8 +4604,6 @@
         function updateLoginButtonText() {
             const loginBtn = document.getElementById('shLoginBtn');
             const mobileLoginBtn = document.getElementById('shMobileLoginBtn');
-            const trainingNavLink = document.getElementById('shTrainingNavLink');
-            const infoNavLink = document.getElementById('shInfoNavLink');
 
             const user = currentUser || { isLoggedIn: false };
 
@@ -4627,176 +4614,18 @@
                     mobileLoginBtn.textContent = formatNavbarUsername(fullUsername);
                     mobileLoginBtn.title = fullUsername;
                 }
-                const isBlogger = user.role === 'blogger';
-                if (trainingNavLink) trainingNavLink.style.display = isBlogger ? 'none' : '';
-                if (infoNavLink) infoNavLink.style.display = isBlogger ? 'none' : '';
             } else {
                 if (loginBtn) { loginBtn.textContent = 'Prihlásiť sa'; loginBtn.title = ''; }
                 if (mobileLoginBtn) {
                     mobileLoginBtn.textContent = 'Prihlásiť sa';
                     mobileLoginBtn.title = '';
                 }
-                if (trainingNavLink) trainingNavLink.style.display = 'none';
-                if (infoNavLink) infoNavLink.style.display = 'none';
             }
             applyRoleNavbarMode();
-            updateImportantInfoNavBadge().catch(() => { });
             updateHeaderScrollOffset();
             if (window.OSKHeader) window.OSKHeader.refresh(currentUser);
         }
 
-        const IMPORTANT_INFO_SEEN_PREFIX = 'importantInfoSeenEvents_';
-        let importantInfoEventsCache = [];
-
-        function getImportantInfoSeenKey() {
-            const user = currentUser || {};
-            const username = user.username ? user.username : 'guest';
-            return IMPORTANT_INFO_SEEN_PREFIX + username;
-        }
-
-        function canUserSeeImportantEvent(target) {
-            if (!currentUser || !currentUser.isLoggedIn) {
-                return false;
-            }
-            if (target === 'admins') {
-                return currentUser.role === 'admin';
-            }
-            if (currentUser.role === 'coach' || currentUser.role === 'admin') {
-                return true;
-            }
-            if (target === 'all') {
-                return true;
-            }
-            if (target === 'players') {
-                return currentUser.role === 'player';
-            }
-            if (target === 'parents') {
-                return currentUser.role === 'parent';
-            }
-            if (target === 'coaches') {
-                return currentUser.role === 'coach' || currentUser.role === 'admin';
-            }
-            return false;
-        }
-
-        function canUserSeePlayerCategory(playerCategory) {
-            if (!playerCategory) {
-                return true;
-            }
-
-            if (!currentUser || !currentUser.isLoggedIn) {
-                return false;
-            }
-
-            if (currentUser.role === 'coach' || currentUser.role === 'admin') {
-                return true;
-            }
-
-            return currentUser.playerCategory === playerCategory;
-        }
-
-        function isImportantEventVisible(event) {
-            if (!event || typeof event !== 'object') {
-                return false;
-            }
-
-            if (!canUserSeeImportantEvent(event.target)) {
-                return false;
-            }
-
-            if (event.target === 'players') {
-                return canUserSeePlayerCategory(event.playerCategory || null);
-            }
-
-            return true;
-        }
-
-        async function refreshImportantInfoEventsCache() {
-            if (!currentUser || !currentUser.isLoggedIn) {
-                importantInfoEventsCache = [];
-                return;
-            }
-
-            try {
-                const [announcementsResponse, pollsResponse] = await Promise.all([
-                    fetch(`${API_BASE}/announcements`, {
-                        method: 'GET',
-                        credentials: 'include'
-                    }),
-                    fetch(`${API_BASE}/polls`, {
-                        method: 'GET',
-                        credentials: 'include'
-                    })
-                ]);
-
-                if (!announcementsResponse.ok || !pollsResponse.ok) {
-                    throw new Error('Nepodarilo sa načítať udalosti dôležitých informácií.');
-                }
-
-                const [announcementsPayload, pollsPayload] = await Promise.all([
-                    announcementsResponse.json(),
-                    pollsResponse.json()
-                ]);
-
-                const announcements = Array.isArray(announcementsPayload && announcementsPayload.items)
-                    ? announcementsPayload.items
-                    : [];
-                const polls = Array.isArray(pollsPayload && pollsPayload.items)
-                    ? pollsPayload.items
-                    : [];
-
-                importantInfoEventsCache = [...announcements, ...polls];
-            } catch (error) {
-                importantInfoEventsCache = [];
-            }
-        }
-
-        function getImportantEventsForUser() {
-            if (!currentUser || !currentUser.isLoggedIn) {
-                return [];
-            }
-
-            return importantInfoEventsCache.filter(isImportantEventVisible);
-        }
-
-        function hasUnseenImportantInfo() {
-            if (!currentUser || !currentUser.isLoggedIn) {
-                return false;
-            }
-            const seen = JSON.parse(localStorage.getItem(getImportantInfoSeenKey()) || '[]');
-            return getImportantEventsForUser().some(event => !seen.includes(event.id));
-        }
-
-        async function updateImportantInfoNavBadge() {
-            const infoNavLink = document.getElementById('infoNavLink');
-            if (!infoNavLink) {
-                return;
-            }
-
-            await refreshImportantInfoEventsCache();
-
-            const hasUnseen = hasUnseenImportantInfo();
-            const existingDot = infoNavLink.querySelector('.nav-dot');
-            if (hasUnseen) {
-                if (!existingDot) {
-                    const dot = document.createElement('span');
-                    dot.className = 'nav-dot';
-                    dot.setAttribute('aria-label', 'Nové dôležité správy');
-                    infoNavLink.appendChild(dot);
-                }
-            } else if (existingDot) {
-                existingDot.remove();
-            }
-        }
-
-        window.addEventListener('storage', function (event) {
-            if (!event.key) {
-                return;
-            }
-            if (event.key.startsWith(IMPORTANT_INFO_SEEN_PREFIX)) {
-                updateImportantInfoNavBadge().catch(() => { });
-            }
-        });
         // Logout Modal Functions
         function openLogoutModal() {
             const modal = document.getElementById('logoutModal');
@@ -5111,11 +4940,6 @@
                 }
             }
         });
-
-        function goToTrainings(e) {
-            e.preventDefault();
-            window.location.href = '/pages/trainings.html';
-        }
 
         function goToMatches(e) {
             if (e && e.preventDefault) e.preventDefault();
@@ -5583,11 +5407,6 @@
             if (pf) pf.removeAttribute('loading');
         }
 
-        function goToImportantInfo(e) {
-            e.preventDefault();
-            window.location.href = '/pages/important_info.html';
-        }
-
         // Handle Login
         function setLoginLoading(isLoading) {
             const submitBtn = document.getElementById('loginSubmitBtn');
@@ -5701,42 +5520,6 @@
             return roleLabels[role] || role;
         }
 
-        // Show training view
-        function showTrainingView(event) {
-            if (event && event.preventDefault) event.preventDefault();
-            const user = currentUser || { isLoggedIn: false };
-            if (!user.isLoggedIn) {
-                alert('Prosím sa najskôr prihláste!');
-                openLoginModal();
-                return;
-            }
-
-            // Initialize training view
-            initializeTrainingView();
-            loadTrainingData();
-
-            // Show/hide areas based on role
-            if (user.role === 'player' || user.role === 'parent') {
-                document.getElementById('coachCreateTrainingArea').style.display = 'none';
-                document.getElementById('playerTrainingArea').style.display = 'block';
-                document.getElementById('parentChildrenArea').style.display = user.role === 'parent' ? 'block' : 'none';
-                document.getElementById('coachRosterArea').style.display = 'none';
-                if (user.role === 'parent') {
-                    updateChildrenList();
-                }
-                refreshPlayerTrainings();
-            } else if (user.role === 'coach' || user.role === 'admin') {
-                document.getElementById('coachCreateTrainingArea').style.display = 'block';
-                document.getElementById('playerTrainingArea').style.display = 'none';
-                document.getElementById('parentChildrenArea').style.display = 'none';
-                document.getElementById('coachRosterArea').style.display = 'block';
-                refreshCoachRoster();
-            }
-
-            // Scroll to training section
-            document.getElementById('trainingView').scrollIntoView({ behavior: 'smooth' });
-        }
-
         // Smooth scrolling for navigation
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
@@ -5750,52 +5533,6 @@
             });
         });
 
-        // Load last login if available
-        async function loadPublicAnnouncements() {
-            const section = document.getElementById('publicAnnouncements');
-            const list = document.getElementById('publicAnnouncementsList');
-            if (!section || !list) return;
-
-            try {
-                const endpoints = [
-                    `${API_BASE}/announcements/public`,
-                    '/api/announcements/public'
-                ];
-                let response = null;
-                for (const ep of endpoints) {
-                    try {
-                        const r = await fetch(ep, { method: 'GET' });
-                        if (r.ok) { response = r; break; }
-                    } catch (_) { }
-                }
-                if (!response) return;
-
-                const payload = await response.json();
-                const items = Array.isArray(payload && payload.items) ? payload.items : [];
-                if (!items.length) return;
-
-                section.style.display = '';
-
-                list.innerHTML = items.map(function (item) {
-                    const date = new Date(item.createdAt);
-                    const dateStr = date.toLocaleDateString('sk-SK', { day: 'numeric', month: 'long', year: 'numeric' });
-                    const imgHtml = item.imageUrl
-                        ? `<img src="${item.imageUrl}" alt="${item.title}" style="width:100%;max-height:220px;object-fit:cover;border-radius:8px 8px 0 0;margin-bottom:12px;" loading="lazy">`
-                        : '';
-                    return `<div style="background:#fff;border-radius:10px;box-shadow:0 5px 15px rgba(0,0,0,0.1);overflow:hidden;">
-                        ${imgHtml}
-                        <div style="padding:16px 20px;">
-                            <div style="font-size:12px;color:#888;margin-bottom:6px;"><i class="fas fa-calendar"></i> ${dateStr}</div>
-                            <h3 style="margin:0 0 8px;color:#003399;font-size:18px;">${item.title}</h3>
-                            <p style="margin:0;color:#555;font-size:14px;line-height:1.5;">${item.message}</p>
-                        </div>
-                    </div>`;
-                }).join('');
-            } catch (error) {
-                console.warn('Public announcements load failed:', error);
-            }
-        }
-
         window.addEventListener('load', async function () {
             // Load matches and standings FIRST – independent and fast
             loadUpcomingMatches();
@@ -5805,7 +5542,6 @@
             if (typeof initializePlayers === 'function') initializePlayers();
             if (typeof showCoachPlayerCardButton === 'function') showCoachPlayerCardButton();
             loadInstagramGalleryFeed();
-            loadPublicAnnouncements();
 
             // Gallery zoom modal logic
             const galleryGrid = document.getElementById('galleryGrid');
