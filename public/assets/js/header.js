@@ -401,9 +401,6 @@
             '        <li><a href="https://4mysport.sk/oskkamennaporuba/" target="_blank" rel="noopener" style="color:#ffd700;font-weight:700;"><i class="fas fa-store"></i> Eshop</a></li>',
             '        <li><a href="' + contactHref + '">Kontakt</a></li>',
             '        <li id="coachAccountMgmtBtn" style="display:none;"><a href="/account_management"><i class="fas fa-users-cog"></i> Správa účtov</a></li>',
-            '        <li id="coachGroupsBtn" style="display:none;"><a href="/skupiny"><i class="fas fa-layer-group"></i> Skupiny</a></li>',
-            '        <li id="shTrainingNavLink" style="display:none;"><a href="/trainings"><i class="fas fa-dumbbell"></i> Tréningy</a></li>',
-            '        <li id="shInfoNavLink" style="display:none;"><a href="/important_info"><i class="fas fa-bullhorn"></i> Dôležité info</a></li>',
             '        <li class="sh-mobile-login"><a href="' + loginHref + '" class="sh-login-btn" id="shMobileLoginBtn">Prihlásiť sa</a></li>',
             '      </ul>',
             '    </nav>',
@@ -480,10 +477,7 @@
     function refreshAuth(user) {
         var loginBtn = document.getElementById('shLoginBtn');
         var mobileLoginBtn = document.getElementById('shMobileLoginBtn');
-        var trainingLink = document.getElementById('shTrainingNavLink');
-        var infoLink = document.getElementById('shInfoNavLink');
         var accountMgmtBtn = document.getElementById('coachAccountMgmtBtn');
-        var groupsBtn = document.getElementById('coachGroupsBtn');
 
         if (user && user.isLoggedIn) {
             var displayName = truncateUsername(user.username || 'Účet');
@@ -491,23 +485,14 @@
             if (mobileLoginBtn) mobileLoginBtn.textContent = displayName;
 
             var role = (user.role || '').toLowerCase();
-            var isBlogger = role === 'blogger';
             var isAdmin = role === 'admin';
-            var isAdminOrCoach = isAdmin || role === 'coach';
-            var canSeeInfo = isAdminOrCoach || isBlogger || role === 'player' || role === 'parent';
 
             // Show relevant links based on role
-            if (trainingLink) trainingLink.style.display = isBlogger ? 'none' : '';
-            if (infoLink) infoLink.style.display = canSeeInfo ? '' : 'none';
             if (accountMgmtBtn) accountMgmtBtn.style.display = isAdmin ? '' : 'none';
-            if (groupsBtn) groupsBtn.style.display = isAdminOrCoach ? '' : 'none';
         } else {
             if (loginBtn) loginBtn.textContent = 'Prihlásiť sa';
             if (mobileLoginBtn) mobileLoginBtn.textContent = 'Prihlásiť sa';
-            if (trainingLink) trainingLink.style.display = 'none';
-            if (infoLink) infoLink.style.display = 'none';
             if (accountMgmtBtn) accountMgmtBtn.style.display = 'none';
-            if (groupsBtn) groupsBtn.style.display = 'none';
         }
     }
 
